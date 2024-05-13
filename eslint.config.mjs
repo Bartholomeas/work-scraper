@@ -1,8 +1,10 @@
-{
-  "extends": ["airbnb", "prettier", "plugin:node/recommended"],
-  "plugins": ["prettier"],
-  "rules": {
-    "prettier/prettier": "error",
+import globals from "globals";
+import pluginJs from "@eslint/js";
+import tseslint from "typescript-eslint";
+
+export default [{
+  languageOptions: { globals: globals.browser },
+  rules: {
     "spaced-comment": "off",
     "no-console": "warn",
     "consistent-return": "off",
@@ -14,6 +16,9 @@
     "no-underscore-dangle": "off",
     "class-methods-use-this": "off",
     "prefer-destructuring": ["error", { "object": true, "array": false }],
-    "no-unused-vars": ["error", { "argsIgnorePattern": "req|res|next|val" }]
-  }
-}
+    "no-unused-vars": "warn",
+  },
+},
+  pluginJs.configs.recommended,
+  ...tseslint.configs.recommended,
+];

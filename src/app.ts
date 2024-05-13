@@ -7,6 +7,9 @@ import compression from "compression";
 import cookieParser from "cookie-parser";
 import { AppError, AppErrorInterface } from "./utils/app-error";
 import { ErrorController } from "./controllers/error-controller";
+import { BASE_URL } from "./misc/constants";
+import { authRouter } from "./routes/auth-routes";
+import { offersRouter } from "./routes/offers-routes";
 
 
 export const app: Express = express();
@@ -26,7 +29,6 @@ const limiter = rateLimit({
 
 app.use("/api", limiter);
 
-
 if (process.env.NODE_ENV === "development")
   app.use(morgan("dev"));
 
@@ -35,8 +37,12 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
+app.use(BASE_URL + "/auth", authRouter);
+app.use(BASE_URL + "/offers", offersRouter);
+
 app.all("*", (req, res, next) => {
   next(new AppError(`Cannot find ${req.originalUrl}`, 404));
 });
 
-app.use((err: AppErrorInterface, req: Request, res: Response, next: NextFunction) => new ErrorController(err, req, res, next));
+
+app.use((err: AppErrorInterface, req: Request, res: Response, next: NextFunction) => new ErrorController(err, req, res));
