@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { type AppErrorInterface } from "../utils/app-error";
+import { type AppErrorInterface } from "../../utils/app-error";
 import * as process from "node:process";
 
 export class ErrorController {
