@@ -6,7 +6,7 @@ export const signupSchema = z.object({
   password: z.string(),
 })
   .refine(({ password }) => PASSWORD_REGEX.test(password), {
-    message: "Hasło musi posiadać conajmniej jedną liczbę, wielką literę oraz znak specjalny.",
+    message: "Password must contain at least one number, big letter and special sign.",
     path: ["password"],
   });
 

@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { AppError } from "../../utils/app-error";
-import { SignupPayload, signupSchema } from "../../schemas/auth.schemas";
+import { SignupPayload } from "../../schemas/auth.schemas";
 
 class AuthService {
   private prisma: PrismaClient;
@@ -11,7 +11,6 @@ class AuthService {
 
   createUser = async (data: SignupPayload) => {
     try {
-      signupSchema.parse(data);
       const existingUser = await this.prisma.user.findFirst({
           where: {
             email: data.email,

@@ -53,4 +53,3 @@ app.all("*", (req, res, next) => {
 
 
 app.use((err: AppErrorInterface, req: Request, res: Response, next: NextFunction) => new ErrorController(err, req, res));
-
