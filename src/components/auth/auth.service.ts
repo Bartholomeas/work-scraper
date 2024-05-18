@@ -1,6 +1,11 @@
 import { PrismaClient } from "@prisma/client";
 import { AppError } from "../../utils/app-error";
-import { SignupPayload } from "../../schemas/auth.schemas";
+import { SignUpPayload } from "../../schemas/auth.schemas";
+
+interface GetUserProps {
+  id?: string,
+  email?: string
+}
 
 class AuthService {
   private prisma: PrismaClient;
@@ -9,7 +14,7 @@ class AuthService {
     this.prisma = new PrismaClient();
   }
 
-  createUser = async (data: SignupPayload) => {
+  async createUser(data: SignUpPayload) {
     try {
       const existingUser = await this.prisma.user.findFirst({
           where: {
@@ -18,14 +23,29 @@ class AuthService {
         },
       );
       if (existingUser) throw new AppError("User already exist", 400);
-      const { password, ...createdUser } = await this.prisma.user.create({
+      const { password, ...user } = await this.prisma.user.create({
         data,
       });
-      return createdUser;
+      return user;
     } catch (err) {
       throw err;
     }
   };
+
+  async getUser({
+                  id, email,
+                }: GetUserProps) {
+    try {
+      const userData = await this.prisma.user.findFirst({
+        where: { OR: [{ id }, { email }] },
+      }) ?? undefined;
+      const { password, ...user } = userData ?? {};
+      return { password, user };
+    } catch (err) {
+      throw err;
+    }
+  }
+  ;
 }
 
 export { AuthService };

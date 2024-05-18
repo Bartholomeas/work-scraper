@@ -1,7 +1,7 @@
 import express from "express";
 
 import { validateBody } from "../../middleware/validate-body";
-import { signupSchema } from "../../schemas/auth.schemas";
+import { signInSchema, signUpSchema } from "../../schemas/auth.schemas";
 import { AuthController } from "./auth.controller";
 
 class AuthRouter {
@@ -13,7 +13,10 @@ class AuthRouter {
 
   getRouter() {
     const router = express.Router();
-    router.post("/sign-up", validateBody(signupSchema), this.authController.signUp);
+    router.get("/me", this.authController.protectRoute, this.authController.getMe);
+    router.post("/sign-up", validateBody(signUpSchema), this.authController.signUp);
+    router.post("/sign-in", validateBody(signInSchema), this.authController.signIn);
+    router.delete("/logout", this.authController.protectRoute, this.authController.logout);
     return router;
   }
 }
