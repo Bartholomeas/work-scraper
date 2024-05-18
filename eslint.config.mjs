@@ -5,6 +5,7 @@ import tseslint from "typescript-eslint";
 export default [{
   languageOptions: { globals: globals.browser },
   rules: {
+    "import/order": "off",
     "spaced-comment": "off",
     "no-console": "warn",
     "consistent-return": "off",
