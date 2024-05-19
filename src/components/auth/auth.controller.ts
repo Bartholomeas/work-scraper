@@ -5,10 +5,9 @@ import bcrypt from "bcrypt";
 import { AppError } from "../../utils/app-error";
 
 import { JWT_COOKIE_NAME, JWT_EXPIRES_IN, JWT_SECRET } from "../../misc/constants";
-import { ERROR_CODES, ERROR_MESSAGES } from "../../misc/error.constants";
 import { DecodedJwtToken, type User } from "../../types/auth.types";
 import { type AuthService } from "./auth.service";
-
+import { ERROR_CODES, ERROR_MESSAGES } from "../../misc/error.constants";
 
 class AuthController {
   private authService: AuthService;
@@ -17,15 +16,11 @@ class AuthController {
     this.authService = authService;
   }
 
-  private signToken = (id: string | undefined) => jwt.sign({ id }, JWT_SECRET, {
-    // expiresIn: JWT_EXPIRES_IN,
-    expiresIn: "7d",
-  });
-
-  createSendToken(user: Partial<User> | undefined, statusCode: number, req: Request, res: Response) {
+  createSendToken = async (user: Partial<User> | undefined, statusCode: number, req: Request, res: Response) => {
     const token = this.signToken(user?.id);
+
     res.cookie(JWT_COOKIE_NAME, token, {
-      expires: new Date(Date.now() + (JWT_EXPIRES_IN * 1000 * 100 * 100)),
+      expires: new Date(Date.now() + JWT_EXPIRES_IN * 1000 * 100 * 100),
       httpOnly: true,
       secure: req.secure || req.headers["x-forwarded-proto"] === "https",
     });
@@ -34,33 +29,41 @@ class AuthController {
       token,
       data: { user },
     });
-  }
+  };
 
-  async comparePasswords(candidatePassword: string, userPassword: string) {
+  comparePasswords = async (candidatePassword: string, userPassword: string) => {
     return await bcrypt.compare(candidatePassword, userPassword);
-  }
+  };
 
   protectRoute = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      let token;
+    let token;
 
-      if (req.headers.authorization && req.headers.authorization.startsWith("Bearer"))
-        token = req.headers.authorization.split(" ")[1];
-      else if (req.cookies[JWT_COOKIE_NAME])
-        token = req.cookies[JWT_COOKIE_NAME];
+    if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) token = req.headers.authorization.split(" ")[1];
+    else if (req.cookies[JWT_COOKIE_NAME]) token = req.cookies[JWT_COOKIE_NAME];
 
-      if (!token) return next(new AppError("You are not logged in. Login to get access.", 401));
+    if (!token)
+      next(
+        new AppError({
+          statusCode: 401,
+          code: ERROR_CODES.not_logged_in,
+          message: ERROR_MESSAGES.not_logged_in,
+        }),
+      );
 
-      const decoded = jwt.verify(token, JWT_SECRET) as DecodedJwtToken | undefined;
-      // console.log(decoded);
-      const currentUser = await this.authService.getUser({ id: decoded?.id });
-      if (!currentUser) return next(new AppError("User assigned to this token does no longer exist.", 401));
+    const decoded = jwt.verify(token, JWT_SECRET) as DecodedJwtToken | undefined;
 
-      res.locals.user = currentUser;
-      next();
-    } catch (err) {
-      throw err;
-    }
+    const currentUser = await this.authService.getUser({ id: decoded?.id });
+    if (!currentUser)
+      next(
+        new AppError({
+          statusCode: 401,
+          code: ERROR_CODES.user_not_exist,
+          message: ERROR_MESSAGES.user_not_exist,
+        }),
+      );
+
+    res.locals.user = currentUser;
+    next();
   };
 
   getMe = async (req: Request, res: Response, next: NextFunction) => {
@@ -70,18 +73,16 @@ class AuthController {
 
         const { password, ...currentUser } = await this.authService.getUser({ id: decoded?.id });
 
-        if (!currentUser) return next();
+        if (!currentUser) next(new AppError({ message: "Current user doesnt exist.", statusCode: 404 }));
 
         return res.status(200).json(currentUser);
       } catch (err) {
-        throw err;
+        next(err);
       }
-    }
-    next();
-  }
-  ;
+    } else next(new AppError({ message: "Cannot find auth session.", statusCode: 404 }));
+  };
 
-  signUp = async (req: Request, res: Response) => {
+  signUp = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { email, password } = req.body;
       const hashedPassword = await bcrypt.hash(password, 12);
@@ -89,28 +90,28 @@ class AuthController {
         email,
         password: hashedPassword,
       });
-      this.createSendToken(user, 201, req, res);
+      await this.createSendToken(user, 201, req, res);
     } catch (err) {
-      if (err instanceof AppError)
-        return res.status(err.statusCode).json({
-          code: ERROR_CODES.user_exists,
-          message: err.message ?? ERROR_MESSAGES.user_exists,
-        });
-
-      return res.status(500).json({ code: ERROR_CODES.internal_error, message: ERROR_MESSAGES.internal_error });
+      next(err);
     }
   };
 
   signIn = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { email, password } = req.body;
-      if (!email || !password) return next(new AppError("Provide email and password.", 400));
+      if (!email || !password) next(new AppError({ message: "Provide email and password.", statusCode: 400 }));
 
       const { password: userPassword, user } = await this.authService.getUser({ email });
-      if (!userPassword || !(await this.comparePasswords(password, userPassword))) return next(new AppError("Invalid credentials", 400));
+      if (!userPassword || !(await this.comparePasswords(password, userPassword)))
+        next(
+          new AppError({
+            statusCode: 400,
+            message: "Invalid credentials",
+          }),
+        );
       this.createSendToken(user, 201, req, res);
     } catch (err) {
-      throw err;
+      next(err);
     }
   };
 
@@ -121,6 +122,12 @@ class AuthController {
     });
     res.status(200).json({ status: "Success" });
   };
+
+  private signToken = (id: string | undefined) =>
+    jwt.sign({ id }, JWT_SECRET, {
+      // expiresIn: JWT_EXPIRES_IN,
+      expiresIn: "7d",
+    });
 }
 
 export { AuthController };

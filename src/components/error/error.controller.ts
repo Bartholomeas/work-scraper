@@ -10,7 +10,6 @@ export class ErrorController {
     } else if (env === "production") {
       this.sendErrorProd(err, req, res);
     }
-
   }
 
   sendErrorDev(err: AppErrorInterface, req: Request, res: Response) {
