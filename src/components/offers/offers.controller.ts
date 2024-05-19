@@ -14,25 +14,8 @@ class OffersController {
     this.initBrowser();
   }
 
-  private initBrowser = async () => {
-    try {
-      if (this.browser)
-        return this.browser;
-      return this.browser = await puppeteer.launch({ headless: true, executablePath: executablePath() });
-    } catch (err) {
-      throw err;
-    }
-  };
-
-
-  private closeBrowser = async () => {
-    if (this.browser)
-      await this.browser.close();
-    return;
-  };
-
   getOffers = async (req: Request, res: Response, next: NextFunction) => {
-    if (!req.body.pageUrl) throw new AppError("There is no page url!", 400);
+    if (!req.body.pageUrl) throw new AppError({ message: "There is no page url!", statusCode: 400 });
     let page: Page | undefined;
 
     try {
@@ -60,6 +43,20 @@ class OffersController {
       if (page) await page.close();
       next(err);
     }
+  };
+
+  private initBrowser = async () => {
+    try {
+      if (this.browser) return this.browser;
+      return (this.browser = await puppeteer.launch({ headless: true, executablePath: executablePath() }));
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  private closeBrowser = async () => {
+    if (this.browser) await this.browser.close();
+    return;
   };
 }
 

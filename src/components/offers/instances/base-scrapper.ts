@@ -1,8 +1,8 @@
 import { Page } from "puppeteer";
 
 interface BaseScrapperPageProps {
-  url: string,
-  categories: string[]
+  url: string;
+  categories: string[];
 }
 
 class BaseScrapper {

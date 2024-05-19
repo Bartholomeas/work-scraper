@@ -1,3 +1,1 @@
-import { ERROR_CODES } from "../misc/error.constants";
-
-export type ErrorCodes = keyof typeof ERROR_CODES
+export type ErrorCodes = "user_exists" | "internal_error" | "invalid_data" | "user_not_exist" | "not_logged_in";

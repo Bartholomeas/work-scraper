@@ -1,12 +1,12 @@
-import { AppErrorInterface } from "../utils/app-error";
+import type { AppErrorInterface, AppErrorProps } from "../utils/app-error";
 import type { NextFunction, Request, Response } from "express";
 
-const errorHandler = (err: AppErrorInterface, req: Request, res: Response, next: NextFunction) => {
-  let { statusCode, message } = err;
-
+const errorHandler = (err: AppErrorInterface & AppErrorProps, req: Request, res: Response, next: NextFunction) => {
+  const { statusCode, message, code } = err;
+  console.log("EROR HANDLER", err);
   const response = {
-    status: "error",
     statusCode,
+    code,
     message,
   };
 

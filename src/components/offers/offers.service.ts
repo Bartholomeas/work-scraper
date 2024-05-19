@@ -1,6 +1,5 @@
 class OffersService {
-  constructor() {
-  }
+  constructor() {}
 }
 
 export { OffersService };

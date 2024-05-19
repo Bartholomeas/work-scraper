@@ -5,15 +5,19 @@ import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import compression from "compression";
 import cookieParser from "cookie-parser";
+
 import { AppError, AppErrorInterface } from "./utils/app-error";
-import { ErrorController } from "./components/error/error.controller";
 import { BASE_URL } from "./misc/constants";
+
+import { ErrorController } from "./components/error/error.controller";
 import { authModule } from "./components/auth/auth.module";
 import { offersModule } from "./components/offers/offers.module";
+
 import { errorHandler } from "./middleware/error-handler";
 
 // For some reason imported in tsconfig doesnt work :(
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     interface Request {
       requestTime: string;
@@ -39,8 +43,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false, limit: "10kb" }));
 app.use(cookieParser());
 
-if (process.env.NODE_ENV === "development")
-  app.use(morgan("dev"));
+if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
 1;
 app.use((req: Request, res: Response, next: NextFunction) => {
   req.requestTime = new Date().toISOString();
@@ -52,8 +55,12 @@ app.use(BASE_URL + "/offers", offersModule.router);
 
 app.use(errorHandler);
 app.all("*", (req, res, next) => {
-  next(new AppError(`Cannot find ${req.originalUrl}`, 404));
+  next(
+    new AppError({
+      message: `Cannot find ${req.originalUrl}`,
+      statusCode: 404,
+    }),
+  );
 });
 
-
-app.use((err: AppErrorInterface, req: Request, res: Response, next: NextFunction) => new ErrorController(err, req, res));
+app.use((err: AppErrorInterface, req: Request, res: Response) => new ErrorController(err, req, res));

@@ -4,9 +4,8 @@ export interface User {
   password: string | undefined;
 }
 
-
 export interface DecodedJwtToken {
-  id: string
-  iat: number,
-  exp: number
+  id: string;
+  iat: number;
+  exp: number;
 }
