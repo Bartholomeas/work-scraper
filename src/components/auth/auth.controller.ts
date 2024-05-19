@@ -70,14 +70,14 @@ class AuthController {
 
         const { password, ...currentUser } = await this.authService.getUser({ id: decoded?.id });
 
-        if (!currentUser) return next();
+        if (!currentUser) return next(new AppError("Current user doesnt exist.", 404));
 
         return res.status(200).json(currentUser);
       } catch (err) {
-        throw err;
+        next(err);
       }
-    }
-    next();
+    } else
+      return next(new AppError("Cannot find auth session.", 404));
   }
   ;
 

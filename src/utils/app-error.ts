@@ -1,15 +1,20 @@
+import { type ErrorCodes } from "../types/error.types";
+import { ERROR_CODES } from "../misc/error.constants";
+
 export interface AppErrorInterface extends Error {
   statusCode: number;
+  code: ErrorCodes,
+  message: string;
 }
 
-export class AppError extends Error {
+class AppError extends Error {
   public statusCode: number;
   public isOperational: boolean;
 
-  constructor(message: string, statusCode: number = 500) {
+  constructor({ message, code = ERROR_CODES.internal_error, statusCode = 500 }: AppErrorInterface) {
     super(message);
-
     this.statusCode = statusCode;
+    this.code = code;
     this.isOperational = true;
 
     Error.captureStackTrace(this, this.constructor);
@@ -19,3 +24,5 @@ export class AppError extends Error {
     return `${this.constructor.name}: ${this.message}`;
   }
 }
+
+export { AppError };
