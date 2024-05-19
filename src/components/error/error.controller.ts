@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
-import { type AppErrorInterface } from "../../utils/app-error";
-import * as process from "node:process";
+import type { AppErrorInterface } from "src/utils/app-error";
 
 export class ErrorController {
   constructor(err: AppErrorInterface, req: Request, res: Response) {

@@ -2,8 +2,12 @@ import { NextFunction, type Request, type Response } from "express";
 import { Browser, executablePath, Page } from "puppeteer";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
-import { type OffersService } from "./offers.service";
-import { AppError } from "../../utils/app-error";
+
+import { AppError } from "@/utils/app-error";
+import { ScrapperPracuj } from "@/components/offers/instances/scrapper-pracuj";
+import type { OffersService } from "@/components/offers/offers.service";
+
+puppeteer.use(StealthPlugin());
 
 class OffersController {
   private offersService: OffersService;
@@ -19,9 +23,11 @@ class OffersController {
     let page: Page | undefined;
 
     try {
-      puppeteer.use(StealthPlugin());
       const { pageUrl } = req.body;
 
+      const pracujScrapper = new ScrapperPracuj(this.browser, {
+        url: "https://pracuj.pl",
+      });
       page = await this.browser?.newPage();
       await page?.goto(pageUrl);
 
@@ -46,12 +52,8 @@ class OffersController {
   };
 
   private initBrowser = async () => {
-    try {
-      if (this.browser) return this.browser;
-      return (this.browser = await puppeteer.launch({ headless: true, executablePath: executablePath() }));
-    } catch (err) {
-      throw err;
-    }
+    if (this.browser) return this.browser;
+    return (this.browser = await puppeteer.launch({ headless: true, executablePath: executablePath() }));
   };
 
   private closeBrowser = async () => {

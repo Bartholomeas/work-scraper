@@ -1,16 +1,16 @@
 import { z, ZodError } from "zod";
 import type { NextFunction, Request, Response } from "express";
-import { ERROR_CODES, ERROR_MESSAGES } from "../misc/error.constants";
-import { AppError } from "../utils/app-error";
+import { AppError } from "@/utils/app-error";
+import { ERROR_CODES, ERROR_MESSAGES } from "@/misc/error.constants";
 
-export const validateBody = <T extends z.ZodType<any, z.ZodTypeDef, any>>(schema: T) => {
+export const validateBody = <T extends z.ZodType<unknown, z.ZodTypeDef, unknown>>(schema: T) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
       schema.parse(req.body);
       next();
     } catch (err) {
       if (err instanceof ZodError) {
-        const errorMessages = err.errors.map((issue: any) => issue);
+        const errorMessages = err.errors.map((issue: unknown) => issue);
         next(
           new AppError({
             statusCode: 400,

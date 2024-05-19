@@ -1,7 +1,7 @@
 import express from "express";
 
-import { validateBody } from "../../middleware/validate-body";
-import { signInSchema, signUpSchema } from "../../schemas/auth.schemas";
+import { validateBody } from "@/middleware/validate-body";
+import { signInSchema, signUpSchema } from "@/schemas/auth.schemas";
 import { AuthController } from "./auth.controller";
 
 class AuthRouter {

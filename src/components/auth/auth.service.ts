@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
-import { AppError } from "../../utils/app-error";
-import { SignUpPayload } from "../../schemas/auth.schemas";
-import { ERROR_CODES, ERROR_MESSAGES } from "../../misc/error.constants";
+import type { SignUpPayload } from "@/schemas/auth.schemas";
+import { AppError } from "@/utils/app-error";
+import { ERROR_CODES, ERROR_MESSAGES } from "@/misc/error.constants";
 
 interface GetUserProps {
   id?: string;

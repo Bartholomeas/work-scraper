@@ -1,7 +1,7 @@
-import { OffersController } from "./offers.controller";
 import express from "express";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
+import { OffersController } from "./offers.controller";
 
 class OffersRouter {
   private offersController: OffersController;
