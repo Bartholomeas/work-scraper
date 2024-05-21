@@ -1,5 +1,4 @@
 import { type Browser, type Page } from "puppeteer";
-import { type NextFunction, type Request, type Response } from "express";
 
 export interface ScrapperBaseProps {
   url: string;
@@ -34,7 +33,7 @@ abstract class ScrapperBase {
     this.page = undefined;
   }
 
-  public abstract getScrappedData(req: Request, res: Response, next: NextFunction): Promise<unknown>;
+  public abstract getScrappedData(): Promise<unknown>;
 }
 
 export { ScrapperBase };

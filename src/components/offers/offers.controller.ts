@@ -40,7 +40,7 @@ class OffersController {
         // url: "https://pracuj.pl",
       });
       await pracujScrapper.initialize();
-      const data = await pracujScrapper.getScrappedData(req, res);
+      const data = await pracujScrapper.getScrappedData();
 
       await pracujScrapper.closePage();
 
