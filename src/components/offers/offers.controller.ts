@@ -4,8 +4,10 @@ import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 
 import { AppError } from "@/utils/app-error";
-import { ScrapperPracuj } from "@/components/offers/instances/scrapper-pracuj";
+import { ERROR_CODES } from "@/misc/error.constants";
+
 import type { OffersService } from "@/components/offers/offers.service";
+import { ScrapperPracuj } from "@/components/offers/instances/scrapper-pracuj";
 
 puppeteer.use(StealthPlugin());
 
@@ -19,31 +21,46 @@ class OffersController {
   }
 
   getOffers = async (req: Request, res: Response, next: NextFunction) => {
-    if (!req.body.pageUrl) throw new AppError({ message: "There is no page url!", statusCode: 400 });
+    if (!req.body.pageUrl)
+      next(
+        new AppError({
+          statusCode: 400,
+          code: ERROR_CODES.not_found,
+          message: "There is no page url!",
+        }),
+      );
     let page: Page | undefined;
 
     try {
       const { pageUrl } = req.body;
+      if (!this.browser) await this.initBrowser();
 
       const pracujScrapper = new ScrapperPracuj(this.browser, {
-        url: "https://pracuj.pl",
+        url: "https://it.pracuj.pl/praca",
+        // url: "https://pracuj.pl",
       });
-      page = await this.browser?.newPage();
-      await page?.goto(pageUrl);
+      await pracujScrapper.initialize();
+      const data = await pracujScrapper.getScrappedData(req, res);
 
-      const date = new Date(Date.now()).toLocaleDateString("pl").toString();
-      const time = `${new Date(Date.now()).getHours()}:${new Date(Date.now()).getMinutes()}:${new Date(Date.now()).getSeconds()}`;
+      await pracujScrapper.closePage();
 
-      await page?.screenshot({
-        path: `./assets/test-${date}-${time}.jpeg`,
-        type: "jpeg",
-        optimizeForSpeed: true,
-      });
+      // page = await this.browser?.newPage();
+      // await page?.goto(pageUrl);
+      //
+      // const date = new Date(Date.now()).toLocaleDateString("pl").toString();
+      // const time = `${new Date(Date.now()).getHours()}:${new Date(Date.now()).getMinutes()}:${new Date(Date.now()).getSeconds()}`;
+      //
+      // await page?.screenshot({
+      //   path: `./public/images/test-${date}-${time}.jpeg`,
+      //   type: "jpeg",
+      //   optimizeForSpeed: true,
+      // });
 
-      await this.closeBrowser();
+      // await this.closeBrowser();
       res.status(200).json({
         pageUrl,
-        data: [],
+        createdAt: new Date(Date.now()),
+        data,
       });
     } catch (err) {
       if (page) await page.close();
