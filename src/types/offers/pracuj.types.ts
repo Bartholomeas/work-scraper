@@ -7,8 +7,8 @@ export interface JobOfferPracuj {
   companyProfileAbsoluteUri: string;
   companyId: number;
   companyLogoUri: string | null;
-  lastPublicated: string; // Można użyć Date, jeśli JSON jest parsowany
-  expirationDate: string; // Można użyć Date, jeśli JSON jest parsowany
+  lastPublicated: string;
+  expirationDate: string;
   salaryDisplayText: string;
   jobDescription: string;
   isSuperOffer: boolean;

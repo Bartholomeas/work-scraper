@@ -12,14 +12,14 @@ abstract class ScrapperBase {
   protected categories: ScrapperBaseProps["categories"];
   protected maxPages: number;
 
-  constructor(browser: Browser | undefined, { url, categories = [] }: ScrapperBaseProps) {
+  protected constructor(browser: Browser | undefined, { url, categories = [] }: ScrapperBaseProps) {
     this.browser = browser;
     this.url = url;
     this.categories = categories;
     this.maxPages = 1;
   }
 
-  protected async initPage() {
+  public async initialize() {
     if (!this.page) {
       this.page = await this.browser?.newPage();
       await this.page?.goto(this.url);
@@ -34,6 +34,8 @@ abstract class ScrapperBase {
   }
 
   public abstract getScrappedData(): Promise<unknown>;
+
+  protected abstract getMaxPages(): Promise<number>;
 }
 
 export { ScrapperBase };

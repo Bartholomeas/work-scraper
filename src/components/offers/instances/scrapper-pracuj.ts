@@ -1,24 +1,22 @@
-import { type Browser } from "puppeteer";
-import { ScrapperBase, type ScrapperBaseProps } from "@/components/offers/instances/scrapper-base";
-import fs from "node:fs";
 import path from "node:path";
-import type { JobOfferPracuj } from "@/types/offers.types";
+import { type Browser } from "puppeteer";
+import { FilesManagerController } from "@/components/files-manager/files-manager.controller";
+import { ScrapperBase, type ScrapperBaseProps } from "@/components/offers/instances/scrapper-base";
+import type { JobOfferPracuj } from "@/types/offers/pracuj.types";
+import type { JobOffer } from "@/types/offers/offers.types";
 
 class ScrapperPracuj extends ScrapperBase {
-  browser: Browser | undefined;
-  maxPages: number;
+  protected browser: Browser | undefined;
+  protected maxPages: number;
+  private filesManager: FilesManagerController;
 
   constructor(browser: Browser | undefined, props: ScrapperBaseProps) {
     super(browser, props);
     this.browser = browser;
     this.maxPages = 1;
+    this.filesManager = new FilesManagerController(path.resolve(__dirname, "../../../../public/scrapped-data"));
   }
 
-  public initialize = async () => {
-    if (!this.page) {
-      await this.initPage();
-    }
-  };
   public getScrappedData = async () => {
     if (!this.page) return null;
     this.maxPages = await this.getMaxPages();
@@ -30,12 +28,44 @@ class ScrapperPracuj extends ScrapperBase {
     }
 
     const results = await Promise.all(pagePromises);
-    const aggregatedData = results.filter(Boolean).flat();
+    const aggregatedData = results.filter(Boolean).flat() as JobOfferPracuj[];
+    const standardizedData = this.standardizeData(aggregatedData);
 
-    this.saveToFile(JSON.stringify(aggregatedData), "pracuj-data");
+    await this.filesManager.saveToFile({
+      data: JSON.stringify(aggregatedData),
+      fileName: "pracuj-data",
+    });
+    await this.filesManager.saveToFile({
+      data: JSON.stringify(standardizedData),
+      fileName: "pracuj-standardized",
+    });
 
-    return aggregatedData;
+    return standardizedData;
   };
+
+  private standardizeData(offers: JobOfferPracuj[]): JobOffer[] {
+    if (!offers.length) return [];
+    return offers.map(
+      (offer): JobOffer => ({
+        id: offer?.groupId,
+        positionName: offer?.jobTitle,
+        company: {
+          logoUrl: offer?.companyLogoUri,
+          name: offer?.companyName,
+        },
+        positionLevel: "mid",
+        contractType: offer?.typesOfContract,
+        workModes: offer?.workModes,
+        workSchedules: offer?.workSchedules,
+        technologies: offer?.technologies,
+        description: offer?.jobDescription,
+        createdAt: offer?.lastPublicated,
+        expirationDate: offer?.expirationDate,
+        offerUrls: offer?.offers?.map(url => url?.offerAbsoluteUri),
+        workplace: offer?.offers?.map(place => place?.displayWorkplace),
+      }),
+    );
+  }
 
   private async scrapePage(pageNumber: number) {
     console.time(`PAGE-${pageNumber}`);
@@ -63,7 +93,7 @@ class ScrapperPracuj extends ScrapperBase {
     }
   }
 
-  private async getMaxPages() {
+  protected async getMaxPages() {
     if (!this.page) return 1;
 
     // TODO: Uncomment that, added low pages to prevent overload
@@ -73,22 +103,8 @@ class ScrapperPracuj extends ScrapperBase {
     //   const textContent = await this.page.evaluate(el => el?.textContent, maxPagesElement);
     //   if (textContent) maxPagesValue = textContent ?? "1";
     // }
-    // return parseInt(maxPagesElement);
+    // return parseInt(maxPagesValue);
     return 2;
-  }
-
-  private saveToFile(data: string, fileName: string) {
-    const dir = path.resolve(__dirname, "../../../../public/scrapped-data");
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-
-    const filePath = path.join(dir, `${fileName}.json`);
-    fs.writeFile(filePath, data, err => {
-      if (err) {
-        console.log("ERROR SAVING SCRAPPED FILE JSON", err);
-      }
-    });
   }
 }
 
