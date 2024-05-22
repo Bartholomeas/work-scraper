@@ -1,6 +1,7 @@
-import { type ErrorCodes } from "../types/error.types";
+import { type ErrorCodes } from "@/types/error.types";
 
 export const ERROR_CODES: Record<ErrorCodes, ErrorCodes> = {
+  not_found: "not_found",
   user_exists: "user_exists",
   internal_error: "internal_error",
   invalid_data: "invalid_data",
@@ -9,6 +10,7 @@ export const ERROR_CODES: Record<ErrorCodes, ErrorCodes> = {
 };
 
 export const ERROR_MESSAGES: Record<ErrorCodes, string> = {
+  not_found: "Data is not found",
   user_exists: "User already exists.",
   internal_error: "Internal server error.",
   invalid_data: "Invalid data has been passed.",

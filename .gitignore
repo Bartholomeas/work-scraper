@@ -1,3 +1,4 @@
 node_modules
 .env**
-assets
+public
+public/scrapped-data

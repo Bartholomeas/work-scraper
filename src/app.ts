@@ -6,14 +6,14 @@ import rateLimit from "express-rate-limit";
 import compression from "compression";
 import cookieParser from "cookie-parser";
 
-import { AppError, AppErrorInterface } from "./utils/app-error";
-import { BASE_URL } from "./misc/constants";
+import { BASE_URL } from "@/misc/constants";
+import { AppError, type AppErrorInterface } from "@/utils/app-error";
 
-import { ErrorController } from "./components/error/error.controller";
-import { authModule } from "./components/auth/auth.module";
-import { offersModule } from "./components/offers/offers.module";
+import { authModule } from "@/components/auth/auth.module";
+import { offersModule } from "@/components/offers/offers.module";
+import { ErrorController } from "@/components/error/error.controller";
 
-import { errorHandler } from "./middleware/error-handler";
+import { errorHandler } from "@/middleware/error-handler";
 
 // For some reason imported in tsconfig doesnt work :(
 declare global {
