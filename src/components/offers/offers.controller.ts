@@ -32,7 +32,8 @@ class OffersController {
     let page: Page | undefined;
 
     try {
-      const { pageUrl } = req.body;
+      const { query } = req;
+
       if (!this.browser) await this.initBrowser();
 
       const pracujScrapper = new ScrapperPracuj(this.browser, {
@@ -40,12 +41,12 @@ class OffersController {
         // url: "https://pracuj.pl",
       });
       await pracujScrapper.initialize();
-      const data = await pracujScrapper.getScrappedData();
+      const data = await pracujScrapper.getScrappedData(query);
 
       await pracujScrapper.closePage();
 
       // page = await this.browser?.newPage();
-      // await page?.goto(pageUrl);
+      // await page?.goto("https://bot.sannysoft.com/");
       //
       // const date = new Date(Date.now()).toLocaleDateString("pl").toString();
       // const time = `${new Date(Date.now()).getHours()}:${new Date(Date.now()).getMinutes()}:${new Date(Date.now()).getSeconds()}`;
@@ -58,7 +59,6 @@ class OffersController {
 
       // await this.closeBrowser();
       res.status(200).json({
-        pageUrl,
         createdAt: new Date(Date.now()),
         data,
       });

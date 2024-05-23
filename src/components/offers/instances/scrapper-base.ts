@@ -1,4 +1,7 @@
 import { type Browser, type Page } from "puppeteer";
+import type { JobOffer, JobQueryParams } from "@/types/offers/offers.types";
+import dayjs from "dayjs";
+import { MINUTES_TO_OUTDATE } from "@/components/offers/helpers/offers.constants";
 
 export interface ScrapperBaseProps {
   url: string;
@@ -33,7 +36,22 @@ abstract class ScrapperBase {
     this.page = undefined;
   }
 
-  public abstract getScrappedData(): Promise<unknown>;
+  protected isFileOutdated(date: string | undefined): boolean {
+    if (!date) return true;
+    const currentDate = dayjs();
+    const fileDate = dayjs(date);
+
+    const timeDiff = currentDate.diff(fileDate, "minute");
+    return timeDiff > MINUTES_TO_OUTDATE;
+  }
+
+  public abstract getScrappedData(query?: JobQueryParams): Promise<JobOffer[] | null>;
+
+  protected abstract saveScrappedDataToFile(): Promise<JobOffer[] | null>;
+
+  protected abstract standardizeData(offers: unknown[]): JobOffer[];
+
+  protected abstract scrapePage(pageNumber: number): Promise<unknown[] | undefined>;
 
   protected abstract getMaxPages(): Promise<number>;
 }

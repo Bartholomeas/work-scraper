@@ -1,7 +1,9 @@
 import "tsconfig-paths/register";
+
 import dotenv from "dotenv";
 //URGENT: dotenv.config() MUST !!! be before other imports. Auto rearrange may change order and then app cannot get .env properties.
 dotenv.config();
+
 import { PORT } from "./misc/constants";
 import { app } from "./app";
 
