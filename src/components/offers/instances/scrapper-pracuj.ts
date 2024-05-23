@@ -1,7 +1,4 @@
-import path from "node:path";
 import { type Browser } from "puppeteer";
-
-import { FilesManagerController } from "@/components/files-manager/files-manager.controller";
 import { ScrapperBase, type ScrapperBaseProps } from "@/components/offers/instances/scrapper-base";
 import { PRACUJ_DATA_FILENAME } from "@/components/offers/helpers/offers.constants";
 
@@ -9,15 +6,11 @@ import type { JobOfferPracuj } from "@/types/offers/pracuj.types";
 import type { JobOffer, JobQueryParams } from "@/types/offers/offers.types";
 
 class ScrapperPracuj extends ScrapperBase {
-  protected browser: Browser | undefined;
   protected maxPages: number;
-  private filesManager: FilesManagerController;
 
   constructor(browser: Browser | undefined, props: ScrapperBaseProps) {
     super(browser, props);
-    this.browser = browser;
     this.maxPages = 1;
-    this.filesManager = new FilesManagerController(path.resolve(__dirname, "../../../../public/scrapped-data"));
   }
 
   public getScrappedData = async (query: JobQueryParams = {}): Promise<JobOffer[] | null> => {
@@ -27,17 +20,14 @@ class ScrapperPracuj extends ScrapperBase {
       fileName: PRACUJ_DATA_FILENAME,
     });
 
-    let parsedData: JobOffer[] | null = null;
     const isDataOutdated = this.isFileOutdated(fileStat?.mtime.toString() ?? undefined);
 
-    if (isDataOutdated) parsedData = await this.saveScrappedDataToFile();
-    else {
+    if (!isDataOutdated) {
       const savedData = await this.filesManager.readFromFile(PRACUJ_DATA_FILENAME);
-      if (savedData) parsedData = JSON.parse(savedData);
-      else parsedData = await this.saveScrappedDataToFile();
+      if (savedData) return JSON.parse(savedData);
     }
 
-    return parsedData;
+    return await this.saveScrappedDataToFile();
   };
 
   protected async saveScrappedDataToFile(): Promise<JobOffer[] | null> {
@@ -52,22 +42,26 @@ class ScrapperPracuj extends ScrapperBase {
     const aggregatedData = results.filter(Boolean).flat() as JobOfferPracuj[];
     const standardizedData = this.standardizeData(aggregatedData);
 
-    await Promise.all([
-      this.filesManager.saveToFile({
-        data: aggregatedData,
-        fileName: "pracuj-data",
-      }),
-      this.filesManager.saveToFile({
-        data: standardizedData,
-        fileName: PRACUJ_DATA_FILENAME,
-      }),
-    ]);
+    try {
+      await Promise.all([
+        this.filesManager.saveToFile({
+          data: aggregatedData,
+          fileName: "pracuj-data",
+        }),
+        this.filesManager.saveToFile({
+          data: standardizedData,
+          fileName: PRACUJ_DATA_FILENAME,
+        }),
+      ]);
+    } catch (err) {
+      console.error("Error saving files", err);
+    }
 
     return standardizedData;
   }
 
   protected standardizeData(offers: JobOfferPracuj[]): JobOffer[] {
-    if (!offers.length) return [];
+    if (!offers || !offers?.length) return [];
     return offers.map(
       (offer): JobOffer => ({
         id: offer?.groupId,
@@ -92,6 +86,7 @@ class ScrapperPracuj extends ScrapperBase {
 
   protected async scrapePage(pageNumber: number) {
     const page = await this?.browser?.newPage();
+
     if (!page) return;
 
     try {
@@ -103,7 +98,6 @@ class ScrapperPracuj extends ScrapperBase {
       });
 
       await page.close();
-
       if (content) return content.props.pageProps.data.jobOffers.groupedOffers as JobOfferPracuj[];
       return;
     } catch (err) {
@@ -117,14 +111,14 @@ class ScrapperPracuj extends ScrapperBase {
     if (!this.page) return 1;
 
     // // TODO: Uncomment that, added low pages to prevent overload
-    const maxPagesElement = await this.page.$('span[data-test="top-pagination-max-page-number"]');
-    let maxPagesValue = "1";
-    if (maxPagesElement) {
-      const textContent = await this.page.evaluate(el => el?.textContent, maxPagesElement);
-      if (textContent) maxPagesValue = textContent ?? "1";
-    }
-    return parseInt(maxPagesValue);
-    // return 2;
+    // const maxPagesElement = await this.page.$('span[data-test="top-pagination-max-page-number"]');
+    // let maxPagesValue = "1";
+    // if (maxPagesElement) {
+    //   const textContent = await this.page.evaluate(el => el?.textContent, maxPagesElement);
+    //   if (textContent) maxPagesValue = textContent ?? "1";
+    // }
+    // return parseInt(maxPagesValue);
+    return 2;
   }
 }
 

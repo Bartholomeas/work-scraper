@@ -1,7 +1,11 @@
+import path from "node:path";
 import { type Browser, type Page } from "puppeteer";
-import type { JobOffer, JobQueryParams } from "@/types/offers/offers.types";
 import dayjs from "dayjs";
+
+import type { JobOffer, JobQueryParams } from "@/types/offers/offers.types";
+
 import { MINUTES_TO_OUTDATE } from "@/components/offers/helpers/offers.constants";
+import { FilesManagerController } from "@/components/files-manager/files-manager.controller";
 
 export interface ScrapperBaseProps {
   url: string;
@@ -11,6 +15,7 @@ export interface ScrapperBaseProps {
 abstract class ScrapperBase {
   protected browser: Browser | undefined;
   protected page: Page | undefined;
+  protected filesManager: FilesManagerController;
   protected url: ScrapperBaseProps["url"];
   protected categories: ScrapperBaseProps["categories"];
   protected maxPages: number;
@@ -20,6 +25,7 @@ abstract class ScrapperBase {
     this.url = url;
     this.categories = categories;
     this.maxPages = 1;
+    this.filesManager = new FilesManagerController(path.resolve(__dirname, "../../../../public/scrapped-data"));
   }
 
   public async initialize() {
