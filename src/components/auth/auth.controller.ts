@@ -3,10 +3,11 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
 import { type AuthService } from "./auth.service";
-import type { DecodedJwtToken, User } from "src/types/auth.types";
-import { JWT_COOKIE_NAME, JWT_EXPIRES_IN, JWT_SECRET } from "src/misc/constants";
-import { AppError } from "src/utils/app-error";
-import { ERROR_CODES, ERROR_MESSAGES } from "src/misc/error.constants";
+
+import type { DecodedJwtToken, User } from "@/types/auth.types";
+import { JWT_COOKIE_NAME, JWT_EXPIRES_IN, JWT_SECRET } from "@/misc/constants";
+import { AppError } from "@/utils/app-error";
+import { ERROR_CODES, ERROR_MESSAGES } from "@/misc/error.constants";
 
 class AuthController {
   private authService: AuthService;

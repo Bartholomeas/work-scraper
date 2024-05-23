@@ -1,4 +1,5 @@
 import { type Browser, type Page } from "puppeteer";
+import type { JobOffer, JobQueryParams } from "@/types/offers/offers.types";
 
 export interface ScrapperBaseProps {
   url: string;
@@ -33,7 +34,7 @@ abstract class ScrapperBase {
     this.page = undefined;
   }
 
-  public abstract getScrappedData(): Promise<unknown>;
+  public abstract getScrappedData(query?: JobQueryParams): Promise<JobOffer[] | null>;
 
   protected abstract getMaxPages(): Promise<number>;
 }

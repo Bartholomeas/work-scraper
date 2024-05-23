@@ -21,3 +21,8 @@ export interface JobOffer {
   offerUrls: string[]; //offers.offerAbsoluteUri
   workplace: string[]; //offers.displayWorkplace
 }
+
+export interface JobQueryParams {
+  search?: string;
+  categories?: string[];
+}

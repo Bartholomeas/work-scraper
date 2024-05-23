@@ -3,7 +3,7 @@ import { type Browser } from "puppeteer";
 import { FilesManagerController } from "@/components/files-manager/files-manager.controller";
 import { ScrapperBase, type ScrapperBaseProps } from "@/components/offers/instances/scrapper-base";
 import type { JobOfferPracuj } from "@/types/offers/pracuj.types";
-import type { JobOffer } from "@/types/offers/offers.types";
+import type { JobOffer, JobQueryParams } from "@/types/offers/offers.types";
 
 class ScrapperPracuj extends ScrapperBase {
   protected browser: Browser | undefined;
@@ -17,12 +17,17 @@ class ScrapperPracuj extends ScrapperBase {
     this.filesManager = new FilesManagerController(path.resolve(__dirname, "../../../../public/scrapped-data"));
   }
 
-  public getScrappedData = async () => {
+  public getScrappedData = async (query: JobQueryParams = {}): Promise<JobOffer[] | null> => {
     if (!this.page) return null;
-    this.maxPages = await this.getMaxPages();
-
     const pagePromises: Promise<JobOfferPracuj[] | undefined>[] = [];
 
+    console.time("HeH2");
+    const fileStat = await this.filesManager.getFileUpdatedDate({
+      fileName: "pracuj-standardized",
+    });
+    console.timeEnd("HeH2");
+
+    this.maxPages = await this.getMaxPages();
     for (let page = 1; page <= this.maxPages; page++) {
       pagePromises.push(this.scrapePage(page));
     }
@@ -31,14 +36,16 @@ class ScrapperPracuj extends ScrapperBase {
     const aggregatedData = results.filter(Boolean).flat() as JobOfferPracuj[];
     const standardizedData = this.standardizeData(aggregatedData);
 
-    await this.filesManager.saveToFile({
-      data: JSON.stringify(aggregatedData),
-      fileName: "pracuj-data",
-    });
-    await this.filesManager.saveToFile({
-      data: JSON.stringify(standardizedData),
-      fileName: "pracuj-standardized",
-    });
+    await Promise.all([
+      this.filesManager.saveToFile({
+        data: aggregatedData,
+        fileName: "pracuj-data",
+      }),
+      this.filesManager.saveToFile({
+        data: standardizedData,
+        fileName: "pracuj-standardized",
+      }),
+    ]);
 
     return standardizedData;
   };
@@ -96,7 +103,7 @@ class ScrapperPracuj extends ScrapperBase {
   protected async getMaxPages() {
     if (!this.page) return 1;
 
-    // TODO: Uncomment that, added low pages to prevent overload
+    // // TODO: Uncomment that, added low pages to prevent overload
     // const maxPagesElement = await this.page.$('span[data-test="top-pagination-max-page-number"]');
     // let maxPagesValue = "1";
     // if (maxPagesElement) {
