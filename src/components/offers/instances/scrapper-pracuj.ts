@@ -1,7 +1,10 @@
 import path from "node:path";
 import { type Browser } from "puppeteer";
+
 import { FilesManagerController } from "@/components/files-manager/files-manager.controller";
 import { ScrapperBase, type ScrapperBaseProps } from "@/components/offers/instances/scrapper-base";
+import { PRACUJ_DATA_FILENAME } from "@/components/offers/helpers/offers.constants";
+
 import type { JobOfferPracuj } from "@/types/offers/pracuj.types";
 import type { JobOffer, JobQueryParams } from "@/types/offers/offers.types";
 
@@ -19,13 +22,26 @@ class ScrapperPracuj extends ScrapperBase {
 
   public getScrappedData = async (query: JobQueryParams = {}): Promise<JobOffer[] | null> => {
     if (!this.page) return null;
-    const pagePromises: Promise<JobOfferPracuj[] | undefined>[] = [];
 
-    console.time("HeH2");
     const fileStat = await this.filesManager.getFileUpdatedDate({
-      fileName: "pracuj-standardized",
+      fileName: PRACUJ_DATA_FILENAME,
     });
-    console.timeEnd("HeH2");
+
+    let parsedData: JobOffer[] | null = null;
+    const isDataOutdated = this.isFileOutdated(fileStat?.mtime.toString() ?? undefined);
+
+    if (isDataOutdated) parsedData = await this.saveScrappedDataToFile();
+    else {
+      const savedData = await this.filesManager.readFromFile(PRACUJ_DATA_FILENAME);
+      if (savedData) parsedData = JSON.parse(savedData);
+      else parsedData = await this.saveScrappedDataToFile();
+    }
+
+    return parsedData;
+  };
+
+  protected async saveScrappedDataToFile(): Promise<JobOffer[] | null> {
+    const pagePromises: Promise<JobOfferPracuj[] | undefined>[] = [];
 
     this.maxPages = await this.getMaxPages();
     for (let page = 1; page <= this.maxPages; page++) {
@@ -43,14 +59,14 @@ class ScrapperPracuj extends ScrapperBase {
       }),
       this.filesManager.saveToFile({
         data: standardizedData,
-        fileName: "pracuj-standardized",
+        fileName: PRACUJ_DATA_FILENAME,
       }),
     ]);
 
     return standardizedData;
-  };
+  }
 
-  private standardizeData(offers: JobOfferPracuj[]): JobOffer[] {
+  protected standardizeData(offers: JobOfferPracuj[]): JobOffer[] {
     if (!offers.length) return [];
     return offers.map(
       (offer): JobOffer => ({
@@ -74,9 +90,7 @@ class ScrapperPracuj extends ScrapperBase {
     );
   }
 
-  private async scrapePage(pageNumber: number) {
-    console.time(`PAGE-${pageNumber}`);
-
+  protected async scrapePage(pageNumber: number) {
     const page = await this?.browser?.newPage();
     if (!page) return;
 
@@ -90,7 +104,6 @@ class ScrapperPracuj extends ScrapperBase {
 
       await page.close();
 
-      console.timeEnd(`PAGE-${pageNumber}`);
       if (content) return content.props.pageProps.data.jobOffers.groupedOffers as JobOfferPracuj[];
       return;
     } catch (err) {
@@ -104,14 +117,14 @@ class ScrapperPracuj extends ScrapperBase {
     if (!this.page) return 1;
 
     // // TODO: Uncomment that, added low pages to prevent overload
-    // const maxPagesElement = await this.page.$('span[data-test="top-pagination-max-page-number"]');
-    // let maxPagesValue = "1";
-    // if (maxPagesElement) {
-    //   const textContent = await this.page.evaluate(el => el?.textContent, maxPagesElement);
-    //   if (textContent) maxPagesValue = textContent ?? "1";
-    // }
-    // return parseInt(maxPagesValue);
-    return 2;
+    const maxPagesElement = await this.page.$('span[data-test="top-pagination-max-page-number"]');
+    let maxPagesValue = "1";
+    if (maxPagesElement) {
+      const textContent = await this.page.evaluate(el => el?.textContent, maxPagesElement);
+      if (textContent) maxPagesValue = textContent ?? "1";
+    }
+    return parseInt(maxPagesValue);
+    // return 2;
   }
 }
 
