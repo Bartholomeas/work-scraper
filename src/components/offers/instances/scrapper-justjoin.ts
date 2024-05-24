@@ -1,11 +1,10 @@
-import { type Browser } from "puppeteer";
 import { ScrapperBase, type ScrapperBaseProps } from "@/components/offers/instances/scrapper-base";
-import { PRACUJ_DATA_FILENAME } from "@/components/offers/helpers/offers.constants";
-
-import type { JobOfferPracuj } from "@/types/offers/pracuj.types";
+import type { Browser } from "puppeteer";
 import type { JobOffer, JobQueryParams } from "@/types/offers/offers.types";
+import { JUSTJOIN_DATA_FILENAME } from "@/components/offers/helpers/offers.constants";
+import type { JobOfferJustjoin } from "@/types/offers/justjoin.types";
 
-class ScrapperPracuj extends ScrapperBase {
+class ScrapperJustjoin extends ScrapperBase {
   protected maxPages: number;
 
   constructor(browser: Browser | undefined, props: ScrapperBaseProps) {
@@ -16,10 +15,10 @@ class ScrapperPracuj extends ScrapperBase {
   public getScrappedData = async (query: JobQueryParams = {}): Promise<JobOffer[] | null> => {
     if (!this.page) return null;
 
-    const isDataOutdated = await this.isFileOutdated(PRACUJ_DATA_FILENAME);
+    const isDataOutdated = await this.isFileOutdated(JUSTJOIN_DATA_FILENAME);
 
     if (!isDataOutdated) {
-      const savedData = await this.filesManager.readFromFile(PRACUJ_DATA_FILENAME);
+      const savedData = await this.filesManager.readFromFile(JUSTJOIN_DATA_FILENAME);
       if (savedData) return JSON.parse(savedData);
     }
 
@@ -27,7 +26,7 @@ class ScrapperPracuj extends ScrapperBase {
   };
 
   protected async saveScrappedDataToFile(): Promise<JobOffer[] | null> {
-    const pagePromises: Promise<JobOfferPracuj[] | undefined>[] = [];
+    const pagePromises: Promise<JobOfferJustjoin[] | undefined[]>[] | undefined[] = [];
 
     this.maxPages = await this.getMaxPages();
     for (let page = 1; page <= this.maxPages; page++) {
@@ -35,18 +34,18 @@ class ScrapperPracuj extends ScrapperBase {
     }
 
     const results = await Promise.all(pagePromises);
-    const aggregatedData = results.filter(Boolean).flat() as JobOfferPracuj[];
+    const aggregatedData = results.filter(Boolean).flat() as JobOfferJustjoin[];
     const standardizedData = this.standardizeData(aggregatedData);
 
     try {
       await Promise.all([
         this.filesManager.saveToFile({
           data: aggregatedData,
-          fileName: "pracuj-data",
+          fileName: "justjoin-data",
         }),
         this.filesManager.saveToFile({
           data: standardizedData,
-          fileName: PRACUJ_DATA_FILENAME,
+          fileName: JUSTJOIN_DATA_FILENAME,
         }),
       ]);
     } catch (err) {
@@ -56,7 +55,7 @@ class ScrapperPracuj extends ScrapperBase {
     return standardizedData;
   }
 
-  protected standardizeData(offers: JobOfferPracuj[]): JobOffer[] {
+  protected standardizeData(offers: JobOfferJustjoin[]): JobOffer[] {
     if (!offers || !offers?.length) return [];
     return offers.map(
       (offer): JobOffer => ({
@@ -82,19 +81,17 @@ class ScrapperPracuj extends ScrapperBase {
 
   protected async scrapePage(pageNumber: number) {
     const page = await this?.browser?.newPage();
-
     if (!page) return;
 
     try {
       await page.goto(`${this.url}?pn=${pageNumber}`, { waitUntil: "networkidle2" });
-
       const content = await page.evaluate(() => {
         const scriptTag = document.querySelector('script[id="__NEXT_DATA__"]');
         return scriptTag ? JSON.parse(scriptTag.innerHTML) : undefined;
       });
 
       await page.close();
-      if (content) return content.props.pageProps.data.jobOffers.groupedOffers as JobOfferPracuj[];
+      if (content) return content as JobOfferJustjoin[];
       return;
     } catch (err) {
       console.error(`Error processing page ${pageNumber}:`, err);
@@ -118,4 +115,4 @@ class ScrapperPracuj extends ScrapperBase {
   }
 }
 
-export { ScrapperPracuj };
+export { ScrapperJustjoin };

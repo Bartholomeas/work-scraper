@@ -42,10 +42,14 @@ abstract class ScrapperBase {
     this.page = undefined;
   }
 
-  protected isFileOutdated(date: string | undefined): boolean {
-    if (!date) return true;
+  protected async isFileOutdated(fileName: string): Promise<boolean> {
+    const fileStat = await this.filesManager.getFileUpdatedDate({
+      fileName,
+    });
+
+    if (!fileStat?.mtime) return true;
     const currentDate = dayjs();
-    const fileDate = dayjs(date);
+    const fileDate = dayjs(fileStat.mtime);
 
     const timeDiff = currentDate.diff(fileDate, "minute");
     return timeDiff > MINUTES_TO_OUTDATE;
