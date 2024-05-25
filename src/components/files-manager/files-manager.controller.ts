@@ -30,6 +30,7 @@ class FilesManagerController {
 
   public async readFromFile(fileName: string) {
     const filePath = path.join(this.baseDir, `${fileName}.json`);
+    if (!existsSync(this.baseDir)) return null;
     try {
       return await fsPromise.readFile(filePath, "utf-8");
     } catch (err) {
@@ -40,6 +41,7 @@ class FilesManagerController {
 
   public async getFileUpdatedDate({ fileName, ext = "json" }: BaseFileProps) {
     const filePath = path.join(this.baseDir, `${fileName}.${ext}`);
+
     try {
       return await fsPromise.stat(filePath);
     } catch (err) {

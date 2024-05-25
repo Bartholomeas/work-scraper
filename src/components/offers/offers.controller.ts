@@ -8,6 +8,8 @@ import { ERROR_CODES } from "@/misc/error.constants";
 
 import type { OffersService } from "@/components/offers/offers.service";
 import { ScrapperPracuj } from "@/components/offers/instances/scrapper-pracuj";
+import { ScrapperJustjoin } from "@/components/offers/instances/scrapper-justjoin";
+import { JUSTJOIN_URL, PRACUJ_URL } from "@/components/offers/helpers/offers.constants";
 
 puppeteer.use(StealthPlugin());
 
@@ -37,13 +39,17 @@ class OffersController {
       if (!this.browser) await this.initBrowser();
 
       const pracujScrapper = new ScrapperPracuj(this.browser, {
-        url: "https://it.pracuj.pl/praca",
-        // url: "https://pracuj.pl",
+        url: PRACUJ_URL,
       });
-      await pracujScrapper.initialize();
-      const data = await pracujScrapper.getScrappedData(query);
+      const justjoinScrapper = new ScrapperJustjoin(this.browser, {
+        url: JUSTJOIN_URL,
+      });
+
+      await Promise.all([pracujScrapper.initializePage(), justjoinScrapper.initializePage()]);
+      const data = await Promise.all([pracujScrapper.getScrappedData(query), justjoinScrapper.getScrappedData(query)]);
 
       await pracujScrapper.closePage();
+      await justjoinScrapper.closePage();
 
       // page = await this.browser?.newPage();
       // await page?.goto("https://bot.sannysoft.com/");

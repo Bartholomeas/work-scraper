@@ -15,45 +15,17 @@ class ScrapperJustjoin extends ScrapperBase {
   public getScrappedData = async (query: JobQueryParams = {}): Promise<JobOffer[] | null> => {
     if (!this.page) return null;
 
-    const isDataOutdated = await this.isFileOutdated(JUSTJOIN_DATA_FILENAME);
+    const isDataOutdated = await this.isFileOutdated(`${JUSTJOIN_DATA_FILENAME}-standardized`);
 
-    if (!isDataOutdated) {
-      const savedData = await this.filesManager.readFromFile(JUSTJOIN_DATA_FILENAME);
-      if (savedData) return JSON.parse(savedData);
-    }
+    // if (!isDataOutdated) {
+    //   const savedData = await this.filesManager.readFromFile(`${JUSTJOIN_DATA_FILENAME}-standardized`);
+    //   if (savedData) return JSON.parse(savedData);
+    // }
 
-    return await this.saveScrappedDataToFile();
+    return await this.saveScrappedData<JobOfferJustjoin>({
+      fileName: JUSTJOIN_DATA_FILENAME,
+    });
   };
-
-  protected async saveScrappedDataToFile(): Promise<JobOffer[] | null> {
-    const pagePromises: Promise<JobOfferJustjoin[] | undefined[]>[] | undefined[] = [];
-
-    this.maxPages = await this.getMaxPages();
-    for (let page = 1; page <= this.maxPages; page++) {
-      pagePromises.push(this.scrapePage(page));
-    }
-
-    const results = await Promise.all(pagePromises);
-    const aggregatedData = results.filter(Boolean).flat() as JobOfferJustjoin[];
-    const standardizedData = this.standardizeData(aggregatedData);
-
-    try {
-      await Promise.all([
-        this.filesManager.saveToFile({
-          data: aggregatedData,
-          fileName: "justjoin-data",
-        }),
-        this.filesManager.saveToFile({
-          data: standardizedData,
-          fileName: JUSTJOIN_DATA_FILENAME,
-        }),
-      ]);
-    } catch (err) {
-      console.error("Error saving files", err);
-    }
-
-    return standardizedData;
-  }
 
   protected standardizeData(offers: JobOfferJustjoin[]): JobOffer[] {
     if (!offers || !offers?.length) return [];
@@ -79,7 +51,7 @@ class ScrapperJustjoin extends ScrapperBase {
     );
   }
 
-  protected async scrapePage(pageNumber: number) {
+  protected async scrapePage<T>(pageNumber: number): Promise<T[] | undefined> {
     const page = await this?.browser?.newPage();
     if (!page) return;
 
@@ -91,7 +63,7 @@ class ScrapperJustjoin extends ScrapperBase {
       });
 
       await page.close();
-      if (content) return content as JobOfferJustjoin[];
+      if (content) return content?.props?.pageProps?.dehydratedState?.queries?.[0]?.state?.data?.pages?.[0]?.data as T[];
       return;
     } catch (err) {
       console.error(`Error processing page ${pageNumber}:`, err);
@@ -111,7 +83,7 @@ class ScrapperJustjoin extends ScrapperBase {
     //   if (textContent) maxPagesValue = textContent ?? "1";
     // }
     // return parseInt(maxPagesValue);
-    return 2;
+    return 1;
   }
 }
 

@@ -14,47 +14,17 @@ class ScrapperPracuj extends ScrapperBase {
   }
 
   public getScrappedData = async (query: JobQueryParams = {}): Promise<JobOffer[] | null> => {
-    if (!this.page) return null;
-
-    const isDataOutdated = await this.isFileOutdated(PRACUJ_DATA_FILENAME);
-
+    if (!this.page) return [];
+    const isDataOutdated = await this.isFileOutdated(`${PRACUJ_DATA_FILENAME}-standardized`);
     if (!isDataOutdated) {
-      const savedData = await this.filesManager.readFromFile(PRACUJ_DATA_FILENAME);
+      const savedData = await this.filesManager.readFromFile(`${PRACUJ_DATA_FILENAME}-standardized`);
       if (savedData) return JSON.parse(savedData);
     }
 
-    return await this.saveScrappedDataToFile();
+    return await this.saveScrappedData<JobOfferPracuj>({
+      fileName: PRACUJ_DATA_FILENAME,
+    });
   };
-
-  protected async saveScrappedDataToFile(): Promise<JobOffer[] | null> {
-    const pagePromises: Promise<JobOfferPracuj[] | undefined>[] = [];
-
-    this.maxPages = await this.getMaxPages();
-    for (let page = 1; page <= this.maxPages; page++) {
-      pagePromises.push(this.scrapePage(page));
-    }
-
-    const results = await Promise.all(pagePromises);
-    const aggregatedData = results.filter(Boolean).flat() as JobOfferPracuj[];
-    const standardizedData = this.standardizeData(aggregatedData);
-
-    try {
-      await Promise.all([
-        this.filesManager.saveToFile({
-          data: aggregatedData,
-          fileName: "pracuj-data",
-        }),
-        this.filesManager.saveToFile({
-          data: standardizedData,
-          fileName: PRACUJ_DATA_FILENAME,
-        }),
-      ]);
-    } catch (err) {
-      console.error("Error saving files", err);
-    }
-
-    return standardizedData;
-  }
 
   protected standardizeData(offers: JobOfferPracuj[]): JobOffer[] {
     if (!offers || !offers?.length) return [];
@@ -80,9 +50,9 @@ class ScrapperPracuj extends ScrapperBase {
     );
   }
 
-  protected async scrapePage(pageNumber: number) {
+  // Abstract class from ScrapperBase which is used inside base instance in saveScrappedDataToFile
+  protected scrapePage = async <T>(pageNumber: number): Promise<T[] | undefined> => {
     const page = await this?.browser?.newPage();
-
     if (!page) return;
 
     try {
@@ -94,14 +64,14 @@ class ScrapperPracuj extends ScrapperBase {
       });
 
       await page.close();
-      if (content) return content.props.pageProps.data.jobOffers.groupedOffers as JobOfferPracuj[];
+      if (content) return content.props.pageProps.data.jobOffers.groupedOffers as T[];
       return;
     } catch (err) {
       console.error(`Error processing page ${pageNumber}:`, err);
       await page.close();
       return;
     }
-  }
+  };
 
   protected async getMaxPages() {
     if (!this.page) return 1;
