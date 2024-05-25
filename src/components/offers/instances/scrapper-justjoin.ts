@@ -1,7 +1,12 @@
 import { ScrapperBase, type ScrapperBaseProps } from "@/components/offers/instances/scrapper-base";
 import type { Browser } from "puppeteer";
-import type { JobOffer, JobQueryParams } from "@/types/offers/offers.types";
+
+import { generateId } from "@/utils/generate-id";
+
+import { isContractTypesArr } from "@/components/offers/helpers/offers.utils";
 import { JUSTJOIN_DATA_FILENAME } from "@/components/offers/helpers/offers.constants";
+
+import type { JobOffer, JobQueryParams } from "@/types/offers/offers.types";
 import type { JobOfferJustjoin } from "@/types/offers/justjoin.types";
 
 class ScrapperJustjoin extends ScrapperBase {
@@ -31,22 +36,23 @@ class ScrapperJustjoin extends ScrapperBase {
     if (!offers || !offers?.length) return [];
     return offers.map(
       (offer): JobOffer => ({
-        id: offer?.groupId,
-        positionName: offer?.jobTitle,
+        id: generateId(offer?.slug),
+        slug: offer?.slug,
+        positionName: offer?.title,
         company: {
-          logoUrl: offer?.companyLogoUri,
           name: offer?.companyName,
+          logoUrl: offer?.companyLogoThumbUrl,
         },
-        positionLevel: "mid",
-        contractType: offer?.typesOfContract,
-        workModes: offer?.workModes,
-        workSchedules: offer?.workSchedules,
-        technologies: offer?.technologies,
-        description: offer?.jobDescription,
-        createdAt: offer?.lastPublicated,
-        expirationDate: offer?.expirationDate,
-        offerUrls: offer?.offers?.map(url => url?.offerAbsoluteUri),
-        workplace: offer?.offers?.map(place => place?.displayWorkplace),
+        positionLevels: this.standardizePositionLevels(offer?.experienceLevel),
+        contractTypes: this.standardizeContractTypes(offer?.employmentTypes),
+        workModes: this.standardizeWorkModes(offer?.workplaceType),
+        workSchedules: this.standardizeWorkSchedules(offer?.workingTime),
+        technologies: offer?.requiredSkills,
+        description: undefined,
+        createdAt: offer?.publishedAt,
+        expirationDate: undefined,
+        offerUrls: offer?.multilocation?.map(loc => `https://justjoin.it/offers/${loc?.slug}`),
+        workplace: offer?.multilocation?.map(place => `${place.city}, ${place.street}`),
       }),
     );
   }
@@ -85,6 +91,83 @@ class ScrapperJustjoin extends ScrapperBase {
     // return parseInt(maxPagesValue);
     return 1;
   }
+
+  standardizeContractTypes = (types: JobOfferJustjoin["employmentTypes"] | undefined): JobOffer["contractTypes"] => {
+    if (!types || !types.length) return [];
+
+    const standardizedTypes = types?.reduce(
+      (acc, _type) => {
+        const type = _type?.type?.toLowerCase();
+
+        switch (type) {
+          case "b2b":
+            acc.push("b2b");
+            break;
+          case "permanent":
+            acc.push("uop");
+            break;
+          case "internship":
+            acc.push("intern");
+            break;
+          case "mandate_contract":
+            acc.push("uz");
+            break;
+          case "contract":
+            acc.push("uod");
+            break;
+          default:
+            return acc;
+        }
+
+        return acc;
+      },
+      [] as JobOffer["contractTypes"],
+    );
+
+    if (isContractTypesArr(standardizedTypes)) return standardizedTypes;
+    else return [];
+  };
+
+  standardizeWorkModes = (mode: JobOfferJustjoin["workplaceType"]): JobOffer["workModes"] => {
+    switch (mode) {
+      case "remote":
+        return ["remote"];
+      case "hybrid":
+        return ["hybrid"];
+      case "office":
+        return ["stationary"];
+      default:
+        return [];
+    }
+  };
+  standardizePositionLevels = (level: JobOfferJustjoin["experienceLevel"] | undefined): JobOffer["positionLevels"] => {
+    switch (level) {
+      case "junior":
+        return ["junior"];
+      case "mid":
+        return ["mid"];
+      case "senior":
+        return ["senior"];
+      case "c_level":
+        return ["manager"];
+      default:
+        return ["junior"];
+    }
+  };
+  standardizeWorkSchedules = (schedule: JobOfferJustjoin["workingTime"] | undefined): JobOffer["workSchedules"] => {
+    switch (schedule) {
+      case "full_time":
+        return ["full-time"];
+      case "part-time":
+        return ["part-time"];
+      case "practice-internship":
+        return ["internship"];
+      case "freelance":
+        return ["freelance"];
+      default:
+        return ["full-time"];
+    }
+  };
 }
 
 export { ScrapperJustjoin };

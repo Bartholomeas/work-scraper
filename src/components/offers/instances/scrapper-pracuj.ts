@@ -1,9 +1,15 @@
+import slugify from "slugify";
 import { type Browser } from "puppeteer";
+
+import { generateId } from "@/utils/generate-id";
+
 import { ScrapperBase, type ScrapperBaseProps } from "@/components/offers/instances/scrapper-base";
 import { PRACUJ_DATA_FILENAME } from "@/components/offers/helpers/offers.constants";
 
 import type { JobOfferPracuj } from "@/types/offers/pracuj.types";
-import type { JobOffer, JobQueryParams } from "@/types/offers/offers.types";
+import { type JobOffer, type JobQueryParams } from "@/types/offers/offers.types";
+import { SLUGIFY_CONFIG } from "@/lib/slugify";
+import { isContractTypesArr, isWorkModesArr, isWorkPositionLevelsArr, isWorkSchedulesArr } from "@/components/offers/helpers/offers.utils";
 
 class ScrapperPracuj extends ScrapperBase {
   protected maxPages: number;
@@ -30,16 +36,17 @@ class ScrapperPracuj extends ScrapperBase {
     if (!offers || !offers?.length) return [];
     return offers.map(
       (offer): JobOffer => ({
-        id: offer?.groupId,
+        id: generateId(offer?.jobTitle),
+        slug: slugify(offer?.jobTitle, SLUGIFY_CONFIG),
         positionName: offer?.jobTitle,
         company: {
           logoUrl: offer?.companyLogoUri,
           name: offer?.companyName,
         },
-        positionLevel: "mid",
-        contractType: offer?.typesOfContract,
-        workModes: offer?.workModes,
-        workSchedules: offer?.workSchedules,
+        positionLevels: this.standardizePositionLevels(offer?.positionLevels),
+        contractTypes: this.standardizeContractTypes(offer?.typesOfContract),
+        workModes: this.standardizeWorkModes(offer?.workModes),
+        workSchedules: this.standardizeWorkSchedules(offer?.workSchedules),
         technologies: offer?.technologies,
         description: offer?.jobDescription,
         createdAt: offer?.lastPublicated,
@@ -84,8 +91,81 @@ class ScrapperPracuj extends ScrapperBase {
     //   if (textContent) maxPagesValue = textContent ?? "1";
     // }
     // return parseInt(maxPagesValue);
-    return 2;
+    return 10;
   }
+
+  standardizeContractTypes = (types: JobOfferPracuj["typesOfContract"] | undefined): JobOffer["contractTypes"] => {
+    if (!types || !types.length) return [];
+    const standardizedTypes = types.reduce(
+      (acc, _type) => {
+        const type = _type.toLowerCase();
+        if (type.includes("prace")) acc.push("uop");
+        else if (type.includes("b2b")) acc.push("b2b");
+        else if (type.includes("zlecenie")) acc.push("uz");
+        else if (type.includes("dzieło")) acc.push("uod");
+        return acc;
+      },
+      [] as JobOffer["contractTypes"],
+    );
+    // 'umowa u prace' 'Kontrakt B2B', 'umowa zlecenie', 'umowa o dzieło'
+    // pełny etat
+    // workSchedules":["Część etatu","Dodatkowa / tymczasowa"]
+
+    if (isContractTypesArr(standardizedTypes)) return standardizedTypes;
+    else return [];
+  };
+
+  standardizeWorkModes = (modes: JobOfferPracuj["workModes"] | undefined): JobOffer["workModes"] => {
+    if (!modes || !modes.length) return [];
+
+    const standardizedModes = modes.reduce(
+      (acc, _mode) => {
+        const mode = _mode.toLowerCase();
+        if (mode.includes("zdalna")) acc.push("remote");
+        else if (mode.includes("stacjonarna")) acc.push("stationary");
+        else if (mode.includes("hybrydowa")) acc.push("hybrid");
+        return acc;
+      },
+      [] as JobOffer["workModes"],
+    );
+
+    if (isWorkModesArr(standardizedModes)) return standardizedModes;
+    else return [];
+  };
+  standardizeWorkSchedules = (schedules: JobOfferPracuj["workSchedules"] | undefined): JobOffer["workSchedules"] => {
+    if (!schedules || !schedules.length) return [];
+
+    const standardizedSchedules = schedules.reduce(
+      (acc, _schedule) => {
+        const schedule = _schedule.toLowerCase();
+        if (schedule.includes("pełny")) acc.push("full-time");
+        else if (schedule.includes("część")) acc.push("part-time");
+        return acc;
+      },
+      [] as JobOffer["workSchedules"],
+    );
+
+    if (isWorkSchedulesArr(standardizedSchedules)) return standardizedSchedules;
+    else return [];
+  };
+  standardizePositionLevels = (levels: JobOfferPracuj["positionLevels"] | undefined): JobOffer["positionLevels"] => {
+    if (!levels || !levels.length) return [];
+
+    const standardizedLevels = levels.reduce(
+      (acc, _level) => {
+        const level = _level.toLowerCase();
+        if (level.includes("junior")) acc.push("junior");
+        else if (level.includes("mid") || level.includes("regular") || level.includes("ekspert")) acc.push("mid");
+        else if (level.includes("senior")) acc.push("senior");
+        else if (level.includes("menager") || level.includes("kierownik")) acc.push("manager");
+        return acc;
+      },
+      [] as JobOffer["positionLevels"],
+    );
+
+    if (isWorkPositionLevelsArr(levels)) return standardizedLevels;
+    else return [];
+  };
 }
 
 export { ScrapperPracuj };

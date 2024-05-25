@@ -1,55 +1,61 @@
-export interface JobOfferJustjoin {
-  technologies: string[];
-  aboutProjectShortDescription: string;
-  groupId: string;
-  jobTitle: string;
-  companyName: string;
-  companyProfileAbsoluteUri: string;
-  companyId: number;
-  companyLogoUri: string | null;
-  lastPublicated: string;
-  expirationDate: string;
-  salaryDisplayText: string;
-  jobDescription: string;
-  isSuperOffer: boolean;
-  isFranchise: boolean;
-  isOptionalCv: boolean;
-  isOneClickApply: boolean;
-  isJobiconCompany: boolean;
-  offers: OfferJustjoin[];
-  positionLevels: string[];
-  typesOfContract: string[];
-  workSchedules: string[];
-  workModes: string[];
-  primaryAttributes: PrimaryAttributeJustjoin[];
-  commonOfferId: string | null;
-  searchEngineRelevancyScore: number;
-  mobileBannerUri: string | null;
-  desktopBannerUri: string | null;
-  appliedProducts: unknown[];
-}
+import { z } from "zod";
 
-interface OfferJustjoin {
-  partitionId: number;
-  offerAbsoluteUri: string;
-  displayWorkplace: string;
-  isWholePoland: boolean;
-  appliedProducts: unknown[];
-}
+const employmentTypeSchema = z.object({
+  to: z.number(),
+  from: z.number(),
+  type: z.string(),
+  gross: z.boolean(),
+  to_chf: z.number(),
+  to_eur: z.number(),
+  to_gbp: z.number(),
+  to_pln: z.string(),
+  to_usd: z.number(),
+  currency: z.string(),
+  from_chf: z.number(),
+  from_eur: z.number(),
+  from_gbp: z.number(),
+  from_pln: z.string(),
+  from_usd: z.number(),
+  fromChf: z.number(),
+  fromEur: z.number(),
+  fromGbp: z.number(),
+  fromPln: z.string(),
+  fromUsd: z.number(),
+  toChf: z.number(),
+  toEur: z.number(),
+  toGbp: z.number(),
+  toPln: z.string(),
+  toUsd: z.number(),
+});
 
-interface PrimaryAttributeJustjoin {
-  code: string;
-  label: LabelJustjoin;
-  model: ModelJustjoin;
-}
+const multilocationSchema = z.object({
+  city: z.string(),
+  slug: z.string(),
+  street: z.string(),
+  latitude: z.number(),
+  longitude: z.number(),
+});
 
-interface LabelJustjoin {
-  text: string;
-  pracujPlText: string;
-  primaryTargetSiteText: string;
-}
+const jobOfferJustjoinSchema = z.object({
+  slug: z.string(),
+  title: z.string(),
+  requiredSkills: z.array(z.string()),
+  niceToHaveSkills: z.string().nullable(),
+  workplaceType: z.string(),
+  workingTime: z.string(),
+  experienceLevel: z.string(),
+  employmentTypes: z.array(employmentTypeSchema),
+  categoryId: z.number(),
+  multilocation: z.array(multilocationSchema),
+  city: z.string(),
+  street: z.string(),
+  latitude: z.number(),
+  longitude: z.number(),
+  remoteInterview: z.boolean(),
+  companyName: z.string(),
+  companyLogoThumbUrl: z.string(),
+  publishedAt: z.string(),
+  openToHireUkrainians: z.boolean(),
+});
 
-interface ModelJustjoin {
-  modelType: string;
-  flag: boolean;
-}
+export type JobOfferJustjoin = z.infer<typeof jobOfferJustjoinSchema>;

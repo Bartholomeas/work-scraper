@@ -91,6 +91,8 @@ abstract class ScrapperBase {
   protected abstract scrapePage<T = unknown>(pageNumber: number): Promise<T[] | undefined>;
 
   protected abstract getMaxPages(): Promise<number>;
+
+  protected abstract standardizeContractTypes(data: unknown): JobOffer["contractTypes"];
 }
 
 export { ScrapperBase };

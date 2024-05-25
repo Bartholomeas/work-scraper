@@ -1,26 +1,38 @@
-type PositionLevels = "intern" | "junior" | "mid" | "senior";
-type ContractTypes = "uz" | "uop" | "b2b";
-type WorkModes = "remote" | "hybrid" | "stationary";
-type WorkSchedules = "full-time" | "half-time" | "part-time";
+import { z } from "zod";
 
-export interface JobOffer {
-  id: string; //groupId
-  positionName: string; // jobTitle
-  company: {
-    logoUrl: string | null; //companyLogoUr
-    name: string;
-  };
-  positionLevel: PositionLevels;
-  contractType: string[]; // ContractTypes[]; //typeOfContract
-  workModes: string[]; // WorkModes[]; //workModes
-  workSchedules: string[]; //WorkSchedules[]; //workModes
-  technologies: string[]; //technologies
-  description: string; //jobDescription
-  createdAt: string; //lastPublicated
-  expirationDate: string; //expirationDate
-  offerUrls: string[]; //offers.offerAbsoluteUri
-  workplace: string[]; //offers.displayWorkplace
-}
+export const positionLevelsSchema = z.enum(["intern", "junior", "mid", "senior", "manager"]);
+export const contractTypeCodesSchema = z.enum(["uz", "uop", "b2b", "uod", "intern"]);
+export const workModesSchema = z.enum(["remote", "hybrid", "stationary"]);
+export const workSchedulesSchema = z.enum(["full-time", "part-time", "internship", "freelance"]);
+
+const jobOfferSchema = z.object({
+  id: z.string(),
+  slug: z.string(),
+  positionName: z.string(),
+  company: z.object({
+    logoUrl: z.string().nullable(),
+    name: z.string(),
+  }),
+  positionLevels: z.array(positionLevelsSchema),
+  // contractTypes: z.array(contractTypeCodesSchema),
+  contractTypes: z.array(contractTypeCodesSchema),
+  workModes: z.array(workModesSchema),
+  // workModes: z.array(z.string()),
+  workSchedules: z.array(workSchedulesSchema),
+  // workSchedules: z.array(z.string()),
+  technologies: z.array(z.string()),
+  description: z.string().optional(),
+  createdAt: z.string(),
+  expirationDate: z.string().optional(),
+  offerUrls: z.array(z.string().url()),
+  workplace: z.array(z.string()),
+});
+
+export type ContractTypesCodes = z.infer<typeof contractTypeCodesSchema>;
+export type WorkModesCodes = z.infer<typeof workModesSchema>;
+export type WorkSchedulesCodes = z.infer<typeof workSchedulesSchema>;
+export type PositionLevelsCodes = z.infer<typeof positionLevelsSchema>;
+export type JobOffer = z.infer<typeof jobOfferSchema>;
 
 export interface JobQueryParams {
   search?: string;
