@@ -49,7 +49,7 @@ class OffersController {
       const data = await Promise.all([pracujScrapper.getScrappedData(query), justjoinScrapper.getScrappedData(query)]);
 
       await pracujScrapper.closePage();
-      await justjoinScrapper.closePage();
+      // await justjoinScrapper.closePage();
 
       // page = await this.browser?.newPage();
       // await page?.goto("https://bot.sannysoft.com/");
@@ -66,6 +66,7 @@ class OffersController {
       // await this.closeBrowser();
       res.status(200).json({
         createdAt: new Date(Date.now()),
+        total: data?.length,
         data,
       });
     } catch (err) {
@@ -76,7 +77,7 @@ class OffersController {
 
   private initBrowser = async () => {
     if (this.browser) return this.browser;
-    return (this.browser = await puppeteer.launch({ headless: true, executablePath: executablePath() }));
+    return (this.browser = await puppeteer.launch({ headless: false, executablePath: executablePath() }));
   };
 
   private closeBrowser = async () => {

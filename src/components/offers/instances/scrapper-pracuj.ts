@@ -5,11 +5,15 @@ import { generateId } from "@/utils/generate-id";
 
 import { ScrapperBase, type ScrapperBaseProps } from "@/components/offers/instances/scrapper-base";
 import { PRACUJ_DATA_FILENAME } from "@/components/offers/helpers/offers.constants";
+import { isContractTypesArr, isWorkModesArr, isWorkPositionLevelsArr, isWorkSchedulesArr } from "@/components/offers/helpers/offers.utils";
 
 import type { JobOfferPracuj } from "@/types/offers/pracuj.types";
-import { type JobOffer, type JobQueryParams } from "@/types/offers/offers.types";
+import { type JobOffer, type JobQueryParams, type ScrappedDataResponse } from "@/types/offers/offers.types";
+
 import { SLUGIFY_CONFIG } from "@/lib/slugify";
-import { isContractTypesArr, isWorkModesArr, isWorkPositionLevelsArr, isWorkSchedulesArr } from "@/components/offers/helpers/offers.utils";
+
+const SCRAPPED_PAGE_WIDTH = 1200;
+const SCRAPPED_PAGE_HEIGHT = 980;
 
 class ScrapperPracuj extends ScrapperBase {
   protected maxPages: number;
@@ -19,17 +23,25 @@ class ScrapperPracuj extends ScrapperBase {
     this.maxPages = 1;
   }
 
-  public getScrappedData = async (query: JobQueryParams = {}): Promise<JobOffer[] | null> => {
-    if (!this.page) return [];
+  // public getScrappedData = async (query: JobQueryParams = {}): Promise<JobOffer[] | null> => {
+  public getScrappedData = async (query: JobQueryParams = {}): Promise<ScrappedDataResponse> => {
+    if (!this.page) return { createdAt: new Date(Date.now()).toISOString(), data: [] };
+
+    await this.page.setViewport({
+      width: SCRAPPED_PAGE_WIDTH,
+      height: SCRAPPED_PAGE_HEIGHT,
+    });
     const isDataOutdated = await this.isFileOutdated(`${PRACUJ_DATA_FILENAME}-standardized`);
     if (!isDataOutdated) {
       const savedData = await this.filesManager.readFromFile(`${PRACUJ_DATA_FILENAME}-standardized`);
       if (savedData) return JSON.parse(savedData);
     }
 
-    return await this.saveScrappedData<JobOfferPracuj>({
+    const data = await this.saveScrappedData<JobOffer>({
       fileName: PRACUJ_DATA_FILENAME,
     });
+
+    return { createdAt: new Date(Date.now()).toISOString(), data: data || [] };
   };
 
   protected standardizeData(offers: JobOfferPracuj[]): JobOffer[] {

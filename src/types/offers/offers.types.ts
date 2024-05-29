@@ -38,3 +38,8 @@ export interface JobQueryParams {
   search?: string;
   categories?: string[];
 }
+
+export interface ScrappedDataResponse<T extends JobOffer[] = JobOffer[]> {
+  createdAt: string;
+  data: T;
+}
