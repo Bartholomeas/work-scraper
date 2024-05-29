@@ -46,10 +46,12 @@ class OffersController {
       });
 
       await Promise.all([pracujScrapper.initializePage(), justjoinScrapper.initializePage()]);
-      const data = await Promise.all([pracujScrapper.getScrappedData(query), justjoinScrapper.getScrappedData(query)]);
 
+      const data = await Promise.all([pracujScrapper.getScrappedData(query), justjoinScrapper.getScrappedData(query)]).then(res =>
+        res.flatMap(el => el.data),
+      );
       await pracujScrapper.closePage();
-      // await justjoinScrapper.closePage();
+      await justjoinScrapper.closePage();
 
       // page = await this.browser?.newPage();
       // await page?.goto("https://bot.sannysoft.com/");
@@ -77,7 +79,7 @@ class OffersController {
 
   private initBrowser = async () => {
     if (this.browser) return this.browser;
-    return (this.browser = await puppeteer.launch({ headless: false, executablePath: executablePath() }));
+    return (this.browser = await puppeteer.launch({ headless: true, executablePath: executablePath() }));
   };
 
   private closeBrowser = async () => {

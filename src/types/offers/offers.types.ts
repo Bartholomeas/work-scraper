@@ -4,9 +4,10 @@ export const positionLevelsSchema = z.enum(["intern", "junior", "mid", "senior",
 export const contractTypeCodesSchema = z.enum(["uz", "uop", "b2b", "uod", "intern"]);
 export const workModesSchema = z.enum(["remote", "hybrid", "stationary"]);
 export const workSchedulesSchema = z.enum(["full-time", "part-time", "internship", "freelance"]);
-
+export const dataSourceCodesSchema = z.enum(["pracuj", "justjoin"]);
 const jobOfferSchema = z.object({
   id: z.string(),
+  dataSourceCode: dataSourceCodesSchema.optional(),
   slug: z.string(),
   positionName: z.string(),
   company: z.object({

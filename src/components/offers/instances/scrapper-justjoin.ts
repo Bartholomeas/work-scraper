@@ -3,7 +3,7 @@ import type { Browser, Page } from "puppeteer";
 import { generateId } from "@/utils/generate-id";
 
 import { isContractTypesArr } from "@/components/offers/helpers/offers.utils";
-import { JUSTJOIN_DATA_FILENAME, PRACUJ_DATA_FILENAME } from "@/components/offers/helpers/offers.constants";
+import { JUSTJOIN_DATA_FILENAME } from "@/components/offers/helpers/offers.constants";
 
 import type { JobOffer, JobQueryParams, ScrappedDataResponse } from "@/types/offers/offers.types";
 import type { JobOfferJustjoin } from "@/types/offers/justjoin.types";
@@ -24,13 +24,13 @@ class ScrapperJustjoin extends ScrapperBase {
 
     const isDataOutdated = await this.isFileOutdated(`${JUSTJOIN_DATA_FILENAME}-standardized`);
 
-    // if (!isDataOutdated) {
-    //   const savedData = await this.filesManager.readFromFile(`${JUSTJOIN_DATA_FILENAME}-standardized`);
-    //   if (savedData) return JSON.parse(savedData);
-    // }
+    if (!isDataOutdated) {
+      const savedData = await this.filesManager.readFromFile(`${JUSTJOIN_DATA_FILENAME}-standardized`);
+      if (savedData) return JSON.parse(savedData);
+    }
 
     const data = await this.saveScrappedData<JobOffer>({
-      fileName: PRACUJ_DATA_FILENAME,
+      fileName: JUSTJOIN_DATA_FILENAME,
     });
 
     return { createdAt: new Date(Date.now()).toISOString(), data: data || [] };
@@ -147,6 +147,7 @@ class ScrapperJustjoin extends ScrapperBase {
     return offers.map(
       (offer): JobOffer => ({
         id: generateId(offer?.slug),
+        dataSourceCode: "justjoin",
         slug: offer?.slug,
         positionName: offer?.title,
         company: {
@@ -213,7 +214,6 @@ class ScrapperJustjoin extends ScrapperBase {
 
       const content = await page.evaluate(() => {
         const scriptTag = document.querySelector('script[id="__NEXT_DATA__"]');
-        // this.evaluatePageWithScroll();
         return scriptTag ? JSON.parse(scriptTag.innerHTML) : undefined;
       });
 
@@ -221,8 +221,7 @@ class ScrapperJustjoin extends ScrapperBase {
 
       console.log("XD OFFERS", offers.length);
 
-      // await page.close();
-      if (content) return content?.props?.pageProps?.dehydratedState?.queries?.[0]?.state?.data?.pages?.[0]?.data as T[];
+      if (content) return [content?.props?.pageProps?.dehydratedState?.queries?.[0]?.state?.data?.pages?.[0]?.data, ...offers] as T[];
       return;
     } catch (err) {
       console.error(`Error processing page ${pageNumber}:`, err);
@@ -248,42 +247,51 @@ class ScrapperJustjoin extends ScrapperBase {
   private async evaluatePageWithScroll(page: Page) {
     if (!page) return null;
     let footerExist = false;
-    let endOfThePage = false;
     let prevScrollHeight = ((await this.page?.evaluate("document.body.scrollHeight")) as number) ?? 0;
-    let currentScrollHeight = await page.evaluate("document.body.scrollHeight");
-    while (!footerExist && !endOfThePage) {
+    let currentScrollHeight: number = prevScrollHeight;
+
+    const scrollHeightMap = new Map<number, number>();
+    // const maxSameScrollHeightCount = 3;
+    let sameScrollHeightCount = 0;
+
+    const wait = (duration = 30) => new Promise(resolve => setTimeout(resolve, duration));
+    // while (!footerExist && !endOfThePage) {
+    while (!footerExist) {
       footerExist = await page.evaluate(() => {
         const footer = document.querySelector("footer");
         return Boolean(footer);
       });
 
-      // const HEHE = await page.$("#cookiescript_accept");
-      // const HEHE = await page.waitForSelector("#cookiescript_accept", {
-      //   visible: true,
-      //   timeout: 5000,
-      // });
-      // if (HEHE) HEHE?.click();
-
-      await page
-        .evaluate(() => window.scrollBy(0, 260))
-        .then(async () => {
-          currentScrollHeight = await page.evaluate("scrollY");
-          console.log("insajds", currentScrollHeight);
-        });
-
-      // await setTimeout(1000);
+      await page.evaluate(() => window.scrollBy(0, 600));
+      await wait();
+      currentScrollHeight = await page.evaluate((): number => document.body.scrollHeight ?? 0);
       console.log({ prevScrollHeight, currentScrollHeight });
-      prevScrollHeight += VIEWPORT_HEIGHT;
+
+      if (scrollHeightMap.has(currentScrollHeight)) {
+        sameScrollHeightCount = (scrollHeightMap.get(currentScrollHeight) || 0) + 1;
+        scrollHeightMap.set(currentScrollHeight, sameScrollHeightCount);
+      } else {
+        sameScrollHeightCount = 1;
+        scrollHeightMap.set(currentScrollHeight, 1);
+      }
+
+      if (sameScrollHeightCount > 1) {
+        console.log("Scrolling has been stuck!");
+        await page.evaluate(() => document.body.scrollBy(0, -600));
+        sameScrollHeightCount = 0;
+      }
+
+      prevScrollHeight += 600;
       // if (currentScrollHeight === prevScrollHeight || currentScrollHeight > prevScrollHeight * 2) {
       //   endOfThePage = true;
       //   console.log("MATCZ");
       //   break;
       // }
-      if (prevScrollHeight > 3000000) {
-        console.log("kuniec XDD");
-        endOfThePage = true;
-        break;
-      }
+      // if (prevScrollHeight > 5000000) {
+      //   console.log("kuniec XDD");
+      //   endOfThePage = true;
+      //   break;
+      // }
       // prevScrollHeight = currentScroll;
     }
   }

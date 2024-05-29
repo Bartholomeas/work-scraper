@@ -71,10 +71,16 @@ abstract class ScrapperBase {
     try {
       await this.filesManager.saveToFile({
         data: aggregatedData,
+        meta: {
+          total: aggregatedData.length,
+        },
         fileName: `${fileName}-data`,
       }),
         await this.filesManager.saveToFile({
           data: standardizedData,
+          meta: {
+            total: aggregatedData.length,
+          },
           fileName: `${fileName}-standardized`,
         });
     } catch (err) {

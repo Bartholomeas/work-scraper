@@ -49,6 +49,7 @@ class ScrapperPracuj extends ScrapperBase {
     return offers.map(
       (offer): JobOffer => ({
         id: generateId(offer?.jobTitle),
+        dataSourceCode: "pracuj",
         slug: slugify(offer?.jobTitle, SLUGIFY_CONFIG),
         positionName: offer?.jobTitle,
         company: {

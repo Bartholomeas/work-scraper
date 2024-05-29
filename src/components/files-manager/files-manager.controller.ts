@@ -9,6 +9,7 @@ interface BaseFileProps {
 
 interface SaveToFileProps<T extends object> extends BaseFileProps {
   data: T;
+  meta?: Record<string, number | number[] | string | string[]>;
 }
 
 class FilesManagerController {
@@ -23,9 +24,9 @@ class FilesManagerController {
     if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
   }
 
-  public async saveToFile<T extends object>({ data, fileName, ext = "json" }: SaveToFileProps<T>) {
+  public async saveToFile<T extends object>({ data, meta, fileName, ext = "json" }: SaveToFileProps<T>) {
     const filePath = path.join(this.baseDir, `${fileName}.${ext}`);
-    await fsPromise.writeFile(filePath, JSON.stringify({ createdAt: new Date(Date.now()).toISOString(), data }));
+    await fsPromise.writeFile(filePath, JSON.stringify({ createdAt: new Date(Date.now()).toISOString(), meta, data }));
   }
 
   public async readFromFile(fileName: string) {
