@@ -41,7 +41,6 @@
       <option name="USE_PUBLIC_MODIFIER" value="true" />
       <option name="FORCE_QUOTE_STYlE" value="true" />
       <option name="ENFORCE_TRAILING_COMMA" value="WhenMultiline" />
-      <option name="USE_EXPLICIT_JS_EXTENSION" value="FALSE" />
       <option name="USE_IMPORT_TYPE" value="ALWAYS" />
       <option name="SPACES_WITHIN_OBJECT_LITERAL_BRACES" value="true" />
       <option name="SPACES_WITHIN_IMPORTS" value="true" />

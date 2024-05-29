@@ -9,6 +9,7 @@ interface BaseFileProps {
 
 interface SaveToFileProps<T extends object> extends BaseFileProps {
   data: T;
+  meta?: Record<string, number | number[] | string | string[]>;
 }
 
 class FilesManagerController {
@@ -23,13 +24,14 @@ class FilesManagerController {
     if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
   }
 
-  public async saveToFile<T extends object>({ data, fileName, ext = "json" }: SaveToFileProps<T>) {
+  public async saveToFile<T extends object>({ data, meta, fileName, ext = "json" }: SaveToFileProps<T>) {
     const filePath = path.join(this.baseDir, `${fileName}.${ext}`);
-    await fsPromise.writeFile(filePath, JSON.stringify({ createdAt: new Date(Date.now()).toISOString(), data }));
+    await fsPromise.writeFile(filePath, JSON.stringify({ createdAt: new Date(Date.now()).toISOString(), meta, data }));
   }
 
   public async readFromFile(fileName: string) {
     const filePath = path.join(this.baseDir, `${fileName}.json`);
+    if (!existsSync(this.baseDir)) return null;
     try {
       return await fsPromise.readFile(filePath, "utf-8");
     } catch (err) {
@@ -40,6 +42,7 @@ class FilesManagerController {
 
   public async getFileUpdatedDate({ fileName, ext = "json" }: BaseFileProps) {
     const filePath = path.join(this.baseDir, `${fileName}.${ext}`);
+
     try {
       return await fsPromise.stat(filePath);
     } catch (err) {
