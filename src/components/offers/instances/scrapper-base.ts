@@ -64,8 +64,7 @@ abstract class ScrapperBase {
       pagePromises.push(this.scrapePage<T>(pageNum));
     }
 
-    const results = await Promise.all(pagePromises);
-    const aggregatedData = results.filter(Boolean).flat() as T[]; //Add typeguard with unknown is Justjoin etc...
+    const aggregatedData = await Promise.all(pagePromises).then(res => res.filter(Boolean).flat() as T[]);
     const standardizedData = this.standardizeData(aggregatedData);
 
     try {

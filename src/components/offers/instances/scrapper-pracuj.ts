@@ -97,14 +97,14 @@ class ScrapperPracuj extends ScrapperBase {
     if (!this.page) return 1;
 
     // // TODO: Uncomment that, added low pages to prevent overload
-    // const maxPagesElement = await this.page.$('span[data-test="top-pagination-max-page-number"]');
-    // let maxPagesValue = "1";
-    // if (maxPagesElement) {
-    //   const textContent = await this.page.evaluate(el => el?.textContent, maxPagesElement);
-    //   if (textContent) maxPagesValue = textContent ?? "1";
-    // }
-    // return parseInt(maxPagesValue);
-    return 10;
+    const maxPagesElement = await this.page.$('span[data-test="top-pagination-max-page-number"]');
+    let maxPagesValue = "1";
+    if (maxPagesElement) {
+      const textContent = await this.page.evaluate(el => el?.textContent, maxPagesElement);
+      if (textContent) maxPagesValue = textContent ?? "1";
+    }
+    return parseInt(maxPagesValue);
+    // return 10;
   }
 
   standardizeContractTypes = (types: JobOfferPracuj["typesOfContract"] | undefined): JobOffer["contractTypes"] => {
