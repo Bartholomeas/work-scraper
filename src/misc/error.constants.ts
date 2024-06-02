@@ -7,6 +7,7 @@ export const ERROR_CODES: Record<ErrorCodes, ErrorCodes> = {
   invalid_data: "invalid_data",
   user_not_exist: "user_not_exist",
   not_logged_in: "not_logged_in",
+  invalid_type: "invalid_type",
 };
 
 export const ERROR_MESSAGES: Record<ErrorCodes, string> = {
@@ -16,4 +17,5 @@ export const ERROR_MESSAGES: Record<ErrorCodes, string> = {
   invalid_data: "Invalid data has been passed.",
   user_not_exist: "This user does not exist.",
   not_logged_in: "Login to get access.",
+  invalid_type: "Invalid data type",
 };

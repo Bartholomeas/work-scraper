@@ -1,3 +1,4 @@
+import { offersQueryParameters } from "@/schemas/offers.schemas";
 import { z } from "zod";
 
 export const positionLevelsSchema = z.enum(["intern", "junior", "mid", "senior", "manager"]);
@@ -44,3 +45,5 @@ export interface ScrappedDataResponse<T extends JobOffer[] = JobOffer[]> {
   createdAt: string;
   data: T;
 }
+
+export type OffersQueryParams = z.infer<typeof offersQueryParameters>;
