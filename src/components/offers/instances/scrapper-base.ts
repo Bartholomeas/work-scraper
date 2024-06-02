@@ -65,18 +65,18 @@ abstract class ScrapperBase {
     }
 
     const results = await Promise.all(pagePromises);
-    const aggregatedData = results.filter(Boolean).flat() as T[]; //Add typeguard with unknown is Justjoin etc...
+    const aggregatedData = results.filter(Boolean).flat() as T[];
     const standardizedData = this.standardizeData(aggregatedData);
 
     try {
-      await this.filesManager.saveToFile({
+      await this.filesManager.writeToFileChunked({
         data: aggregatedData,
         meta: {
           total: aggregatedData.length,
         },
         fileName: `${fileName}-data`,
       }),
-        await this.filesManager.saveToFile({
+        await this.filesManager.writeToFileChunked({
           data: standardizedData,
           meta: {
             total: aggregatedData.length,

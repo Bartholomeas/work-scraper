@@ -50,6 +50,7 @@ class OffersController {
       const data = await Promise.all([pracujScrapper.getScrappedData(query), justjoinScrapper.getScrappedData(query)]).then(res =>
         res.flatMap(el => el.data),
       );
+
       await pracujScrapper.closePage();
       await justjoinScrapper.closePage();
 

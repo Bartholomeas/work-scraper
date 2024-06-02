@@ -1,4 +1,4 @@
-export const MINUTES_TO_OUTDATE = 60;
+export const MINUTES_TO_OUTDATE = 60 * 4;
 
 export const PRACUJ_URL = "https://it.pracuj.pl/praca";
 export const PRACUJ_DATA_FILENAME = "pracuj";

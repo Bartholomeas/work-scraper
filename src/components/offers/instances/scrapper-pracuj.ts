@@ -120,9 +120,6 @@ class ScrapperPracuj extends ScrapperBase {
       },
       [] as JobOffer["contractTypes"],
     );
-    // 'umowa u prace' 'Kontrakt B2B', 'umowa zlecenie', 'umowa o dzieło'
-    // pełny etat
-    // workSchedules":["Część etatu","Dodatkowa / tymczasowa"]
 
     if (isContractTypesArr(standardizedTypes)) return standardizedTypes;
     else return [];
