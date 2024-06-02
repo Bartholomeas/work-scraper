@@ -64,18 +64,19 @@ abstract class ScrapperBase {
       pagePromises.push(this.scrapePage<T>(pageNum));
     }
 
-    const aggregatedData = await Promise.all(pagePromises).then(res => res.filter(Boolean).flat() as T[]);
+    const results = await Promise.all(pagePromises);
+    const aggregatedData = results.filter(Boolean).flat() as T[];
     const standardizedData = this.standardizeData(aggregatedData);
 
     try {
-      await this.filesManager.saveToFile({
+      await this.filesManager.writeToFileChunked({
         data: aggregatedData,
         meta: {
           total: aggregatedData.length,
         },
         fileName: `${fileName}-data`,
       }),
-        await this.filesManager.saveToFile({
+        await this.filesManager.writeToFileChunked({
           data: standardizedData,
           meta: {
             total: aggregatedData.length,

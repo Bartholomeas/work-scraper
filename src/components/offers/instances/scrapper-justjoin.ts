@@ -55,7 +55,7 @@ class ScrapperJustjoin extends ScrapperBase {
             const contentType = response.headers()["content-type"];
             if (contentType && contentType.includes("application/json")) {
               const res = await response.json();
-              console.log("Response wylapany ok", url);
+              console.log("Response ok", url);
               offers.push(...res.data);
             }
           } catch (err) {
@@ -87,8 +87,6 @@ class ScrapperJustjoin extends ScrapperBase {
 
       await this.scrollToEndOfPage(page);
 
-      console.log("XD OFFERS", offers.length);
-
       if (content) return [content?.props?.pageProps?.dehydratedState?.queries?.[0]?.state?.data?.pages?.[0]?.data, ...offers] as T[];
       return;
     } catch (err) {
@@ -115,7 +113,7 @@ class ScrapperJustjoin extends ScrapperBase {
         return Boolean(footer);
       });
 
-      await page.evaluate(() => window.scrollBy(0, 600));
+      await page.evaluate(() => window.scrollBy(0, 980));
       await wait();
       currentScrollHeight = await page.evaluate((): number => document.body.scrollHeight ?? 0);
       console.log({ prevScrollHeight, currentScrollHeight });
@@ -130,7 +128,7 @@ class ScrapperJustjoin extends ScrapperBase {
 
       if (sameScrollHeightCount > 1) {
         console.log("Scrolling has been stuck!");
-        await page.evaluate(() => document.body.scrollBy(0, -600));
+        await page.evaluate(() => document.body.scrollBy(0, -980));
         sameScrollHeightCount = 0;
       }
 
