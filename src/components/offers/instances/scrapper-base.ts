@@ -9,6 +9,7 @@ import { FilesManagerController } from "@/components/files-manager/files-manager
 
 interface SaveScrappedDataToFileProps<T> {
   fileName: string;
+  data: T[];
 }
 
 export interface ScrapperBaseProps {
@@ -16,6 +17,13 @@ export interface ScrapperBaseProps {
   categories?: string[];
 }
 
+/**
+ * @description - Abstract class representing base scrapper instance with common methods for scrapping data from website
+ * @param {Browser} browser - Puppeteer browser instance
+ * @param {Object} options - Options object containing url and categories
+ * @param {String} options.url - URL of the website to scrap
+ * @param {string[]} options.categories - Categories to scrap
+ */
 abstract class ScrapperBase {
   protected browser: Browser | undefined;
   protected page: Page | undefined;
@@ -56,7 +64,7 @@ abstract class ScrapperBase {
     return timeDiff > MINUTES_TO_OUTDATE;
   };
 
-  protected saveScrappedData = async <T extends object>({ fileName }: SaveScrappedDataToFileProps<T>): Promise<JobOffer[] | null> => {
+  protected scrapData = async <T extends object>(): Promise<T[]> => {
     const pagePromises: Promise<T[] | undefined>[] = [];
     this.maxPages = await this.getMaxPages();
 
@@ -65,37 +73,59 @@ abstract class ScrapperBase {
     }
 
     const results = await Promise.all(pagePromises);
-    const aggregatedData = results.filter(Boolean).flat() as T[];
-    const standardizedData = this.standardizeData(aggregatedData);
 
+    return this.standardizeData(results.filter(Boolean).flat()) as T[];
+  };
+
+  /**
+   * @description - method to scrape and save scrapped and standardized data to file or DB. Then it returns standardized data
+   * @param {Object} props - Props
+   * @param {String} props.fileName - fileName to save as
+   * @param {JobOffer[]} props.data - data that is scrapped from pages
+   */
+  protected saveScrappedData = async <T extends object>({ data, fileName }: SaveScrappedDataToFileProps<T>): Promise<void> => {
     try {
       await this.filesManager.writeToFileChunked({
-        data: aggregatedData,
+        data: data,
         meta: {
-          total: aggregatedData.length,
+          total: data.length,
         },
         fileName: `${fileName}-data`,
       }),
         await this.filesManager.writeToFileChunked({
-          data: standardizedData,
+          data,
           meta: {
-            total: aggregatedData.length,
+            total: data.length,
           },
           fileName: `${fileName}-standardized`,
         });
     } catch (err) {
       console.error("Error saving files", err);
     }
-    return standardizedData;
   };
 
   // public abstract getScrappedData(query?: JobQueryParams): Promise<JobOffer[] | null>;
   public abstract getScrappedData(query?: JobQueryParams): Promise<ScrappedDataResponse>;
 
+  /**
+   * @description - Standardize passed data to generic format of entire scrapped data
+   * @param offers
+   * @protected
+   * @return {JobOffer[]}
+   */
   protected abstract standardizeData(offers: unknown[]): JobOffer[];
 
+  /**
+   *  @description - Scrape data for specified page (pageNumber)
+   * @param pageNumber
+   * @protected
+   */
   protected abstract scrapePage<T = unknown>(pageNumber: number): Promise<T[] | undefined>;
 
+  /**
+   * @description - Get last page on the website if it exists
+   * @protected
+   */
   protected abstract getMaxPages(): Promise<number>;
 
   protected abstract standardizeContractTypes(data: unknown): JobOffer["contractTypes"];

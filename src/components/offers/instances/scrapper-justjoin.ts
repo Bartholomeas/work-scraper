@@ -29,9 +29,8 @@ class ScrapperJustjoin extends ScrapperBase {
       if (savedData) return JSON.parse(savedData);
     }
 
-    const data = await this.saveScrappedData<JobOffer>({
-      fileName: JUSTJOIN_DATA_FILENAME,
-    });
+    const data = await this.scrapData<JobOffer>();
+    await this.saveScrappedData({ fileName: JUSTJOIN_DATA_FILENAME, data });
 
     return { createdAt: new Date(Date.now()).toISOString(), data: data || [] };
   };

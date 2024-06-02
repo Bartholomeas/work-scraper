@@ -70,7 +70,7 @@ class OffersController {
       res.status(200).json({
         createdAt: new Date(Date.now()),
         total: data?.length,
-        data,
+        data: data.slice(0, 25),
       });
     } catch (err) {
       if (page) await page.close();
