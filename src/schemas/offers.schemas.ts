@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { paginationSchema } from "@/schemas/query.schemas";
 
 export const offerTechCategories = z.union([
   z.literal("html"),
@@ -24,3 +25,11 @@ export const offerTechCategories = z.union([
   z.literal("ios"),
   z.literal("ruby on rails"),
 ]);
+
+export const offersQueryParameters = z.intersection(
+  z.object({
+    search: z.string().optional(),
+    categories: z.array(offerTechCategories).optional(),
+  }),
+  paginationSchema,
+);
