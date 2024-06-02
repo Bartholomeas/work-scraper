@@ -80,11 +80,7 @@ class OffersController {
       res.status(200).json({
         createdAt: new Date(Date.now()),
         total: data?.length,
-<<<<<<< Updated upstream
-        data,
-=======
         data: this.filterData({ data, queryParams: parsedParams.data }).slice(0, 25),
->>>>>>> Stashed changes
       });
     } catch (err) {
       if (page) await page.close();
