@@ -69,14 +69,15 @@ abstract class ScrapperBase {
     const standardizedData = this.standardizeData(aggregatedData);
 
     try {
-      await this.filesManager.writeToFileChunked({
+      //TODO: writeToFileChunked probably is better in performance but getting errors while reading from file as it destroys structure and keeps multiple data arrays or smth like that. To check
+      await this.filesManager.writeToFile({
         data: aggregatedData,
         meta: {
           total: aggregatedData.length,
         },
         fileName: `${fileName}-data`,
       }),
-        await this.filesManager.writeToFileChunked({
+        await this.filesManager.writeToFile({
           data: standardizedData,
           meta: {
             total: aggregatedData.length,

@@ -40,7 +40,6 @@ class ScrapperPracuj extends ScrapperBase {
     const data = await this.saveScrappedData<JobOffer>({
       fileName: PRACUJ_DATA_FILENAME,
     });
-
     return { createdAt: new Date(Date.now()).toISOString(), data: data || [] };
   };
 
