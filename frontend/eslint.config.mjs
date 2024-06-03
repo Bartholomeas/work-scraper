@@ -3,11 +3,25 @@ import pluginTypescript from "@typescript-eslint/eslint-plugin";
 import parserTypescript from "@typescript-eslint/parser";
 
 export default [
+  // ...pluginVue.configs["flat/recommended"],
   {
+    extends: [
+      "eslint:recommended",
+      "plugin:vue/vue3-recommended",
+      "plugin:@typescript-eslint/recommended",
+      "plugin:prettier-vue/recommended",
+      "prettier",
+    ],
+    files: ["*.ts", "*.tsx", "*.vue"],
+    // parser: "@typescript-eslint/parser",
+    parser: parserTypescript,
     languageOptions: {
-      parser: parserTypescript,
       parserOptions: {
+        sourceType: "module",
         project: "./tsconfig.json",
+        parser: "@typescript-eslint/parser",
+        extraFileExtensions: [".vue"],
+        ecmaVersion: 2021,
       },
     },
     plugins: {
@@ -31,5 +45,4 @@ export default [
       "@typescript-eslint/no-unused-vars": "warn",
     },
   },
-  ...pluginVue.configs["flat/recommended"],
 ];
