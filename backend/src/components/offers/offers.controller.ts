@@ -80,7 +80,7 @@ class OffersController {
       res.status(200).json({
         createdAt: new Date(Date.now()),
         total: data?.length,
-        data: this.filterData({ data, queryParams: parsedParams.data }).slice(0, 25),
+        data: this.filterData({ data, queryParams: parsedParams.data }),
       });
     } catch (err) {
       if (page) await page.close();
@@ -98,7 +98,7 @@ class OffersController {
         else if (job.description && job.description.toLowerCase().includes(search)) return true;
         else if (job.technologies?.some(cat => cat.includes(search))) return true;
       }
-      return !!(categories && Array.isArray(categories) && categories.some(el => job.technologies?.includes(el.toLowerCase())));
+      return categories && Array.isArray(categories) && categories.some(el => job.technologies?.includes(el.toLowerCase()));
     });
     // const asyncFilter = promisify((arr: JobOffer[]) => {
     //   arr.filter(job => {

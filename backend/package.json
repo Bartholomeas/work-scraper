@@ -1,8 +1,8 @@
 {
-  "name": "scrapi",
-  "version": "1.0.0",
+  "name": "scrapi-backend",
+  "version": "0.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "./index.js",
   "scripts": {
     "build": "npx tsc",
     "dev": "nodemon src/server.ts",
@@ -22,6 +22,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "shared": "workspace:*",
     "@prisma/client": "^5.14.0",
     "bcrypt": "^5.1.1",
     "compression": "^1.7.4",
