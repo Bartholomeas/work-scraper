@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { paginationSchema } from "@/schemas/query.schemas";
+import { paginationSchema } from "src/schemas/query.schemas";
 
 export const offerTechCategories = z.union([
   z.literal("html"),

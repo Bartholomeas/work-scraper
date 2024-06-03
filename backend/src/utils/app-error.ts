@@ -1,5 +1,5 @@
-import { type ErrorCodes } from "../types/error.types";
-import { ERROR_CODES } from "../misc/error.constants";
+import { type ErrorCodes } from "src/types/error.types";
+import { ERROR_CODES } from "src/misc/error.constants";
 
 export interface AppErrorInterface extends Error {
   statusCode: number;

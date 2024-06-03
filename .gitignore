@@ -1,4 +1,6 @@
 node_modules
+backend/node_modules
 .env**
 public
 public/scrapped-data
+.turbo

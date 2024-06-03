@@ -7,13 +7,13 @@ import compression from "compression";
 import cookieParser from "cookie-parser";
 
 import { BASE_URL } from "@/misc/constants";
-import { AppError, type AppErrorInterface } from "@/utils/app-error";
+import { AppError, type AppErrorInterface } from "src/utils/app-error";
 
-import { errorHandler } from "@/middleware/error-handler";
+import { errorHandler } from "src/middleware/error-handler";
 
-import { authModule } from "@/components/auth/auth.module";
-import { offersModule } from "@/components/offers/offers.module";
-import { ErrorController } from "@/components/error/error.controller";
+import { authModule } from "src/components/auth/auth.module";
+import { offersModule } from "src/components/offers/offers.module";
+import { ErrorController } from "src/components/error/error.controller";
 
 // For some reason imported in tsconfig doesnt work :(
 declare global {

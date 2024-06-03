@@ -1,4 +1,4 @@
-import { offersQueryParameters } from "@/schemas/offers.schemas";
+import { offersQueryParameters } from "src/schemas/offers.schemas";
 import { z } from "zod";
 
 export const positionLevelsSchema = z.enum(["intern", "junior", "mid", "senior", "manager"]);

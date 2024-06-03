@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { PASSWORD_REGEX } from "../misc/constants";
+import { PASSWORD_REGEX } from "src/misc/constants";
 
 export const signUpSchema = z
   .object({
