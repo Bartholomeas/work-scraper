@@ -6,7 +6,7 @@ import { HEADER_HEIGHT } from "@/constants";
 <template>
   <Header />
   <main class="container bg-amber-400" :style="{ minHeight: `calc(100vh - ${HEADER_HEIGHT}px)` }">
-    <router-view></router-view>
+    <RouterView></RouterView>
   </main>
 </template>
 
