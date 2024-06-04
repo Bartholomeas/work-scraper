@@ -8,6 +8,7 @@ import OffersSearchbar from "@/components/offers/filters/OffersSearchbar.vue";
 const filterOffersSchema = toTypedSchema(
   z.object({
     search: z.string().optional(),
+    sort: z.string().optional(),
     categories: z
       .array(z.union([z.literal("javascript"), z.literal("python")]))
       .optional()

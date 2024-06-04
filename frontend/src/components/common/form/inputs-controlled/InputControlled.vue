@@ -3,21 +3,11 @@ import { useField } from "vee-validate";
 
 import { Input, InputProps } from "@/components/ui/input";
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/common/form";
+import type { ControlledProps } from "@/components/common/form/inputs-controlled/inputs-controlled.types";
 
-const { name, label, description, labelSrOnly, ...props } = withDefaults(
-  defineProps<
-    InputProps & {
-      name: string;
-      label: string;
-      description?: string;
-      placeholder?: string;
-      labelSrOnly?: boolean;
-    }
-  >(),
-  {
-    labelSrOnly: false,
-  },
-);
+const { name, label, description, labelSrOnly, ...props } = withDefaults(defineProps<InputProps & ControlledProps>(), {
+  labelSrOnly: false,
+});
 const { meta } = useField(name);
 </script>
 
