@@ -1,9 +1,15 @@
 <script setup lang="ts">
-import OffersSearchbar from "@/components/offers/OffersSearchbar.vue";
+import OffersFiltersContainer from "@/components/offers/filters/OffersFiltersContainer.vue";
+import OffersItemsList from "@/components/offers/OffersItemsList.vue";
+import OffersStatCards from "@/components/offers/OffersStatCards.vue";
 </script>
 
 <template>
-  <OffersSearchbar />
+  <div class="flex flex-col gap-6">
+    <OffersFiltersContainer />
+    <OffersStatCards />
+    <OffersItemsList />
+  </div>
 </template>
 
 <style scoped></style>

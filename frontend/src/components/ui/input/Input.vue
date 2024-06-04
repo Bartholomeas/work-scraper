@@ -1,16 +1,9 @@
 <script setup lang="ts">
-import type { HTMLAttributes } from "vue";
 import { useVModel } from "@vueuse/core";
 import { cn } from "@/lib/utils";
-import type { LucideIcon } from "lucide-vue-next";
+import type { InputProps } from "@/components/ui/input/index";
 
-const props = defineProps<{
-  defaultValue?: string | number;
-  modelValue?: string | number;
-  placeholder?: HTMLAttributes["placeholder"];
-  class?: HTMLAttributes["class"];
-  icon?: LucideIcon;
-}>();
+const props = defineProps<InputProps>();
 
 const emits = defineEmits<{
   (e: "update:modelValue", payload: string | number): void;
