@@ -1,7 +1,9 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import OffersSearchbar from "@/components/offers/OffersSearchbar.vue";
+</script>
 
 <template>
-  <p>oferty ok</p>
+  <OffersSearchbar />
 </template>
 
 <style scoped></style>
