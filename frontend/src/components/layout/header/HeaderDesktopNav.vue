@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { routeUrls } from "@/router/routes";
 import NavLink from "@/components/common/NavLink.vue";
 import HeaderToggleTheme from "@/components/layout/header/HeaderToggleTheme.vue";
-import { Package } from "lucide-vue-next";
+import { HEADER_LINKS } from "@/components/layout/header/header.constants";
+import Logo from "@/components/special/Logo.vue";
 </script>
 
 <template>
@@ -11,15 +11,12 @@ import { Package } from "lucide-vue-next";
   >
     <ul class="hidden gap-6 md:flex md:flex-row md:items-center md:gap-4">
       <li>
-        <NavLink :to="routeUrls.index" class="flex items-center gap-2 font-bold">
-          <Package class="h-6 w-6" />
+        <Logo />
+      </li>
+      <li v-for="link in HEADER_LINKS" :key="`navLink-${link.label.toLowerCase().split(' ').join('-')}-${link.to}`">
+        <NavLink :to="link.to">
+          {{ link.label }}
         </NavLink>
-      </li>
-      <li>
-        <NavLink :to="routeUrls.index">Strona główna</NavLink>
-      </li>
-      <li>
-        <NavLink :to="routeUrls.statistics">Statystyki</NavLink>
       </li>
     </ul>
     <HeaderToggleTheme />
