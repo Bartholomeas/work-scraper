@@ -1,2 +1,4 @@
 const serverPort = 3000;
-export { serverPort };
+const duppa = "XDD";
+
+export { serverPort, duppa };

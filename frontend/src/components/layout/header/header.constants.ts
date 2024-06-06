@@ -11,10 +11,6 @@ export const HEADER_LINKS: HeaderLinks[] = [
     to: routeUrls.index,
   },
   {
-    label: "Oferty",
-    to: routeUrls.offers,
-  },
-  {
     label: "Statystyki",
     to: routeUrls.statistics,
   },

@@ -1,5 +1,18 @@
 <script setup lang="ts">
 import OffersSingleItem from "@/components/offers/OffersSingleItem.vue";
+import { useGetOffersList } from "@/api/getOffers";
+import { toRaw, watch } from "vue";
+
+// console.log("XD", data.value);
+
+const { data } = useGetOffersList();
+// console.log("XDD", data, isLoading);
+// console.log("HHH", toRaw(data.value));
+
+watch(data, newData => {
+  console.log("XD");
+  console.log(newData, toRaw(newData));
+});
 </script>
 
 <template>
@@ -13,6 +26,7 @@ import OffersSingleItem from "@/components/offers/OffersSingleItem.vue";
       position-level="junior"
       work-mode="remote"
       expiration-date="21.06.2024"
+      :work-place="['Wrocław', 'Kraków']"
       :salary="{
         min: 100,
         max: 1000,
