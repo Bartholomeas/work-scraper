@@ -8,7 +8,7 @@ import { PRACUJ_DATA_FILENAME } from "@/components/offers/helpers/offers.constan
 import { isContractTypesArr, isWorkModesArr, isWorkPositionLevelsArr, isWorkSchedulesArr } from "@/components/offers/helpers/offers.utils";
 
 import type { JobOfferPracuj } from "@/types/offers/pracuj.types";
-import { type JobOffer, type JobQueryParams, type ScrappedDataResponse } from "@/types/offers/offers.types";
+import { type JobOffer, type JobQueryParams, type ScrappedDataResponse } from "shared/src/offers/offers.types";
 
 import { SLUGIFY_CONFIG } from "@/lib/slugify";
 

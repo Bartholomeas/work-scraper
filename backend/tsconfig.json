@@ -1,13 +1,17 @@
 {
+  "extends": "../tsconfig.base.json",
   "compilerOptions": {
-    "target": "es2016",
+    //    "target": "es2016",
     "module": "commonjs",
-    "rootDir": "src",
+    //    "rootDir": "src",
     "moduleResolution": "node",
     "baseUrl": "./",
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "@shared/*": [
+        "../shared/src/*"
       ]
     },
     "typeRoots": [

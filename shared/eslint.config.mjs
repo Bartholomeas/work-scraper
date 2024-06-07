@@ -1,12 +1,33 @@
-import globals from "globals";
-import pluginJs from "@eslint/js";
-import tseslint from "typescript-eslint";
+import pluginVue from "eslint-plugin-vue";
+import pluginTypescript from "@typescript-eslint/eslint-plugin";
+import parserTypescript from "@typescript-eslint/parser";
 
 export default [
-  pluginJs.configs.recommended,
-  ...tseslint.configs.recommended,
+  // ...pluginVue.configs["flat/recommended"],
   {
-    languageOptions: { globals: globals.browser },
+    extends: [
+      "eslint:recommended",
+      "plugin:vue/vue3-recommended",
+      "plugin:@typescript-eslint/recommended",
+      "plugin:prettier-vue/recommended",
+      "prettier",
+    ],
+    files: ["*.ts", "*.tsx", "*.vue"],
+    // parser: "@typescript-eslint/parser",
+    parser: parserTypescript,
+    languageOptions: {
+      parserOptions: {
+        sourceType: "module",
+        project: "./tsconfig.json",
+        parser: "@typescript-eslint/parser",
+        extraFileExtensions: [".vue"],
+        ecmaVersion: 2021,
+      },
+    },
+    plugins: {
+      vue: pluginVue,
+      "@typescript-eslint": pluginTypescript,
+    },
     rules: {
       "import/order": "off",
       "spaced-comment": "off",
@@ -23,7 +44,5 @@ export default [
       "no-unused-vars": "warn",
       "@typescript-eslint/no-unused-vars": "warn",
     },
-
   },
-
 ];

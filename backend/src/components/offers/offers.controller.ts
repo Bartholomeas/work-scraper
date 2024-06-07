@@ -3,8 +3,6 @@ import { Browser, executablePath, Page } from "puppeteer";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 
-import { offersQueryParameters } from "@/schemas/offers.schemas";
-
 import { ERROR_CODES } from "@/misc/error.constants";
 import { AppError } from "@/utils/app-error";
 
@@ -12,8 +10,8 @@ import { JUSTJOIN_URL, PRACUJ_URL } from "@/components/offers/helpers/offers.con
 import { ScrapperPracuj } from "@/components/offers/instances/scrapper-pracuj";
 import { ScrapperJustjoin } from "@/components/offers/instances/scrapper-justjoin";
 import type { OffersService } from "@/components/offers/offers.service";
-
-import type { JobOffer, OffersQueryParams } from "@/types/offers/offers.types";
+import type { JobOffer, OffersQueryParams } from "@shared/offers/offers.types";
+import { offersQueryParameters } from "@shared/offers/offers.schemas";
 
 puppeteer.use(StealthPlugin());
 
