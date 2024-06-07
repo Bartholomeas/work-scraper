@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vue-tsc && vite build",
     "start": "vite preview",
-    "lint": "eslint --fix ./src"
+    "lint": "eslint --fix"
   },
   "dependencies": {
     "@radix-icons/vue": "^1.0.0",

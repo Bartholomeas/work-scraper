@@ -1,14 +1,20 @@
 import { fetcher } from "@/lib/fetcher";
 import { useQuery } from "vue-query/esm";
+import type { JobOffersResponse } from "shared/src/offers/offers.types";
 
 const OFFERS_LIST_KEY = "OFFERS_LIST_KEY";
-const getOffersList = async () => {
+
+const getOffersList = async (): Promise<JobOffersResponse | undefined> => {
   const url = `${import.meta.env.VITE_API_URL}/offers`;
-  return await fetcher.get(url);
+  try {
+    return await fetcher.get<JobOffersResponse>(url);
+  } catch (err) {
+    throw err;
+  }
 };
 
 export const useGetOffersList = () =>
-  useQuery({
+  useQuery<JobOffersResponse | undefined>({
     queryKey: [OFFERS_LIST_KEY],
     queryFn: getOffersList,
   });

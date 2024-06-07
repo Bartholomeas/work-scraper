@@ -1,43 +1,47 @@
 <script setup lang="ts">
-import type { HTMLAttributes } from "vue";
-import type { ContractTypesCodes, OfferCompany, PositionLevelsCodes, WorkModesCodes } from "@/types/offers.types";
+import { type HTMLAttributes, reactive } from "vue";
+
+import type { JobOffer } from "shared/src/offers/offers.types";
+
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+
 import { MapPin } from "lucide-vue-next";
 
 interface OffersTableRowProps {
-  slug: string;
-  positionName: string;
-  contractType: ContractTypesCodes;
-  positionLevel: PositionLevelsCodes;
-  workMode: WorkModesCodes;
-  expirationDate: string;
-  workPlace: string[];
-  salary: {
-    min: number;
-    max: number;
-    currency: string;
-  };
-  company: OfferCompany;
+  offer: JobOffer;
   class?: HTMLAttributes["class"];
 }
 
+const createStringFromArr = (arr: unknown[] | undefined) => (Array.isArray(arr) ? arr.join(", ") : "");
+
+const salary = reactive({
+  min: 100,
+  max: 1000,
+  currency: "PL",
+});
+
 const {
-  positionName,
-  contractType,
-  positionLevel,
-  expirationDate,
-  salary,
-  workMode,
-  workPlace,
+  offer: {
+    positionName,
+    contractTypes,
+    positionLevels,
+    expirationDate,
+    // salary,
+    workModes,
+    workplace,
+    company,
+  },
   class: _class,
 } = defineProps<OffersTableRowProps>();
+
+console.log({ positionName, contractTypes });
 </script>
 
 <template>
   <Card
     class="flex flex-col p-3 hover:translate-y-[-2px] cursor-pointer transition-shadow transition-transform hover:z-30 hover:shadow-xl"
-    :aria-label="`Otwórz szczegóły ogłoszenia: ${positionName}`"
+    :aria-label="`Otwórz szczegóły ogłoszenia: ${positionName ?? ''}`"
     @click="
       () => {
         console.log('kekw');
@@ -56,10 +60,10 @@ const {
         />
         <div class="flex flex-col">
           <p class="text-lg">{{ positionName }}</p>
-          <p class="text-sm text-muted-foreground">{{ company.name }}</p>
+          <p class="text-sm text-muted-foreground">{{ company?.name }}</p>
           <div class="flex items-center gap-1">
             <MapPin class="h-4 w-4 text-muted-foreground" />
-            <p class="text-muted-foreground text-sm">{{ workPlace.join(", ") }}</p>
+            <p class="text-muted-foreground text-sm">{{ createStringFromArr(workplace) }}</p>
           </div>
         </div>
       </div>
@@ -67,9 +71,9 @@ const {
         <p class="font-bold text-lg text-primary">{{ salary.min }} - {{ salary.max }}{{ salary.currency }}</p>
         <p class="text-muted-foreground text-sm">{{ expirationDate }}</p>
         <div class="flex gap-2">
-          <Badge>{{ positionLevel.toUpperCase() }}</Badge>
-          <Badge variant="outline">{{ workMode.toUpperCase() }}</Badge>
-          <Badge>{{ contractType }}</Badge>
+          <Badge>{{ createStringFromArr(positionLevels).toUpperCase() }}</Badge>
+          <Badge variant="outline">{{ createStringFromArr(workModes).toUpperCase() }}</Badge>
+          <Badge>{{ createStringFromArr(contractTypes).toUpperCase() }}</Badge>
         </div>
       </div>
     </div>

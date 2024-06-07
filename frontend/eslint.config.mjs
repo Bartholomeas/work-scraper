@@ -6,7 +6,11 @@ export default [
   // ...pluginVue.configs["flat/recommended"],
   {
     extends: [
-
+      "eslint:recommended",
+      "plugin:vue/vue3-recommended",
+      "plugin:@typescript-eslint/recommended",
+      "plugin:prettier-vue/recommended",
+      "prettier",
     ],
     files: ["*.ts", "*.tsx", "*.vue"],
     // parser: "@typescript-eslint/parser",
