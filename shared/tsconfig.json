@@ -26,8 +26,6 @@
     "./src/**/*.ts"
   ],
   "exclude": [
-    "node_modules",
-    "dist",
-    "public"
+    "node_modules"
   ]
 }

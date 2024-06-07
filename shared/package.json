@@ -4,6 +4,7 @@
   "version": "0.0.1",
   "main": "./src/index.ts",
   "devDependencies": {
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "zod": "^3.23.8"
   }
 }

@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "lint": "eslint --fix ./src",
     "build": "vue-tsc && vite build",
-    "preview": "vite preview"
+    "start": "vite preview",
+    "lint": "eslint --fix ./src"
   },
   "dependencies": {
     "@radix-icons/vue": "^1.0.0",

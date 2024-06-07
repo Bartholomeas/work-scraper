@@ -4,16 +4,16 @@
   "description": "",
   "main": "./index.js",
   "scripts": {
-    "build": "npx tsc",
+    "build": "pnpx tsc",
     "dev": "nodemon src/server.ts",
     "start": "node dist/server.js",
     "lint": "eslint src/**/*.ts",
     "format": "eslint src/**/*.ts --fix",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "db:push": "npx prisma db push",
-    "db:studio": "npx prisma studio",
-    "postinstall": "npx prisma generate",
-    "seed": "npx prisma db seed"
+    "db:push": "pnpx prisma db push",
+    "db:studio": "pnpx prisma studio",
+    "postinstall": "pnpx prisma generate",
+    "seed": "pnpx prisma db seed"
   },
   "_moduleAliases": {
     "@": "dist"
