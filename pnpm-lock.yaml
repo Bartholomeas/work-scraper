@@ -165,6 +165,9 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
+      dayjs:
+        specifier: ^1.11.11
+        version: 1.11.11
       lucide-vue-next:
         specifier: ^0.383.0
         version: 0.383.0(vue@3.4.27(typescript@5.4.5))

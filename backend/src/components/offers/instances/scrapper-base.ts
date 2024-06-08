@@ -86,6 +86,8 @@ abstract class ScrapperBase {
         });
     } catch (err) {
       console.error("Error saving files", err);
+    } finally {
+      await this.page?.close();
     }
     return standardizedData;
   };

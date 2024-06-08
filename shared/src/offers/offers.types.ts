@@ -2,6 +2,7 @@ import { z } from "zod";
 import {
   companySchema,
   contractTypeCodesSchema,
+  dataSourceCodesSchema,
   jobOfferSchema,
   jobOffersResponseSchema,
   type offersQueryParameters,
@@ -14,6 +15,7 @@ export type ContractTypesCodes = z.infer<typeof contractTypeCodesSchema>;
 export type WorkModesCodes = z.infer<typeof workModesSchema>;
 export type WorkSchedulesCodes = z.infer<typeof workSchedulesSchema>;
 export type PositionLevelsCodes = z.infer<typeof positionLevelsSchema>;
+export type DataSourceCodes = z.infer<typeof dataSourceCodesSchema>;
 export type JobOffer = z.infer<typeof jobOfferSchema>;
 export type OfferCompany = z.infer<typeof companySchema>;
 export type JobOffersResponse = z.infer<typeof jobOffersResponseSchema>;

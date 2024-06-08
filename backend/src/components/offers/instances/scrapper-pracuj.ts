@@ -25,9 +25,10 @@ class ScrapperPracuj extends ScrapperBase {
 
   // public getScrappedData = async (query: JobQueryParams = {}): Promise<JobOffer[] | null> => {
   public getScrappedData = async (query: JobQueryParams = {}): Promise<ScrappedDataResponse> => {
-    if (!this.page) return { createdAt: new Date(Date.now()).toISOString(), data: [] };
+    if (!this.page) await this.initializePage();
+    // if (!this.page) return { createdAt: new Date(Date.now()).toISOString(), data: [] };
 
-    await this.page.setViewport({
+    await this.page?.setViewport({
       width: SCRAPPED_PAGE_WIDTH,
       height: SCRAPPED_PAGE_HEIGHT,
     });
