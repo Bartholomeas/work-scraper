@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import OffersSingleItem from "@/components/offers/OffersSingleItem.vue";
+import OffersSingleItem from "@/components/offers/single/OffersSingleItem.vue";
 import { useGetOffersList } from "@/api/getOffers";
-
-// console.log("XD", data.value);
 
 const { data } = useGetOffersList();
 </script>
