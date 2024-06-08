@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { routeUrls } from "@/router/routes";
-
 import NavLink from "@/components/common/NavLink.vue";
 import HeaderToggleTheme from "@/components/layout/header/HeaderToggleTheme.vue";
 import Logo from "@/components/special/Logo.vue";
 
+import { HEADER_LINKS } from "@/components/layout/header/header.constants";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 
@@ -27,11 +26,10 @@ import { Menu } from "lucide-vue-next";
             <li>
               <Logo />
             </li>
-            <li>
-              <NavLink :to="routeUrls.index">Strona główna</NavLink>
-            </li>
-            <li>
-              <NavLink :to="routeUrls.statistics">Statystyki</NavLink>
+            <li v-for="link in HEADER_LINKS" :key="`navLink-${link.label.toLowerCase().split(' ').join('-')}-${link.to}`">
+              <NavLink :to="link.to">
+                {{ link.label }}
+              </NavLink>
             </li>
             <li>
               <HeaderToggleTheme />

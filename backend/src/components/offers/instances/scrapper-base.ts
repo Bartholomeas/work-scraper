@@ -2,7 +2,7 @@ import path from "node:path";
 import { type Browser, type Page } from "puppeteer";
 import dayjs from "dayjs";
 
-import type { JobOffer, JobQueryParams, ScrappedDataResponse } from "@/types/offers/offers.types";
+import type { JobOffer, JobQueryParams, ScrappedDataResponse } from "@shared/offers/offers.types";
 
 import { MINUTES_TO_OUTDATE } from "@/components/offers/helpers/offers.constants";
 import { FilesManagerController } from "@/components/files-manager/files-manager.controller";
@@ -86,6 +86,8 @@ abstract class ScrapperBase {
         });
     } catch (err) {
       console.error("Error saving files", err);
+    } finally {
+      await this.page?.close();
     }
     return standardizedData;
   };

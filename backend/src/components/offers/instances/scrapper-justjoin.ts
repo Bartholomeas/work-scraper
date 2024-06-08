@@ -1,12 +1,13 @@
 import { ScrapperBase, type ScrapperBaseProps } from "@/components/offers/instances/scrapper-base";
 import type { Browser, Page } from "puppeteer";
 
+import { generateId } from "@/utils/generate-id";
+
 import { isContractTypesArr } from "@/components/offers/helpers/offers.utils";
 import { JUSTJOIN_DATA_FILENAME } from "@/components/offers/helpers/offers.constants";
 
-import type { JobOffer, JobQueryParams, ScrappedDataResponse } from "@/types/offers/offers.types";
+import type { JobOffer, JobQueryParams, ScrappedDataResponse } from "shared/src/offers/offers.types";
 import type { JobOfferJustjoin } from "@/types/offers/justjoin.types";
-import { generateId } from "@/utils/generate-id";
 
 const VIEWPORT_WIDTH = 800;
 const VIEWPORT_HEIGHT = 980;

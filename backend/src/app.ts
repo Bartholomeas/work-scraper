@@ -1,5 +1,5 @@
 import express, { Express, type NextFunction, type Request, type Response } from "express";
-import cors from "cors";
+import cors, { type CorsOptions } from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
@@ -26,9 +26,12 @@ declare global {
 }
 
 export const app: Express = express();
+const corsOptions: CorsOptions = {
+  origin: "http://localhost:5173",
+};
 
-app.use(cors());
-app.options("*", cors());
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.use(helmet());
 app.use(compression());
 

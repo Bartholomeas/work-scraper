@@ -8,7 +8,7 @@ import { PRACUJ_DATA_FILENAME } from "@/components/offers/helpers/offers.constan
 import { isContractTypesArr, isWorkModesArr, isWorkPositionLevelsArr, isWorkSchedulesArr } from "@/components/offers/helpers/offers.utils";
 
 import type { JobOfferPracuj } from "@/types/offers/pracuj.types";
-import { type JobOffer, type JobQueryParams, type ScrappedDataResponse } from "@/types/offers/offers.types";
+import { type JobOffer, type JobQueryParams, type ScrappedDataResponse } from "shared/src/offers/offers.types";
 
 import { SLUGIFY_CONFIG } from "@/lib/slugify";
 
@@ -25,9 +25,10 @@ class ScrapperPracuj extends ScrapperBase {
 
   // public getScrappedData = async (query: JobQueryParams = {}): Promise<JobOffer[] | null> => {
   public getScrappedData = async (query: JobQueryParams = {}): Promise<ScrappedDataResponse> => {
-    if (!this.page) return { createdAt: new Date(Date.now()).toISOString(), data: [] };
+    if (!this.page) await this.initializePage();
+    // if (!this.page) return { createdAt: new Date(Date.now()).toISOString(), data: [] };
 
-    await this.page.setViewport({
+    await this.page?.setViewport({
       width: SCRAPPED_PAGE_WIDTH,
       height: SCRAPPED_PAGE_HEIGHT,
     });

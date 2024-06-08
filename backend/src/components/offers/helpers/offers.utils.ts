@@ -1,14 +1,6 @@
 import { z } from "zod";
-import {
-  contractTypeCodesSchema,
-  type ContractTypesCodes,
-  type PositionLevelsCodes,
-  positionLevelsSchema,
-  type WorkModesCodes,
-  workModesSchema,
-  type WorkSchedulesCodes,
-  workSchedulesSchema,
-} from "@/types/offers/offers.types";
+import { contractTypeCodesSchema, positionLevelsSchema, workModesSchema, workSchedulesSchema } from "@shared/offers/offers.schemas";
+import type { ContractTypesCodes, PositionLevelsCodes, WorkModesCodes, WorkSchedulesCodes } from "@shared/offers/offers.types";
 
 export const isContractTypesArr = (types: unknown[]): types is ContractTypesCodes[] =>
   z.array(contractTypeCodesSchema).safeParse(types).success;

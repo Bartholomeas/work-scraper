@@ -5,20 +5,25 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "lint": "eslint --fix ./src",
     "build": "vue-tsc && vite build",
-    "preview": "vite preview"
+    "start": "vite preview",
+    "lint": "eslint --fix"
   },
   "dependencies": {
     "@radix-icons/vue": "^1.0.0",
+    "@vee-validate/zod": "^4.13.0",
     "@vueuse/core": "^10.10.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "dayjs": "^1.11.11",
     "lucide-vue-next": "^0.383.0",
     "radix-vue": "^1.8.3",
+    "shared": "workspace:*",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
+    "vee-validate": "^4.13.0",
     "vue": "^3.4.21",
+    "vue-query": "^1.26.0",
     "vue-router": "^4.3.2",
     "zod": "^3.23.8"
   },
@@ -28,7 +33,7 @@
     "@typescript-eslint/parser": "^7.11.0",
     "@vitejs/plugin-vue": "^5.0.4",
     "autoprefixer": "^10.4.19",
-    "eslint": "^9.4.0",
+    "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier-vue": "^5.0.0",
     "eslint-plugin-vue": "^9.26.0",

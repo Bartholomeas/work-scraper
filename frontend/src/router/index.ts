@@ -1,13 +1,13 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { routeUrls } from "@/router/routes";
-import Home from "@/views/Home.vue";
 import Statistics from "@/views/Statistics.vue";
+import Offers from "@/views/Offers.vue";
 
 const routes = [
   {
     path: routeUrls.index,
-    name: "Home",
-    component: Home,
+    name: "Offers",
+    component: Offers,
   },
   {
     path: routeUrls.statistics,

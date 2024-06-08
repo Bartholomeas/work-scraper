@@ -1,8 +1,9 @@
 {
+  "extends": "../tsconfig.base.json",
   "compilerOptions": {
     "target": "ES2020",
+    "module": "ES2020",
     "useDefineForClassFields": true,
-    "module": "ESNext",
     "lib": [
       "ES2020",
       "DOM",
@@ -24,13 +25,16 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "types": [
+      "vite/client"
+    ]
   },
   "include": [
     "./src/**/*.ts",
     "./src/**/*.tsx",
     "./src/**/*.vue",
-    "./vite.config.ts"
+    "./vite.config.js"
   ],
   "references": [
     {

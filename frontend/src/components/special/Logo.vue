@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { routeUrls } from "@/router/routes";
-import NavLink from "@/components/common/NavLink.vue";
 import { Package } from "lucide-vue-next";
 </script>
 
 <template>
-  <NavLink :to="routeUrls.index" class="flex items-center gap-2 font-bold">
+  <RouterLink :to="routeUrls.index" class="flex items-center gap-2 font-bold text-foreground">
     <Package class="h-6 w-6" />
-    <span> APK </span>
-  </NavLink>
+    <span> Scrappie </span>
+  </RouterLink>
 </template>
