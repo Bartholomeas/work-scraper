@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { type HTMLAttributes, reactive } from "vue";
-import { formatDate } from "@/lib/formatDate";
+import { computed, type HTMLAttributes } from "vue";
+import { formatDate } from "@/utils/formatDate";
 
 import type { JobOffer } from "shared/src/offers/offers.types";
-import { formatPrice } from "@/lib/formatPrice";
+import { formatPrice } from "@/utils/formatPrice";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -13,20 +13,25 @@ import OffersIconValueBox from "@/components/offers/single/OffersIconValueBox.vu
 
 import { ArrowRight, Building2, Calendar, Info, MapPin } from "lucide-vue-next";
 import OfferBadges from "@/components/offers/single/OfferBadges.vue";
-import { createStringFromArr } from "@/lib/createStringFromArr";
+import { createStringFromArr } from "@/utils/createStringFromArr";
+import { transformTimeUnitType } from "@/utils/apiCodesTransform";
 
 interface OffersTableRowProps {
   offer: JobOffer;
   class?: HTMLAttributes["class"];
 }
 
-const salary = reactive({
-  min: 100,
-  max: 1000,
-  currency: "PL",
-});
-
 const { offer } = defineProps<OffersTableRowProps>();
+
+const minPrice = computed(() => formatPrice(offer?.salaryRange?.min, offer?.salaryRange?.currency));
+const maxPrice = computed(() => formatPrice(offer?.salaryRange?.max, offer?.salaryRange?.currency));
+
+const salaryRangeString = computed(() =>
+  !offer?.salaryRange?.min || !offer?.salaryRange?.max
+    ? undefined
+    : `${minPrice.value} - ${maxPrice.value}, ${offer?.salaryRange?.type ?? ""}` +
+      (offer?.salaryRange?.timeUnit ? ` / ${transformTimeUnitType(offer?.salaryRange?.timeUnit)}` : ""),
+);
 </script>
 
 <template>
@@ -53,12 +58,11 @@ const { offer } = defineProps<OffersTableRowProps>();
       </div>
       <div class="flex flex-col gap-2 justify-between md:items-end max-md:mt-2">
         <div class="flex flex-row-reverse justify-between items-end flex-nowrap gap-2 md:flex-col">
-          <p class="font-bold text-lg text-primary md:mb-2 text-right">{{ formatPrice(salary.min) }} - {{ formatPrice(salary.max) }}</p>
-          <!--        <OfferSourceSite :source-code="offer?.dataSourceCode" />-->
+          <p class="font-bold text-lg text-primary md:mb-2 text-right">{{ salaryRangeString ?? "Nie podano" }}</p>
           <OfferBadges :position-levels="offer?.positionLevels" :work-modes="offer?.workModes" :contract-types="offer?.contractTypes" />
         </div>
         <div class="flex gap-2 items-center grow self-end max-md:w-full">
-          <OffersDetailsDialog :offer="offer">
+          <OffersDetailsDialog :offer="offer" :salary-text="salaryRangeString ?? 'Nie podano'">
             <Button variant="secondary">
               Szczegóły
               <Info class="h-4 w-4 ml-2" />

@@ -2,7 +2,7 @@
 import type { LabelProps } from "radix-vue";
 import type { HTMLAttributes } from "vue";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/utils";
 
 import { useFormField } from "@/components/common/form/useFormField";
 import { Label } from "@/components/ui/label";

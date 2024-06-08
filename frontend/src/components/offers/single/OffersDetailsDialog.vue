@@ -12,17 +12,18 @@ import {
 } from "@/components/ui/dialog";
 import type { JobOffer } from "shared/src/offers/offers.types";
 import { ArrowRight, Building2, Calendar, MapPin } from "lucide-vue-next";
-import { createStringFromArr } from "@/lib/createStringFromArr";
-import { formatDate } from "@/lib/formatDate";
+import { createStringFromArr } from "@/utils/createStringFromArr";
+import { formatDate } from "@/utils/formatDate";
 import OffersIconValueBox from "@/components/offers/single/OffersIconValueBox.vue";
 import { Separator } from "@/components/ui/separator";
 import OfferBadges from "@/components/offers/single/OfferBadges.vue";
 
 interface OffersDetailsDialogProps {
   offer: JobOffer;
+  salaryText: string;
 }
 
-const { offer } = defineProps<OffersDetailsDialogProps>();
+const { offer, salaryText } = defineProps<OffersDetailsDialogProps>();
 </script>
 
 <template>
@@ -41,7 +42,7 @@ const { offer } = defineProps<OffersDetailsDialogProps>();
           class="rounded-md object-contain"
         />
         <DialogTitle class="text-center text-[24px]">{{ offer?.positionName }}</DialogTitle>
-        <p class="font-bold text-lg text-primary md:mb-2 text-right">100-1000PLN</p>
+        <p class="font-bold text-lg text-primary md:mb-2 text-right">{{ salaryText }}</p>
         <div class="flex justify-around gap-2">
           <OffersIconValueBox :icon="Building2" :value="offer?.company?.name" />
           <OffersIconValueBox :icon="MapPin" :value="createStringFromArr(offer?.workplace)" />

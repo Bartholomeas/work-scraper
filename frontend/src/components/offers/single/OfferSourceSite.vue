@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { DataSourceCodes } from "shared/src/offers/offers.types";
-import { getServiceIconUrlByCode } from "@/lib/getServiceIconUrlByCode";
+import { getServiceIconUrlByCode } from "@/utils/getServiceIconUrlByCode";
 
 interface OfferSourceSiteProps {
   sourceCode: DataSourceCodes | undefined;

@@ -2,15 +2,21 @@ import { z } from "zod";
 import {
   companySchema,
   contractTypeCodesSchema,
+  currenciesSchema,
   dataSourceCodesSchema,
   jobOfferSchema,
   jobOffersResponseSchema,
   type offersQueryParameters,
   positionLevelsSchema,
+  salaryTypeSchema,
+  timeUnitTypeSchema,
   workModesSchema,
   workSchedulesSchema,
 } from "./offers.schemas";
 
+export type CurrencyCodes = z.infer<typeof currenciesSchema>;
+export type SalaryTypes = z.infer<typeof salaryTypeSchema>;
+export type TimeUnitTypes = z.infer<typeof timeUnitTypeSchema>;
 export type ContractTypesCodes = z.infer<typeof contractTypeCodesSchema>;
 export type WorkModesCodes = z.infer<typeof workModesSchema>;
 export type WorkSchedulesCodes = z.infer<typeof workSchedulesSchema>;

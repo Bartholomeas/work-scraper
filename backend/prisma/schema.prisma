@@ -9,7 +9,103 @@ generator client {
 }
 
 model User {
-  id       String @id @default(cuid())
+  id       String @id @default(uuid())
   email    String @unique
   password String
+}
+
+model Company {
+  id      String     @id @default(uuid())
+  logoUrl String?
+  name    String
+  offers  JobOffer[]
+}
+
+model PositionLevel {
+  id         String   @id @default(uuid())
+  value      String
+  jobOfferId String
+  jobOffer   JobOffer @relation(fields: [jobOfferId], references: [id])
+
+  @@index([jobOfferId])
+  @@index([value])
+}
+
+model ContractType {
+  id         String   @id @default(uuid())
+  value      String
+  jobOfferId String
+  jobOffer   JobOffer @relation(fields: [jobOfferId], references: [id])
+
+  @@index([jobOfferId])
+  @@index([value])
+}
+
+model WorkMode {
+  id         String   @id @default(uuid())
+  value      String
+  jobOfferId String
+  jobOffer   JobOffer @relation(fields: [jobOfferId], references: [id])
+
+  @@index([jobOfferId])
+  @@index([value])
+}
+
+model WorkSchedule {
+  id         String   @id @default(uuid())
+  value      String
+  jobOfferId String
+  jobOffer   JobOffer @relation(fields: [jobOfferId], references: [id])
+
+  @@index([jobOfferId])
+  @@index([value])
+}
+
+model Technology {
+  id         String   @id @default(uuid())
+  value      String
+  jobOfferId String
+  jobOffer   JobOffer @relation(fields: [jobOfferId], references: [id])
+
+  @@index([jobOfferId])
+  @@index([value])
+}
+
+model OfferUrl {
+  id         String   @id @default(uuid())
+  value      String
+  jobOfferId String
+  jobOffer   JobOffer @relation(fields: [jobOfferId], references: [id])
+
+  @@index([jobOfferId])
+  @@index([value])
+}
+
+model Workplace {
+  id         String   @id @default(uuid())
+  value      String
+  jobOfferId String
+  jobOffer   JobOffer @relation(fields: [jobOfferId], references: [id])
+
+  @@index([jobOfferId])
+  @@index([value])
+}
+
+model JobOffer {
+  id             String          @id @default(uuid())
+  dataSourceCode String?
+  slug           String
+  positionName   String
+  companyId      String
+  company        Company         @relation(fields: [companyId], references: [id])
+  description    String?
+  createdAt      DateTime        @default(now())
+  expirationDate DateTime?
+  positionLevels PositionLevel[]
+  contractTypes  ContractType[]
+  workModes      WorkMode[]
+  workSchedules  WorkSchedule[]
+  technologies   Technology[]
+  offerUrls      OfferUrl[]
+  workplaces     Workplace[]
 }
