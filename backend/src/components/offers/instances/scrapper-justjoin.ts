@@ -92,8 +92,9 @@ class ScrapperJustjoin extends ScrapperBase {
       return;
     } catch (err) {
       console.error(`Error processing page ${pageNumber}:`, err);
-      await page.close();
       return;
+    } finally {
+      // await page.close();
     }
   }
 
@@ -153,6 +154,7 @@ class ScrapperJustjoin extends ScrapperBase {
         contractTypes: this.standardizeContractTypes(offer?.employmentTypes),
         workModes: this.standardizeWorkModes(offer?.workplaceType),
         workSchedules: this.standardizeWorkSchedules(offer?.workingTime),
+        salaryRange: this.standardizeSalary(offer?.employmentTypes),
         technologies: offer?.requiredSkills,
         description: undefined,
         createdAt: offer?.publishedAt,
@@ -162,6 +164,26 @@ class ScrapperJustjoin extends ScrapperBase {
       }),
     );
   }
+
+  private standardizeSalary = (salary: JobOfferJustjoin["employmentTypes"] | undefined): JobOffer["salaryRange"] => {
+    if (!salary) return undefined;
+
+    const type = salary?.[0].gross ? "netto" : "brutto";
+    const min = salary.reduce((acc, curr): number => {
+      if (!acc) return curr?.from ?? 0;
+      return curr?.from && curr.from < acc ? curr?.from : acc;
+    }, 0);
+    const max = salary.reduce((acc, curr) => (curr?.to && curr.to > acc ? curr?.to : acc), 0);
+    const currency = (salary?.[0].currency ?? "pln") as "pln" | "usd";
+
+    return {
+      min,
+      max,
+      currency,
+      type,
+      timeUnit: "month",
+    };
+  };
 
   standardizeContractTypes = (types: JobOfferJustjoin["employmentTypes"] | undefined): JobOffer["contractTypes"] => {
     if (!types || !types.length) return [];

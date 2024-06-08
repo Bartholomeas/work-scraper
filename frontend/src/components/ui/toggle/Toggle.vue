@@ -2,7 +2,7 @@
 import { computed, type HTMLAttributes } from "vue";
 import { Toggle, type ToggleEmits, type ToggleProps, useForwardPropsEmits } from "radix-vue";
 import { type ToggleVariants, toggleVariants } from ".";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/utils";
 
 const props = withDefaults(
   defineProps<

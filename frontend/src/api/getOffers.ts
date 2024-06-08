@@ -1,4 +1,4 @@
-import { fetcher } from "@/lib/fetcher";
+import { fetcher } from "@/utils/fetcher";
 import { useQuery } from "vue-query/esm";
 import type { JobOffersResponse } from "shared/src/offers/offers.types";
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useVModel } from "@vueuse/core";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/utils";
 import type { InputProps } from "@/components/ui/input/index";
 
 const props = defineProps<InputProps>();

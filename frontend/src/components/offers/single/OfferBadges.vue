@@ -4,7 +4,7 @@ import { computed } from "vue";
 import type { JobOffer } from "shared/src/offers/offers.types";
 
 import { Badge } from "@/components/ui/badge";
-import { createStringFromArr } from "@/lib/createStringFromArr";
+import { createStringFromArr } from "@/utils/createStringFromArr";
 
 interface OfferBadgesProps {
   positionLevels: JobOffer["positionLevels"];
