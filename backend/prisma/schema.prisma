@@ -22,53 +22,28 @@ model Company {
 }
 
 model PositionLevel {
-  id         String   @id @default(uuid())
-  value      String
-  jobOfferId String
-  jobOffer   JobOffer @relation(fields: [jobOfferId], references: [id])
-
-  @@index([jobOfferId])
-  @@index([value])
+  value     String     @unique @id
+  jobOffers JobOffer[] @relation("PositionLevels")
 }
 
 model ContractType {
-  id         String   @id @default(uuid())
-  value      String
-  jobOfferId String
-  jobOffer   JobOffer @relation(fields: [jobOfferId], references: [id])
-
-  @@index([jobOfferId])
-  @@index([value])
+  value     String     @unique @id
+  jobOffers JobOffer[] @relation("ContractTypes")
 }
 
 model WorkMode {
-  id         String   @id @default(uuid())
-  value      String
-  jobOfferId String
-  jobOffer   JobOffer @relation(fields: [jobOfferId], references: [id])
-
-  @@index([jobOfferId])
-  @@index([value])
+  value     String     @unique @id
+  jobOffers JobOffer[] @relation("WorkModes")
 }
 
 model WorkSchedule {
-  id         String   @id @default(uuid())
-  value      String
-  jobOfferId String
-  jobOffer   JobOffer @relation(fields: [jobOfferId], references: [id])
-
-  @@index([jobOfferId])
-  @@index([value])
+  value     String     @unique @id
+  jobOffers JobOffer[] @relation("WorkSchedules")
 }
 
 model Technology {
-  id         String   @id @default(uuid())
-  value      String
-  jobOfferId String
-  jobOffer   JobOffer @relation(fields: [jobOfferId], references: [id])
-
-  @@index([jobOfferId])
-  @@index([value])
+  value     String     @unique @id
+  jobOffers JobOffer[] @relation("Technologies")
 }
 
 model OfferUrl {
@@ -92,20 +67,23 @@ model Workplace {
 }
 
 model JobOffer {
-  id             String          @id @default(uuid())
-  dataSourceCode String?
-  slug           String
-  positionName   String
-  companyId      String
-  company        Company         @relation(fields: [companyId], references: [id])
-  description    String?
-  createdAt      DateTime        @default(now())
-  expirationDate DateTime?
-  positionLevels PositionLevel[]
-  contractTypes  ContractType[]
-  workModes      WorkMode[]
-  workSchedules  WorkSchedule[]
-  technologies   Technology[]
-  offerUrls      OfferUrl[]
-  workplaces     Workplace[]
+  id              String          @id @default(uuid())
+  dataSourceCode  String?
+  slug            String
+  positionName    String
+  companyId       String?
+  company         Company?        @relation(fields: [companyId], references: [id])
+  description     String?
+  createdAt       DateTime        @default(now())
+  expirationDate  DateTime?
+  positionLevels  PositionLevel[] @relation("PositionLevels")
+  contractTypes   ContractType[]  @relation("ContractTypes")
+  workModes       WorkMode[]      @relation("WorkModes")
+  workSchedules   WorkSchedule[]  @relation("WorkSchedules")
+  technologies    Technology[]    @relation("Technologies")
+  offerUrls       OfferUrl[]
+  workplaces      Workplace[]
+  positionLevelId String?
+
+  @@index([companyId])
 }

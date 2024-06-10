@@ -53,9 +53,17 @@ class ScrapperPracuj extends ScrapperBase {
 
   protected standardizeData(offers: JobOfferPracuj[]): JobOffer[] {
     if (!offers || !offers?.length) return [];
-    return offers.map(
-      (offer): JobOffer => ({
-        id: generateId(offer?.jobTitle),
+
+    return offers.map((offer): JobOffer => {
+      const positionLevels = this.standardizePositionLevels(offer?.positionLevels);
+      const contractTypes = this.standardizeContractTypes(offer?.typesOfContract);
+      const workSchedules = this.standardizeWorkSchedules(offer?.workSchedules);
+      const workModes = this.standardizeWorkModes(offer?.workModes);
+      const salaryRange = this.standardizeSalary(offer?.salaryDisplayText);
+
+      const idHash = `${offer?.jobTitle}-${offer?.companyName}-${offer?.lastPublicated}-pracuj`;
+      return {
+        id: generateId(idHash),
         dataSourceCode: "pracuj",
         slug: slugify(offer?.jobTitle, SLUGIFY_CONFIG),
         positionName: offer?.jobTitle,
@@ -63,19 +71,19 @@ class ScrapperPracuj extends ScrapperBase {
           logoUrl: offer?.companyLogoUri,
           name: offer?.companyName,
         },
-        positionLevels: this.standardizePositionLevels(offer?.positionLevels),
-        contractTypes: this.standardizeContractTypes(offer?.typesOfContract),
-        workModes: this.standardizeWorkModes(offer?.workModes),
-        workSchedules: this.standardizeWorkSchedules(offer?.workSchedules),
-        salaryRange: this.standardizeSalary(offer?.salaryDisplayText),
+        positionLevels,
+        contractTypes,
+        workModes,
+        workSchedules,
+        salaryRange,
         technologies: offer?.technologies,
         description: offer?.jobDescription,
         createdAt: offer?.lastPublicated,
         expirationDate: offer?.expirationDate,
         offerUrls: offer?.offers?.map(url => url?.offerAbsoluteUri),
         workplace: offer?.offers?.map(place => place?.displayWorkplace),
-      }),
-    );
+      };
+    });
   }
 
   // Abstract class from ScrapperBase which is used inside base instance in saveScrappedDataToFile

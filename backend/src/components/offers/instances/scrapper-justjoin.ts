@@ -140,9 +140,17 @@ class ScrapperJustjoin extends ScrapperBase {
 
   protected standardizeData(offers: JobOfferJustjoin[]): JobOffer[] {
     if (!offers || !offers?.length) return [];
-    return offers.map(
-      (offer): JobOffer => ({
-        id: generateId(offer?.slug),
+    return offers.map((offer): JobOffer => {
+      const positionLevels = this.standardizePositionLevels(offer?.experienceLevel);
+      const contractTypes = this.standardizeContractTypes(offer?.employmentTypes);
+      const workModes = this.standardizeWorkModes(offer?.workplaceType);
+      const workSchedules = this.standardizeWorkSchedules(offer?.workingTime);
+      const salaryRange = this.standardizeSalary(offer?.employmentTypes);
+
+      const idHash = `${offer?.title}-${offer?.companyName}-${offer?.publishedAt}-justjoin`;
+
+      return {
+        id: generateId(idHash),
         dataSourceCode: "justjoin",
         slug: offer?.slug,
         positionName: offer?.title,
@@ -150,19 +158,19 @@ class ScrapperJustjoin extends ScrapperBase {
           name: offer?.companyName,
           logoUrl: offer?.companyLogoThumbUrl,
         },
-        positionLevels: this.standardizePositionLevels(offer?.experienceLevel),
-        contractTypes: this.standardizeContractTypes(offer?.employmentTypes),
-        workModes: this.standardizeWorkModes(offer?.workplaceType),
-        workSchedules: this.standardizeWorkSchedules(offer?.workingTime),
-        salaryRange: this.standardizeSalary(offer?.employmentTypes),
+        positionLevels,
+        contractTypes,
+        workModes,
+        workSchedules,
+        salaryRange,
         technologies: offer?.requiredSkills,
         description: undefined,
         createdAt: offer?.publishedAt,
         expirationDate: undefined,
         offerUrls: offer?.multilocation?.map(loc => `https://justjoin.it/offers/${loc?.slug}`),
         workplace: offer?.multilocation?.map(place => `${place.city}, ${place.street}`),
-      }),
-    );
+      };
+    });
   }
 
   private standardizeSalary = (salary: JobOfferJustjoin["employmentTypes"] | undefined): JobOffer["salaryRange"] => {
