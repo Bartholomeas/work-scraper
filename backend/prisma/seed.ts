@@ -12,10 +12,35 @@ const workSchedules = ["full-time", "part-time", "internship", "freelance"];
 // const dataSources = ["pracuj", "justjoin"];
 
 const mockOffer: JobOffer = {
-  positionName: 
-}
+  id: "aSDAJS4jasdj5r",
+  slug: "",
+  positionName: "TEST gineer",
+  createdAt: new Date().toISOString(),
+  dataSourceCode: "justjoin",
+  companyName: "Google",
+  description: "",
+  // createdAt: new Date().toISOString(),
+  company: {
+    name: "Google",
+    logoUrl: null,
+  },
+  expirationDate: new Date().toISOString(),
+  positionLevels: ["mid"],
+  contractTypes: ["uod", "b2b"],
+  workModes: ["remote"],
+  workSchedules: ["freelance"],
+  technologies: ["Javascript", "Nodejs", "Typescript"],
+  offerUrls: [""],
+  workplaces: ["Zielona Góra"],
+};
+
 async function main() {
   try {
+    const existingOffersCount = await prisma.jobOffer
+      .count({
+        where: { positionName: mockOffer.positionName },
+      })
+      .catch(() => 0);
     const positionLevelsExists = await prisma.positionLevel.findMany().catch(() => false);
     const contractTypesExists = await prisma.contractType.findMany().catch(() => false);
     const workModesExists = await prisma.workMode.findMany().catch(() => false);
@@ -44,21 +69,37 @@ async function main() {
     await prisma.jobOffer.create({
       data: {
         // slug: slugify(["Junior FS Dev", "Google", "intern", "costam"].join(" "), SLUGIFY_CONFIG),
-        slug: generateJobOfferSlug(["junior fs DEV", "Testowa firma", "Kekw"]),
-        positionName: "Junior FS Dev",
+        positionName: mockOffer.positionName!,
+        slug: generateJobOfferSlug(mockOffer, existingOffersCount > 0 ? [(existingOffersCount + 1).toString()] : []),
+        // ...mockOffer,
+        positionLevels: {
+          connect: mockOffer?.positionLevels.map(value => ({ value })),
+        },
+        contractTypes: {
+          connect: mockOffer?.contractTypes.map(value => ({ value })),
+        },
+        workModes: {
+          connect: mockOffer?.workModes.map(value => ({ value })),
+        },
+        workSchedules: {
+          connect: mockOffer?.workSchedules.map(value => ({ value })),
+        },
+        technologies: {
+          connect: mockOffer?.technologies.map(value => ({ value })),
+        },
         company: {
           connectOrCreate: {
-            where: { name: "Testowa firma" },
+            where: { name: mockOffer.company?.name },
             create: {
-              name: "Testowa firma",
-            },s
+              name: mockOffer.company?.name ?? "Undefined name",
+              logoUrl: null,
+            },
+
+            // connect: {
+            //   name: mockOffer.company.name,
+            // },
           },
         },
-        // workSchedules: {
-        //   connect: {
-        //     value: "intern",
-        //   },
-        // },
       },
     });
 

@@ -170,7 +170,7 @@ class ScrapperJustjoin extends ScrapperBase {
         createdAt: offer?.publishedAt,
         expirationDate: undefined,
         offerUrls: offer?.multilocation?.map(loc => `https://justjoin.it/offers/${loc?.slug}`),
-        workplace: offer?.multilocation?.map(place => `${place.city}, ${place.street}`),
+        workplaces: offer?.multilocation?.map(place => `${place.city}, ${place.street}`),
       } satisfies JobOffer;
 
       return { ...parsedOffer, slug: generateJobOfferSlug(parsedOffer) } as JobOffer;

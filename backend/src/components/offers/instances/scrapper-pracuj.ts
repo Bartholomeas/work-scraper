@@ -79,7 +79,7 @@ class ScrapperPracuj extends ScrapperBase {
         createdAt: offer?.lastPublicated,
         expirationDate: offer?.expirationDate,
         offerUrls: offer?.offers?.map(url => url?.offerAbsoluteUri),
-        workplace: offer?.offers?.map(place => place?.displayWorkplace),
+        workplaces: offer?.offers?.map(place => place?.displayWorkplace),
       } satisfies JobOffer;
 
       return { ...parsedOffer, slug: generateJobOfferSlug(parsedOffer) } as JobOffer;

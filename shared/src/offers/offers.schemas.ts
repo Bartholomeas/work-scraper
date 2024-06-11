@@ -25,6 +25,7 @@ export const jobOfferSchema = z.object({
   dataSourceCode: dataSourceCodesSchema.optional(),
   slug: z.string(),
   positionName: z.string(),
+  companyName: z.string().optional(),
   company: z.object({
     logoUrl: z.string().nullable(),
     name: z.string(),
@@ -42,7 +43,7 @@ export const jobOfferSchema = z.object({
   createdAt: z.string(),
   expirationDate: z.string().optional(),
   offerUrls: z.array(z.string().url()),
-  workplace: z.array(z.string()),
+  workplaces: z.array(z.string()),
 });
 
 export const companySchema = z.object({

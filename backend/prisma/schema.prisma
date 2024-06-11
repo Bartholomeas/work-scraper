@@ -56,12 +56,14 @@ model OfferUrl {
 }
 
 model Workplace {
-  id         String   @id @default(uuid())
-  value      String
-  jobOfferId String
-  jobOffer   JobOffer @relation(fields: [jobOfferId], references: [id])
+  // id         String   @id @default(uuid())
+  // value      String
+  // jobOfferId String
+  // jobOffer   JobOffer @relation(fields: [jobOfferId], references: [id])
 
-  @@index([jobOfferId])
+  value     String     @id @unique
+  jobOffers JobOffer[] @relation("Workplaces")
+
   @@index([value])
 }
 
@@ -80,8 +82,8 @@ model JobOffer {
   workModes      WorkMode[]      @relation("WorkModes")
   workSchedules  WorkSchedule[]  @relation("WorkSchedules")
   technologies   Technology[]    @relation("Technologies")
+  workplaces     Workplace[]     @relation("Workplaces")
   offerUrls      OfferUrl[]
-  workplaces     Workplace[]
 
   @@index([companyName])
 }
