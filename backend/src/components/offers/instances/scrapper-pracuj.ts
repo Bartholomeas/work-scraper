@@ -1,4 +1,3 @@
-import slugify from "slugify";
 import { type Browser } from "puppeteer";
 
 import { generateId } from "@/utils/generate-id";
@@ -16,8 +15,7 @@ import {
   type ScrappedDataResponse,
   type TimeUnitTypes,
 } from "shared/src/offers/offers.types";
-
-import { SLUGIFY_CONFIG } from "@/lib/slugify";
+import { generateJobOfferSlug } from "@/utils/generate-job-offer-slug";
 
 const SCRAPPED_PAGE_WIDTH = 1200;
 const SCRAPPED_PAGE_HEIGHT = 980;
@@ -62,10 +60,10 @@ class ScrapperPracuj extends ScrapperBase {
       const salaryRange = this.standardizeSalary(offer?.salaryDisplayText);
 
       const idHash = `${offer?.jobTitle}-${offer?.companyName}-${offer?.lastPublicated}-pracuj`;
-      return {
+      const parsedOffer = {
         id: generateId(idHash),
         dataSourceCode: "pracuj",
-        slug: slugify(offer?.jobTitle, SLUGIFY_CONFIG),
+        slug: "",
         positionName: offer?.jobTitle,
         company: {
           logoUrl: offer?.companyLogoUri,
@@ -82,7 +80,9 @@ class ScrapperPracuj extends ScrapperBase {
         expirationDate: offer?.expirationDate,
         offerUrls: offer?.offers?.map(url => url?.offerAbsoluteUri),
         workplace: offer?.offers?.map(place => place?.displayWorkplace),
-      };
+      } satisfies JobOffer;
+
+      return { ...parsedOffer, slug: generateJobOfferSlug(parsedOffer) } as JobOffer;
     });
   }
 

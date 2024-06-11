@@ -8,6 +8,7 @@ import { JUSTJOIN_DATA_FILENAME } from "@/components/offers/helpers/offers.const
 
 import type { JobOffer, JobQueryParams, ScrappedDataResponse } from "shared/src/offers/offers.types";
 import type { JobOfferJustjoin } from "@/types/offers/justjoin.types";
+import { generateJobOfferSlug } from "@/utils/generate-job-offer-slug";
 
 const VIEWPORT_WIDTH = 800;
 const VIEWPORT_HEIGHT = 980;
@@ -87,14 +88,16 @@ class ScrapperJustjoin extends ScrapperBase {
       });
 
       await this.scrollToEndOfPage(page);
-
+      console.log("CONTENT OK", content.length);
+      await page.close();
       if (content) return [content?.props?.pageProps?.dehydratedState?.queries?.[0]?.state?.data?.pages?.[0]?.data, ...offers] as T[];
       return;
     } catch (err) {
       console.error(`Error processing page ${pageNumber}:`, err);
+      await page.close();
       return;
     } finally {
-      // await page.close();
+      if (page) await page.close();
     }
   }
 
@@ -148,8 +151,7 @@ class ScrapperJustjoin extends ScrapperBase {
       const salaryRange = this.standardizeSalary(offer?.employmentTypes);
 
       const idHash = `${offer?.title}-${offer?.companyName}-${offer?.publishedAt}-justjoin`;
-
-      return {
+      const parsedOffer = {
         id: generateId(idHash),
         dataSourceCode: "justjoin",
         slug: offer?.slug,
@@ -169,7 +171,9 @@ class ScrapperJustjoin extends ScrapperBase {
         expirationDate: undefined,
         offerUrls: offer?.multilocation?.map(loc => `https://justjoin.it/offers/${loc?.slug}`),
         workplace: offer?.multilocation?.map(place => `${place.city}, ${place.street}`),
-      };
+      } satisfies JobOffer;
+
+      return { ...parsedOffer, slug: generateJobOfferSlug(parsedOffer) } as JobOffer;
     });
   }
 

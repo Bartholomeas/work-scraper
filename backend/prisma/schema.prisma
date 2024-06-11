@@ -15,34 +15,33 @@ model User {
 }
 
 model Company {
-  id      String     @id @default(uuid())
   logoUrl String?
-  name    String
+  name    String     @id @unique
   offers  JobOffer[]
 }
 
 model PositionLevel {
-  value     String     @unique @id
+  value     String     @id @unique
   jobOffers JobOffer[] @relation("PositionLevels")
 }
 
 model ContractType {
-  value     String     @unique @id
+  value     String     @id @unique
   jobOffers JobOffer[] @relation("ContractTypes")
 }
 
 model WorkMode {
-  value     String     @unique @id
+  value     String     @id @unique
   jobOffers JobOffer[] @relation("WorkModes")
 }
 
 model WorkSchedule {
-  value     String     @unique @id
+  value     String     @id @unique
   jobOffers JobOffer[] @relation("WorkSchedules")
 }
 
 model Technology {
-  value     String     @unique @id
+  value     String     @id @unique
   jobOffers JobOffer[] @relation("Technologies")
 }
 
@@ -67,23 +66,22 @@ model Workplace {
 }
 
 model JobOffer {
-  id              String          @id @default(uuid())
-  dataSourceCode  String?
-  slug            String
-  positionName    String
-  companyId       String?
-  company         Company?        @relation(fields: [companyId], references: [id])
-  description     String?
-  createdAt       DateTime        @default(now())
-  expirationDate  DateTime?
-  positionLevels  PositionLevel[] @relation("PositionLevels")
-  contractTypes   ContractType[]  @relation("ContractTypes")
-  workModes       WorkMode[]      @relation("WorkModes")
-  workSchedules   WorkSchedule[]  @relation("WorkSchedules")
-  technologies    Technology[]    @relation("Technologies")
-  offerUrls       OfferUrl[]
-  workplaces      Workplace[]
-  positionLevelId String?
+  id             String          @id @default(uuid())
+  slug           String
+  positionName   String
+  dataSourceCode String?
+  companyName    String?
+  company        Company?        @relation(fields: [companyName], references: [name])
+  description    String?
+  createdAt      DateTime        @default(now())
+  expirationDate DateTime?
+  positionLevels PositionLevel[] @relation("PositionLevels")
+  contractTypes  ContractType[]  @relation("ContractTypes")
+  workModes      WorkMode[]      @relation("WorkModes")
+  workSchedules  WorkSchedule[]  @relation("WorkSchedules")
+  technologies   Technology[]    @relation("Technologies")
+  offerUrls      OfferUrl[]
+  workplaces     Workplace[]
 
-  @@index([companyId])
+  @@index([companyName])
 }
