@@ -21,27 +21,32 @@ model Company {
 }
 
 model PositionLevel {
-  value     String     @id @unique
+  id        String     @id @default(uuid())
+  value     String     @unique
   jobOffers JobOffer[] @relation("PositionLevels")
 }
 
 model ContractType {
-  value     String     @id @unique
+  id        String     @id @default(uuid())
+  value     String     @unique
   jobOffers JobOffer[] @relation("ContractTypes")
 }
 
 model WorkMode {
-  value     String     @id @unique
+  id        String     @id @default(uuid())
+  value     String     @unique
   jobOffers JobOffer[] @relation("WorkModes")
 }
 
 model WorkSchedule {
-  value     String     @id @unique
+  id        String     @id @default(uuid())
+  value     String     @unique
   jobOffers JobOffer[] @relation("WorkSchedules")
 }
 
 model Technology {
-  value     String     @id @unique
+  id        String     @id @default(uuid())
+  value     String     @unique
   jobOffers JobOffer[] @relation("Technologies")
 }
 
@@ -56,12 +61,8 @@ model OfferUrl {
 }
 
 model Workplace {
-  // id         String   @id @default(uuid())
-  // value      String
-  // jobOfferId String
-  // jobOffer   JobOffer @relation(fields: [jobOfferId], references: [id])
-
-  value     String     @id @unique
+  id        String     @id @default(uuid())
+  value     String     @unique
   jobOffers JobOffer[] @relation("Workplaces")
 
   @@index([value])
