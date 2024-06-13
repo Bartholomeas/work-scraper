@@ -59,9 +59,12 @@ class OffersController {
 
       await Promise.all([pracujScrapper.initializePage(), justjoinScrapper.initializePage()]);
 
-      const data = await Promise.all([pracujScrapper.getScrappedData(query), justjoinScrapper.getScrappedData(query)]).then(res =>
-        res.flatMap(el => el.data),
-      );
+      const data = await Promise.all([pracujScrapper.getScrappedData(query)]).then(res => res.flatMap(el => el.data));
+      // const data = await Promise.all([pracujScrapper.getScrappedData(query), justjoinScrapper.getScrappedData(query)]).then(res =>
+      //   res.flatMap(el => el.data)
+      // );
+
+      await this.offersService.saveJobOffers(data);
 
       await pracujScrapper.closePage();
       await justjoinScrapper.closePage();

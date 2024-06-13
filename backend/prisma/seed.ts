@@ -1,8 +1,12 @@
-import { PrismaClient } from "@prisma/client";
-import { generateJobOfferSlug } from "../src/utils/generate-job-offer-slug";
 import type { JobOffer } from "shared/src/offers/offers.types";
+import { PrismaInstance } from "./../src/components/libs/prisma.instance";
+import { createOrConnectArray } from "./../src/utils/prisma";
+import { generateJobOfferSlug } from "./../src/utils/generate-job-offer-slug";
 
-const prisma = new PrismaClient();
+// import { PrismaInstance } from "src/components/libs/prisma.instance";
+// import { generateJobOfferSlug } from "src/utils/generate-job-offer-slug";
+
+const prisma = PrismaInstance.getInstance();
 
 const positionLevels = ["intern", "junior", "mid", "senior", "manager"];
 const contractTypes = ["uz", "uop", "b2b", "uod", "intern"];
@@ -10,15 +14,6 @@ const workModes = ["remote", "hybrid", "stationary"];
 const workSchedules = ["full-time", "part-time", "internship", "freelance"];
 
 // const dataSources = ["pracuj", "justjoin"];
-
-function connectOrCreateField(values: string[]) {
-  return {
-    connectOrCreate: values.map(value => ({
-      where: { value },
-      create: { value },
-    })),
-  };
-}
 
 const mockOffer: JobOffer = {
   id: "aSDAJS4jasdj5r",
@@ -80,11 +75,11 @@ async function main() {
       data: {
         positionName: mockOffer.positionName!,
         slug: generateJobOfferSlug(mockOffer, existingOffersCount > 0 ? [(existingOffersCount + 1).toString()] : []),
-        positionLevels: connectOrCreateField(mockOffer?.positionLevels),
-        contractTypes: connectOrCreateField(mockOffer?.contractTypes),
-        workModes: connectOrCreateField(mockOffer?.workModes),
-        workSchedules: connectOrCreateField(mockOffer?.workSchedules),
-        technologies: connectOrCreateField(mockOffer?.technologies),
+        positionLevels: createOrConnectArray(mockOffer?.positionLevels),
+        contractTypes: createOrConnectArray(mockOffer?.contractTypes),
+        workModes: createOrConnectArray(mockOffer?.workModes),
+        workSchedules: createOrConnectArray(mockOffer?.workSchedules),
+        technologies: createOrConnectArray(mockOffer?.technologies),
         workplaces: {
           connectOrCreate: mockOffer?.workplaces?.map(value => ({
             where: { value },

@@ -54,10 +54,9 @@ model OfferUrl {
   id         String   @id @default(uuid())
   value      String
   jobOfferId String
-  jobOffer   JobOffer @relation(fields: [jobOfferId], references: [id])
+  jobOffer   JobOffer @relation("OfferUrls", fields: [jobOfferId], references: [id])
 
   @@index([jobOfferId])
-  @@index([value])
 }
 
 model Workplace {
@@ -76,7 +75,7 @@ model JobOffer {
   companyName    String?
   company        Company?        @relation(fields: [companyName], references: [name])
   description    String?
-  createdAt      DateTime        @default(now())
+  createdAt      DateTime?       @default(now())
   expirationDate DateTime?
   positionLevels PositionLevel[] @relation("PositionLevels")
   contractTypes  ContractType[]  @relation("ContractTypes")
@@ -84,7 +83,7 @@ model JobOffer {
   workSchedules  WorkSchedule[]  @relation("WorkSchedules")
   technologies   Technology[]    @relation("Technologies")
   workplaces     Workplace[]     @relation("Workplaces")
-  offerUrls      OfferUrl[]
+  offerUrls      OfferUrl[]      @relation("OfferUrls")
 
   @@index([companyName])
 }
