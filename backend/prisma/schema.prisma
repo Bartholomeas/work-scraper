@@ -15,97 +15,75 @@ model User {
 }
 
 model Company {
-  id      String     @id @default(uuid())
   logoUrl String?
-  name    String
+  name    String     @id @unique
   offers  JobOffer[]
 }
 
 model PositionLevel {
-  id         String   @id @default(uuid())
-  value      String
-  jobOfferId String
-  jobOffer   JobOffer @relation(fields: [jobOfferId], references: [id])
-
-  @@index([jobOfferId])
-  @@index([value])
+  id        String     @id @default(uuid())
+  value     String     @unique
+  jobOffers JobOffer[] @relation("PositionLevels")
 }
 
 model ContractType {
-  id         String   @id @default(uuid())
-  value      String
-  jobOfferId String
-  jobOffer   JobOffer @relation(fields: [jobOfferId], references: [id])
-
-  @@index([jobOfferId])
-  @@index([value])
+  id        String     @id @default(uuid())
+  value     String     @unique
+  jobOffers JobOffer[] @relation("ContractTypes")
 }
 
 model WorkMode {
-  id         String   @id @default(uuid())
-  value      String
-  jobOfferId String
-  jobOffer   JobOffer @relation(fields: [jobOfferId], references: [id])
-
-  @@index([jobOfferId])
-  @@index([value])
+  id        String     @id @default(uuid())
+  value     String     @unique
+  jobOffers JobOffer[] @relation("WorkModes")
 }
 
 model WorkSchedule {
-  id         String   @id @default(uuid())
-  value      String
-  jobOfferId String
-  jobOffer   JobOffer @relation(fields: [jobOfferId], references: [id])
-
-  @@index([jobOfferId])
-  @@index([value])
+  id        String     @id @default(uuid())
+  value     String     @unique
+  jobOffers JobOffer[] @relation("WorkSchedules")
 }
 
 model Technology {
-  id         String   @id @default(uuid())
-  value      String
-  jobOfferId String
-  jobOffer   JobOffer @relation(fields: [jobOfferId], references: [id])
-
-  @@index([jobOfferId])
-  @@index([value])
+  id        String     @id @default(uuid())
+  value     String     @unique
+  jobOffers JobOffer[] @relation("Technologies")
 }
 
 model OfferUrl {
   id         String   @id @default(uuid())
   value      String
   jobOfferId String
-  jobOffer   JobOffer @relation(fields: [jobOfferId], references: [id])
+  jobOffer   JobOffer @relation("OfferUrls", fields: [jobOfferId], references: [id])
 
   @@index([jobOfferId])
-  @@index([value])
 }
 
 model Workplace {
-  id         String   @id @default(uuid())
-  value      String
-  jobOfferId String
-  jobOffer   JobOffer @relation(fields: [jobOfferId], references: [id])
+  id        String     @id @default(uuid())
+  value     String     @unique
+  jobOffers JobOffer[] @relation("Workplaces")
 
-  @@index([jobOfferId])
   @@index([value])
 }
 
 model JobOffer {
   id             String          @id @default(uuid())
-  dataSourceCode String?
   slug           String
   positionName   String
-  companyId      String
-  company        Company         @relation(fields: [companyId], references: [id])
+  dataSourceCode String?
+  companyName    String?
+  company        Company?        @relation(fields: [companyName], references: [name])
   description    String?
-  createdAt      DateTime        @default(now())
+  createdAt      DateTime?       @default(now())
   expirationDate DateTime?
-  positionLevels PositionLevel[]
-  contractTypes  ContractType[]
-  workModes      WorkMode[]
-  workSchedules  WorkSchedule[]
-  technologies   Technology[]
-  offerUrls      OfferUrl[]
-  workplaces     Workplace[]
+  positionLevels PositionLevel[] @relation("PositionLevels")
+  contractTypes  ContractType[]  @relation("ContractTypes")
+  workModes      WorkMode[]      @relation("WorkModes")
+  workSchedules  WorkSchedule[]  @relation("WorkSchedules")
+  technologies   Technology[]    @relation("Technologies")
+  workplaces     Workplace[]     @relation("Workplaces")
+  offerUrls      OfferUrl[]      @relation("OfferUrls")
+
+  @@index([companyName])
 }

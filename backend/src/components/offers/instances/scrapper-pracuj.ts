@@ -1,4 +1,3 @@
-import slugify from "slugify";
 import { type Browser } from "puppeteer";
 
 import { generateId } from "@/utils/generate-id";
@@ -16,8 +15,7 @@ import {
   type ScrappedDataResponse,
   type TimeUnitTypes,
 } from "shared/src/offers/offers.types";
-
-import { SLUGIFY_CONFIG } from "@/lib/slugify";
+import { generateJobOfferSlug } from "@/utils/generate-job-offer-slug";
 
 const SCRAPPED_PAGE_WIDTH = 1200;
 const SCRAPPED_PAGE_HEIGHT = 980;
@@ -53,29 +51,39 @@ class ScrapperPracuj extends ScrapperBase {
 
   protected standardizeData(offers: JobOfferPracuj[]): JobOffer[] {
     if (!offers || !offers?.length) return [];
-    return offers.map(
-      (offer): JobOffer => ({
-        id: generateId(offer?.jobTitle),
+
+    return offers.map((offer): JobOffer => {
+      const positionLevels = this.standardizePositionLevels(offer?.positionLevels);
+      const contractTypes = this.standardizeContractTypes(offer?.typesOfContract);
+      const workSchedules = this.standardizeWorkSchedules(offer?.workSchedules);
+      const workModes = this.standardizeWorkModes(offer?.workModes);
+      const salaryRange = this.standardizeSalary(offer?.salaryDisplayText);
+
+      const idHash = `${offer?.jobTitle}-${offer?.companyName}-${offer?.lastPublicated}-pracuj`;
+      const parsedOffer = {
+        id: generateId(idHash),
         dataSourceCode: "pracuj",
-        slug: slugify(offer?.jobTitle, SLUGIFY_CONFIG),
+        slug: "",
         positionName: offer?.jobTitle,
         company: {
           logoUrl: offer?.companyLogoUri,
           name: offer?.companyName,
         },
-        positionLevels: this.standardizePositionLevels(offer?.positionLevels),
-        contractTypes: this.standardizeContractTypes(offer?.typesOfContract),
-        workModes: this.standardizeWorkModes(offer?.workModes),
-        workSchedules: this.standardizeWorkSchedules(offer?.workSchedules),
-        salaryRange: this.standardizeSalary(offer?.salaryDisplayText),
+        positionLevels,
+        contractTypes,
+        workModes,
+        workSchedules,
+        salaryRange,
         technologies: offer?.technologies,
         description: offer?.jobDescription,
         createdAt: offer?.lastPublicated,
         expirationDate: offer?.expirationDate,
         offerUrls: offer?.offers?.map(url => url?.offerAbsoluteUri),
-        workplace: offer?.offers?.map(place => place?.displayWorkplace),
-      }),
-    );
+        workplaces: offer?.offers?.map(place => place?.displayWorkplace),
+      } satisfies JobOffer;
+
+      return { ...parsedOffer, slug: generateJobOfferSlug(parsedOffer) } as JobOffer;
+    });
   }
 
   // Abstract class from ScrapperBase which is used inside base instance in saveScrappedDataToFile
@@ -211,13 +219,13 @@ class ScrapperPracuj extends ScrapperBase {
         if (level.includes("junior")) acc.push("junior");
         else if (level.includes("mid") || level.includes("regular") || level.includes("ekspert")) acc.push("mid");
         else if (level.includes("senior")) acc.push("senior");
-        else if (level.includes("menager") || level.includes("kierownik")) acc.push("manager");
+        else if (level.includes("menager") || level.includes("kierownik") || level.includes("menedżer")) acc.push("manager");
         return acc;
       },
       [] as JobOffer["positionLevels"],
     );
 
-    if (isWorkPositionLevelsArr(levels)) return standardizedLevels;
+    if (isWorkPositionLevelsArr(standardizedLevels)) return standardizedLevels;
     else return [];
   };
 }

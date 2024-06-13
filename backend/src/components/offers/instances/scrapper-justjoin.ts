@@ -8,6 +8,7 @@ import { JUSTJOIN_DATA_FILENAME } from "@/components/offers/helpers/offers.const
 
 import type { JobOffer, JobQueryParams, ScrappedDataResponse } from "shared/src/offers/offers.types";
 import type { JobOfferJustjoin } from "@/types/offers/justjoin.types";
+import { generateJobOfferSlug } from "@/utils/generate-job-offer-slug";
 
 const VIEWPORT_WIDTH = 800;
 const VIEWPORT_HEIGHT = 980;
@@ -87,14 +88,16 @@ class ScrapperJustjoin extends ScrapperBase {
       });
 
       await this.scrollToEndOfPage(page);
-
+      console.log("CONTENT OK", content.length);
+      await page.close();
       if (content) return [content?.props?.pageProps?.dehydratedState?.queries?.[0]?.state?.data?.pages?.[0]?.data, ...offers] as T[];
       return;
     } catch (err) {
       console.error(`Error processing page ${pageNumber}:`, err);
+      await page.close();
       return;
     } finally {
-      // await page.close();
+      if (page) await page.close();
     }
   }
 
@@ -140,9 +143,16 @@ class ScrapperJustjoin extends ScrapperBase {
 
   protected standardizeData(offers: JobOfferJustjoin[]): JobOffer[] {
     if (!offers || !offers?.length) return [];
-    return offers.map(
-      (offer): JobOffer => ({
-        id: generateId(offer?.slug),
+    return offers.map((offer): JobOffer => {
+      const positionLevels = this.standardizePositionLevels(offer?.experienceLevel);
+      const contractTypes = this.standardizeContractTypes(offer?.employmentTypes);
+      const workModes = this.standardizeWorkModes(offer?.workplaceType);
+      const workSchedules = this.standardizeWorkSchedules(offer?.workingTime);
+      const salaryRange = this.standardizeSalary(offer?.employmentTypes);
+
+      const idHash = `${offer?.title}-${offer?.companyName}-${offer?.publishedAt}-justjoin`;
+      const parsedOffer = {
+        id: generateId(idHash),
         dataSourceCode: "justjoin",
         slug: offer?.slug,
         positionName: offer?.title,
@@ -150,19 +160,21 @@ class ScrapperJustjoin extends ScrapperBase {
           name: offer?.companyName,
           logoUrl: offer?.companyLogoThumbUrl,
         },
-        positionLevels: this.standardizePositionLevels(offer?.experienceLevel),
-        contractTypes: this.standardizeContractTypes(offer?.employmentTypes),
-        workModes: this.standardizeWorkModes(offer?.workplaceType),
-        workSchedules: this.standardizeWorkSchedules(offer?.workingTime),
-        salaryRange: this.standardizeSalary(offer?.employmentTypes),
+        positionLevels,
+        contractTypes,
+        workModes,
+        workSchedules,
+        salaryRange,
         technologies: offer?.requiredSkills,
         description: undefined,
         createdAt: offer?.publishedAt,
         expirationDate: undefined,
         offerUrls: offer?.multilocation?.map(loc => `https://justjoin.it/offers/${loc?.slug}`),
-        workplace: offer?.multilocation?.map(place => `${place.city}, ${place.street}`),
-      }),
-    );
+        workplaces: offer?.multilocation?.map(place => `${place.city}, ${place.street}`),
+      } satisfies JobOffer;
+
+      return { ...parsedOffer, slug: generateJobOfferSlug(parsedOffer) } as JobOffer;
+    });
   }
 
   private standardizeSalary = (salary: JobOfferJustjoin["employmentTypes"] | undefined): JobOffer["salaryRange"] => {
