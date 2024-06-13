@@ -113,14 +113,14 @@ class ScrapperPracuj extends ScrapperBase {
     if (!this.page) return 1;
 
     // // TODO: Uncomment that, added low pages to prevent overload
-    // const maxPagesElement = await this.page.$('span[data-test="top-pagination-max-page-number"]');
-    // let maxPagesValue = "1";
-    // if (maxPagesElement) {
-    //   const textContent = await this.page.evaluate(el => el?.textContent, maxPagesElement);
-    //   if (textContent) maxPagesValue = textContent ?? "1";
-    // }
-    // return parseInt(maxPagesValue);
-    return 10;
+    const maxPagesElement = await this.page.$('span[data-test="top-pagination-max-page-number"]');
+    let maxPagesValue = "1";
+    if (maxPagesElement) {
+      const textContent = await this.page.evaluate(el => el?.textContent, maxPagesElement);
+      if (textContent) maxPagesValue = textContent ?? "1";
+    }
+    return parseInt(maxPagesValue);
+    // return 10;
   }
 
   private transformSalaryTimeUnit = (val: string): TimeUnitTypes => {
@@ -164,7 +164,7 @@ class ScrapperPracuj extends ScrapperBase {
     const standardizedTypes = types.reduce(
       (acc, _type) => {
         const type = _type.toLowerCase();
-        if (type.includes("prace")) acc.push("uop");
+        if (type.includes("prace") || type.includes("pracę")) acc.push("uop");
         else if (type.includes("b2b")) acc.push("b2b");
         else if (type.includes("zlecenie")) acc.push("uz");
         else if (type.includes("dzieło")) acc.push("uod");

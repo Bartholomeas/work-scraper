@@ -95,15 +95,15 @@ class OfferHelper {
       workModes: createOrConnectArray(offer?.workModes),
       workSchedules: createOrConnectArray(offer?.workSchedules),
       technologies: createOrConnectArray(offer?.technologies),
-      // company: {
-      //   connectOrCreate: {
-      //     where: { name: offer?.company?.name },
-      //     create: {
-      //       name: offer?.company?.name ?? "Undefined name",
-      //       logoUrl: offer?.company?.logoUrl,
-      //     },
-      //   },
-      // },
+      company: {
+        connectOrCreate: {
+          where: { name: offer?.company?.name },
+          create: {
+            name: offer?.company?.name ?? "Nieznana firma",
+            logoUrl: offer?.company?.logoUrl,
+          },
+        },
+      },
     };
   }
 }
