@@ -1,12 +1,18 @@
 import { PrismaClient } from "@prisma/client";
 
 import type { JobOffer } from "shared/src/offers/offers.types";
-import { PrismaInstance } from "@/components/libs/prisma.instance";
+
+import { AppError } from "@/utils/app-error";
 import { createOrConnectArray } from "@/utils/prisma";
 
-// import { PrismaInstance } from "@/components/libs/prisma.instance";
-// import type { JobOffer } from "@shared/offers/offers.types";
-// import { createOrConnectArray } from "@/utils/prisma";
+import { PrismaInstance } from "@/components/libs/prisma.instance";
+import { ERROR_CODES, ERROR_MESSAGES } from "@/misc/error.constants";
+import dayjs from "dayjs";
+import { jobOfferSchema } from "@shared/offers/offers.schemas";
+
+interface SetOffersMetadataProps {
+  total: number;
+}
 
 class OffersService {
   private prisma: PrismaClient;
@@ -15,71 +21,158 @@ class OffersService {
     this.prisma = PrismaInstance.getInstance();
   }
 
-  // private async createCategories() {
-  //   try {
-  //     await this.prisma.positionLevel.createMany({
-  //       data: [{ value: "intern" }, { value: "junior" }, { value: "mid" }, { value: "senior" }, { value: "manager" }],
-  //     });
-  //   } catch (err) {
-  //     console.log("createCategories Error:", err);
-  //   }
-  // }
+  public async getJobOffers() {
+    const helper = new OfferHelper();
+
+    try {
+      const data = await this.prisma.jobOffer.findMany({
+        take: 5,
+        include: {
+          company: true,
+          salaryRange: true,
+          offerUrls: true,
+          workplaces: {
+            select: {
+              value: true,
+            },
+          },
+          workModes: {
+            select: {
+              value: true,
+            },
+          },
+          contractTypes: {
+            select: {
+              value: true,
+            },
+          },
+          technologies: {
+            select: {
+              value: true,
+            },
+          },
+          workSchedules: {
+            select: {
+              value: true,
+            },
+          },
+          positionLevels: {
+            select: {
+              value: true,
+            },
+          },
+        },
+      });
+      // const parsedData = z.array(jobOfferSchema).parse(data);
+      console.log("LENGTH", data);
+
+      return helper.parsePrismaToJobOffer(data);
+      // return data as unknown as JobOffer[];
+    } catch (err) {
+      console.log("saveJobOffers Error:", err);
+      throw new AppError({
+        statusCode: 500,
+        code: ERROR_CODES.internal_error,
+        message: ERROR_MESSAGES.internal_error,
+      });
+    }
+  }
 
   public async saveJobOffers(offers: JobOffer[]) {
     const helper = new OfferHelper();
 
-    const upsertOfferPromises = offers?.map(offer => {
-      const parsedOffer = helper.parseJobOfferToPrismaModel(offer);
-      return this.prisma.jobOffer.upsert({
-        where: { id: offer?.id },
-        create: parsedOffer,
-        update: parsedOffer,
-      });
-    });
-
     try {
+      const upsertOfferPromises = offers?.map(offer => {
+        const parsedOffer = helper.parseJobOfferToPrismaModel(offer);
+        return this.prisma.jobOffer.upsert({
+          where: { id: offer?.id },
+          create: parsedOffer,
+          update: parsedOffer,
+        });
+      });
+
       await this.prisma.$transaction(upsertOfferPromises);
-      // await Promise.all(upsertOfferPromises);
-      // await this.prisma.jobOffer.upsert({
-      //   where: { id: offers[0]?.id },
-      //   create: helper.parseJobOfferToPrismaModel(offers[0]),
-      //   update: helper.parseJobOfferToPrismaModel(offers[0]),
-      // });
-      // await this.prisma.jobOffer.createMany({
-      //   data: offers.map(offer => ({
-      //     // id: offer.id,
-      //     // ...offer,
-      //
-      //     positionName: offer?.positionName,
-      //     slug: offer?.slug,
-      //     dataSourceCode: offer?.dataSourceCode,
-      //     description: offer?.description,
-      //     expirationDate: offer?.expirationDate,
-      //     positionLevels: createOrConnectArray(offer?.positionLevels),
-      //     contractTypes: createOrConnectArray(offer?.contractTypes),
-      //     workModes: createOrConnectArray(offer?.workModes),
-      //     workSchedules: createOrConnectArray(offer?.workSchedules),
-      //     technologies: createOrConnectArray(offer?.technologies),
-      //     offerUrls: createOrConnectArray(offer?.offerUrls),
-      //     company: {
-      //       connectOrCreate: {
-      //         where: { name: offer?.company?.name },
-      //         create: {
-      //           name: offer?.company?.name ?? "Undefined name",
-      //           logoUrl: offer?.company?.logoUrl,
-      //         },
-      //       },
-      //     },
-      //   })),
-      // });
+      await this.setOffersMetadata({ total: offers.length });
     } catch (err) {
       console.log("saveJobOffers Error:", err);
+      throw new AppError({
+        statusCode: 500,
+        code: ERROR_CODES.internal_error,
+        message: ERROR_MESSAGES.internal_error,
+      });
+    }
+  }
+
+  private async setOffersMetadata({ total }: SetOffersMetadataProps) {
+    try {
+      await this.prisma.offersMetadata.upsert({
+        where: { id: "offers-metadata" },
+        create: {
+          total,
+        },
+        update: {
+          total,
+        },
+      });
+    } catch (err) {
+      throw new AppError({
+        statusCode: 400,
+        code: ERROR_CODES.invalid_data,
+        message: JSON.stringify(err),
+      });
+    }
+  }
+
+  public async checkDataIsOutdated(hoursAmount = 4) {
+    try {
+      const metadata = await this.prisma.offersMetadata.findUnique({
+        where: {
+          id: "offers-metadata",
+        },
+        select: {
+          updatedAt: true,
+        },
+      });
+      if (!metadata) return true;
+      return dayjs().diff(dayjs(metadata?.updatedAt), "hours") > hoursAmount;
+    } catch (err) {
+      throw new AppError({
+        statusCode: 400,
+        code: ERROR_CODES.invalid_data,
+        message: ERROR_MESSAGES.invalid_data,
+      });
     }
   }
 }
 
+type PrismaOffers = Record<
+  keyof JobOffer,
+  {
+    value: string;
+  }[]
+>;
+
 class OfferHelper {
+  private static keysToMap = ["workplaces", "workModes", "contractTypes", "technologies", "workSchedules", "positionLevels"] as const;
+
   constructor() {}
+
+  public parsePrismaToJobOffer<T extends PrismaOffers>(prismaOffers: T[]): JobOffer[] {
+    return prismaOffers?.map(offer => {
+      // const newJobOffer: unknown = offer;
+      const newJobOffer = {} as JobOffer;
+
+      OfferHelper.keysToMap.forEach(key => {
+        if (key in offer) {
+          const isValueArray = Array.isArray(offer[key]);
+
+          newJobOffer[key] = isValueArray ? (offer[key]?.map(el => el.value) as never) : [];
+        }
+      });
+
+      return jobOfferSchema.parse(newJobOffer);
+    });
+  }
 
   public parseJobOfferToPrismaModel(offer: JobOffer) {
     return {

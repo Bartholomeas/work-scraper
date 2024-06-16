@@ -31,6 +31,15 @@ class OffersController {
     this.initBrowser();
   }
 
+  public checkMetadata = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const isOutdated = await this.offersService.checkDataIsOutdated();
+      res.status(200).json({ isOutdated });
+    } catch (err) {
+      console.log("checkMetadata err: ", err);
+    }
+  };
+
   public getOffers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const parsedParams = offersQueryParameters.safeParse(req.body);
     if (parsedParams.error) {
@@ -58,13 +67,20 @@ class OffersController {
       });
 
       await Promise.all([pracujScrapper.initializePage(), justjoinScrapper.initializePage()]);
+      const isOutdated = await this.offersService.checkDataIsOutdated();
 
-      const data = await Promise.all([pracujScrapper.getScrappedData(query)]).then(res => res.flatMap(el => el.data));
-      // const data = await Promise.all([pracujScrapper.getScrappedData(query), justjoinScrapper.getScrappedData(query)]).then(res =>
-      //   res.flatMap(el => el.data)
-      // );
+      let data: JobOffer[] = [];
+      if (isOutdated) {
+        data = await Promise.all([pracujScrapper.getScrappedData(query)]).then(res => res.flatMap(el => el.data));
+        // const data = await Promise.all([justjoinScrapper.getScrappedData(query)]).then(res => res.flatMap(el => el.data));
+        // const data = await Promise.all([pracujScrapper.getScrappedData(query), justjoinScrapper.getScrappedData(query)]).then(res =>
+        //   res.flatMap(el => el.data)
+        // );
 
-      await this.offersService.saveJobOffers(data);
+        await this.offersService.saveJobOffers(data);
+      } else {
+        data = await this.offersService.getJobOffers();
+      }
 
       await pracujScrapper.closePage();
       await justjoinScrapper.closePage();

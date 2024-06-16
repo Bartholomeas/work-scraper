@@ -113,14 +113,14 @@ class ScrapperPracuj extends ScrapperBase {
     if (!this.page) return 1;
 
     // // TODO: Uncomment that, added low pages to prevent overload
-    const maxPagesElement = await this.page.$('span[data-test="top-pagination-max-page-number"]');
-    let maxPagesValue = "1";
-    if (maxPagesElement) {
-      const textContent = await this.page.evaluate(el => el?.textContent, maxPagesElement);
-      if (textContent) maxPagesValue = textContent ?? "1";
-    }
-    return parseInt(maxPagesValue);
-    // return 10;
+    // const maxPagesElement = await this.page.$('span[data-test="top-pagination-max-page-number"]');
+    // let maxPagesValue = "1";
+    // if (maxPagesElement) {
+    //   const textContent = await this.page.evaluate(el => el?.textContent, maxPagesElement);
+    //   if (textContent) maxPagesValue = textContent ?? "1";
+    // }
+    // return parseInt(maxPagesValue);
+    return 10;
   }
 
   private transformSalaryTimeUnit = (val: string): TimeUnitTypes => {
@@ -136,8 +136,8 @@ class ScrapperPracuj extends ScrapperBase {
     }
   };
 
-  private standardizeSalary = (salary: JobOfferPracuj["salaryDisplayText"] | undefined): JobOffer["salaryRange"] | undefined => {
-    if (!salary) return undefined;
+  private standardizeSalary = (salary: JobOfferPracuj["salaryDisplayText"] | undefined): JobOffer["salaryRange"] => {
+    if (!salary) return [];
     const regex = /(\d[\d\s]*)–(\d[\d\s]*)\s*([a-zA-Zżł$€£]*)\s*(brutto|netto)?(?:\s*\(\+\s*VAT\))?\s*\/\s*(godz|dzień|mies)/;
 
     const matched = salary.match(regex);
@@ -145,18 +145,20 @@ class ScrapperPracuj extends ScrapperBase {
     const min = matched?.[1] ? parseInt(matched[1].replace(/\s/g, "")) : 0;
     const max = matched?.[2] ? parseInt(matched[2].replace(/\s/g, "")) : 0;
 
-    if (!min || !max) return undefined;
+    if (!min || !max) return [];
     const currency = (matched?.[3].trim() ?? "pln") as CurrencyCodes;
     const type = (matched?.[4] ? matched[4].trim() : "brutto") as SalaryTypes;
     const timeUnit = matched?.[5] ? this.transformSalaryTimeUnit(matched[5].trim()) : "month";
 
-    return {
-      min,
-      max,
-      currency,
-      type,
-      timeUnit,
-    };
+    return [
+      {
+        min,
+        max,
+        currency,
+        type,
+        timeUnit,
+      },
+    ];
   };
 
   standardizeContractTypes = (types: JobOfferPracuj["typesOfContract"] | undefined): JobOffer["contractTypes"] => {
