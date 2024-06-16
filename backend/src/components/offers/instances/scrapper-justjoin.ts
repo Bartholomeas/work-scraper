@@ -178,7 +178,7 @@ class ScrapperJustjoin extends ScrapperBase {
   }
 
   private standardizeSalary = (salary: JobOfferJustjoin["employmentTypes"] | undefined): JobOffer["salaryRange"] => {
-    if (!salary) return undefined;
+    if (!salary) return [];
 
     const type = salary?.[0].gross ? "netto" : "brutto";
     const min = salary.reduce((acc, curr): number => {
@@ -188,13 +188,15 @@ class ScrapperJustjoin extends ScrapperBase {
     const max = salary.reduce((acc, curr) => (curr?.to && curr.to > acc ? curr?.to : acc), 0);
     const currency = (salary?.[0].currency ?? "pln") as "pln" | "usd";
 
-    return {
-      min,
-      max,
-      currency,
-      type,
-      timeUnit: "month",
-    };
+    return [
+      {
+        min,
+        max,
+        currency,
+        type,
+        timeUnit: "month",
+      },
+    ];
   };
 
   standardizeContractTypes = (types: JobOfferJustjoin["employmentTypes"] | undefined): JobOffer["contractTypes"] => {

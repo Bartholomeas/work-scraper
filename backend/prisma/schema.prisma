@@ -67,16 +67,29 @@ model Workplace {
   @@index([value])
 }
 
+model SalaryRange {
+  id         String   @id @default(uuid())
+  min        Int
+  max        Int
+  currency   String   @default("pln")
+  type       String   @default("brutto")
+  timeUnit   String   @default("month")
+  jobOfferId String   @unique
+  jobOffer   JobOffer @relation(fields: [jobOfferId], references: [id])
+}
+
 model JobOffer {
   id             String          @id @default(uuid())
   slug           String
   positionName   String
   dataSourceCode String?
-  companyName    String?
-  company        Company?        @relation(fields: [companyName], references: [name])
   description    String?
   createdAt      DateTime?       @default(now())
+  updatedAt      DateTime?       @default(now()) @updatedAt
   expirationDate DateTime?
+  companyName    String?
+  company        Company?        @relation(fields: [companyName], references: [name])
+  salaryRange    SalaryRange[]
   positionLevels PositionLevel[] @relation("PositionLevels")
   contractTypes  ContractType[]  @relation("ContractTypes")
   workModes      WorkMode[]      @relation("WorkModes")
@@ -86,4 +99,10 @@ model JobOffer {
   offerUrls      OfferUrl[]      @relation("OfferUrls")
 
   @@index([companyName])
+}
+
+model OffersMetadata {
+  id        String   @id @default("offers-metadata")
+  updatedAt DateTime @updatedAt
+  total     Int      @default(0)
 }
