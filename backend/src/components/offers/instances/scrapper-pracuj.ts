@@ -51,7 +51,6 @@ class ScrapperPracuj extends ScrapperBase {
 
   protected standardizeData(offers: JobOfferPracuj[]): JobOffer[] {
     if (!offers || !offers?.length) return [];
-
     return offers.map((offer): JobOffer => {
       const positionLevels = this.standardizePositionLevels(offer?.positionLevels);
       const contractTypes = this.standardizeContractTypes(offer?.typesOfContract);

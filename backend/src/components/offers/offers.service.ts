@@ -21,11 +21,11 @@ class OffersService {
   }
 
   public async getJobOffers() {
-    const helper = new OfferHelper();
-
     try {
       const data = await this.prisma.jobOffer.findMany({
-        take: 5,
+        orderBy: {
+          expirationDate: "asc",
+        },
         include: {
           company: true,
           salaryRange: true,
@@ -63,7 +63,7 @@ class OffersService {
         },
       });
 
-      return helper.parsePrismaToJobOffer(data as never[]);
+      return OfferHelper.parsePrismaToJobOffer(data as never[]);
     } catch (err) {
       throw new AppError({
         statusCode: 400,
@@ -74,12 +74,9 @@ class OffersService {
   }
 
   public async saveJobOffers(offers: JobOffer[]) {
-    const helper = new OfferHelper();
-
     try {
-      console.log("XDD", helper.parseJobOfferToPrismaModel(offers[0]));
       const upsertOfferPromises = offers?.map(offer => {
-        const parsedOffer = helper.parseJobOfferToPrismaModel(offer);
+        const parsedOffer = OfferHelper.parseJobOfferToPrismaModel(offer);
 
         return this.prisma.jobOffer.upsert({
           where: { id: offer?.id },
@@ -142,37 +139,40 @@ class OffersService {
   }
 }
 
-type PrismaOffers = Record<
-  keyof JobOffer,
-  {
-    value: string;
-  }[]
->;
+type PrismaJobOffer = JobOffer & {
+  workplaces: { value: string }[];
+  workModes: { value: string }[];
+  contractTypes: { value: string }[];
+  technologies: { value: string }[];
+  workSchedules: { value: string }[];
+  positionLevels: { value: string }[];
+  company?: { logoUrl: string | null; name: string };
+};
 
 class OfferHelper {
   private static keysToMap = ["workplaces", "workModes", "contractTypes", "technologies", "workSchedules", "positionLevels"] as const;
 
   constructor() {}
 
-  public parsePrismaToJobOffer<T extends PrismaOffers>(prismaOffers: T[]): JobOffer[] {
+  public static parsePrismaToJobOffer<T extends PrismaJobOffer>(prismaOffers: T[]): JobOffer[] {
     return prismaOffers?.map(offer => {
       // const newJobOffer: unknown = offer;
-      const newJobOffer = {} as JobOffer;
-
-      OfferHelper.keysToMap.forEach(key => {
-        if (key in offer) {
-          const isValueArray = Array.isArray(offer[key]);
-
-          newJobOffer[key] = isValueArray ? (offer[key]?.map(el => el.value) as never) : [];
-        }
-      });
+      const newJobOffer: JobOffer = {
+        ...offer,
+        workplaces: offer.workplaces.map((w: { value: string }) => w.value),
+        workModes: offer.workModes.map((w: { value: string }) => w.value) as JobOffer["workModes"],
+        contractTypes: offer.contractTypes.map((c: { value: string }) => c.value) as JobOffer["contractTypes"],
+        technologies: offer.technologies.map((t: { value: string }) => t.value) as JobOffer["technologies"],
+        workSchedules: offer.workSchedules.map((w: { value: string }) => w.value) as JobOffer["workSchedules"],
+        positionLevels: offer.positionLevels.map((p: { value: string }) => p.value) as JobOffer["positionLevels"],
+      };
 
       // return jobOfferSchema.parse(newJobOffer);
       return newJobOffer;
     });
   }
 
-  public parseJobOfferToPrismaModel(offer: JobOffer) {
+  public static parseJobOfferToPrismaModel(offer: JobOffer) {
     return {
       id: offer.id,
       positionName: offer.positionName,
@@ -186,6 +186,11 @@ class OfferHelper {
       workModes: connectOrCreateArray(offer?.workModes),
       workSchedules: connectOrCreateArray(offer?.workSchedules),
       technologies: connectOrCreateArray(offer?.technologies),
+      offerUrls: {
+        create: offer?.offerUrls.map(el => ({
+          value: el,
+        })),
+      },
       salaryRange: {
         create: offer?.salaryRange?.map(salary => ({
           min: salary?.min,
