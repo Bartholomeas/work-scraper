@@ -1,14 +1,13 @@
+import dayjs from "dayjs";
 import { PrismaClient } from "@prisma/client";
 
-import type { JobOffer } from "shared/src/offers/offers.types";
-
 import { AppError } from "@/utils/app-error";
-import { createOrConnectArray } from "@/utils/prisma";
+import { connectOrCreateArray } from "@/utils/prisma";
 
 import { PrismaInstance } from "@/components/libs/prisma.instance";
-import { ERROR_CODES, ERROR_MESSAGES } from "@/misc/error.constants";
-import dayjs from "dayjs";
-import { jobOfferSchema } from "@shared/offers/offers.schemas";
+import { ERROR_CODES } from "@/misc/error.constants";
+
+import type { JobOffer } from "shared/src/offers/offers.types";
 
 interface SetOffersMetadataProps {
   total: number;
@@ -63,17 +62,13 @@ class OffersService {
           },
         },
       });
-      // const parsedData = z.array(jobOfferSchema).parse(data);
-      console.log("LENGTH", data);
 
-      return helper.parsePrismaToJobOffer(data);
-      // return data as unknown as JobOffer[];
+      return helper.parsePrismaToJobOffer(data as never[]);
     } catch (err) {
-      console.log("saveJobOffers Error:", err);
       throw new AppError({
-        statusCode: 500,
+        statusCode: 400,
         code: ERROR_CODES.internal_error,
-        message: ERROR_MESSAGES.internal_error,
+        message: JSON.stringify(err),
       });
     }
   }
@@ -82,23 +77,24 @@ class OffersService {
     const helper = new OfferHelper();
 
     try {
+      console.log("XDD", helper.parseJobOfferToPrismaModel(offers[0]));
       const upsertOfferPromises = offers?.map(offer => {
         const parsedOffer = helper.parseJobOfferToPrismaModel(offer);
+
         return this.prisma.jobOffer.upsert({
           where: { id: offer?.id },
-          create: parsedOffer,
-          update: parsedOffer,
+          create: parsedOffer as never,
+          update: parsedOffer as never,
         });
       });
 
       await this.prisma.$transaction(upsertOfferPromises);
       await this.setOffersMetadata({ total: offers.length });
     } catch (err) {
-      console.log("saveJobOffers Error:", err);
       throw new AppError({
-        statusCode: 500,
+        statusCode: 400,
         code: ERROR_CODES.internal_error,
-        message: ERROR_MESSAGES.internal_error,
+        message: JSON.stringify(err),
       });
     }
   }
@@ -139,7 +135,8 @@ class OffersService {
       throw new AppError({
         statusCode: 400,
         code: ERROR_CODES.invalid_data,
-        message: ERROR_MESSAGES.invalid_data,
+        message: JSON.stringify(err),
+        // message: ERROR_MESSAGES.invalid_data,
       });
     }
   }
@@ -170,7 +167,8 @@ class OfferHelper {
         }
       });
 
-      return jobOfferSchema.parse(newJobOffer);
+      // return jobOfferSchema.parse(newJobOffer);
+      return newJobOffer;
     });
   }
 
@@ -182,12 +180,21 @@ class OfferHelper {
       dataSourceCode: offer?.dataSourceCode,
       description: offer?.description,
       expirationDate: offer?.expirationDate,
-      positionLevels: createOrConnectArray(offer.positionLevels),
-      workplaces: createOrConnectArray(offer?.workplaces),
-      contractTypes: createOrConnectArray(offer?.contractTypes),
-      workModes: createOrConnectArray(offer?.workModes),
-      workSchedules: createOrConnectArray(offer?.workSchedules),
-      technologies: createOrConnectArray(offer?.technologies),
+      positionLevels: connectOrCreateArray(offer.positionLevels),
+      workplaces: connectOrCreateArray(offer?.workplaces),
+      contractTypes: connectOrCreateArray(offer?.contractTypes),
+      workModes: connectOrCreateArray(offer?.workModes),
+      workSchedules: connectOrCreateArray(offer?.workSchedules),
+      technologies: connectOrCreateArray(offer?.technologies),
+      salaryRange: {
+        create: offer?.salaryRange?.map(salary => ({
+          min: salary?.min,
+          max: salary?.max,
+          type: salary?.type,
+          timeUnit: salary?.timeUnit,
+        })),
+      },
+
       company: {
         connectOrCreate: {
           where: { name: offer?.company?.name },

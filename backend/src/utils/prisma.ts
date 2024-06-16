@@ -1,4 +1,4 @@
-export const createOrConnectArray = (values: string[]) => {
+export const connectOrCreateArray = (values: string[]) => {
   return {
     connectOrCreate: values?.map(_value => {
       const value = _value.toLowerCase();
