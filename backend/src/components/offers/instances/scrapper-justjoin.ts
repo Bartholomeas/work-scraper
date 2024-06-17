@@ -6,7 +6,7 @@ import { generateId } from "@/utils/generate-id";
 import { isContractTypesArr } from "@/components/offers/helpers/offers.utils";
 import { JUSTJOIN_DATA_FILENAME } from "@/components/offers/helpers/offers.constants";
 
-import type { JobOffer, JobQueryParams, ScrappedDataResponse } from "shared/src/offers/offers.types";
+import type { JobOffer, ScrappedDataResponse } from "shared/src/offers/offers.types";
 import type { JobOfferJustjoin } from "@/types/offers/justjoin.types";
 import { generateJobOfferSlug } from "@/utils/generate-job-offer-slug";
 
@@ -21,15 +21,14 @@ class ScrapperJustjoin extends ScrapperBase {
     this.maxPages = 1;
   }
 
-  public getScrappedData = async (query: JobQueryParams = {}): Promise<ScrappedDataResponse> => {
-    if (!this.page) return { createdAt: new Date(Date.now()).toISOString(), data: [] };
+  public getScrappedData = async (): Promise<ScrappedDataResponse> => {
+    if (!this.page) await this.initializePage();
 
-    const isDataOutdated = await this.isFileOutdated(`${JUSTJOIN_DATA_FILENAME}-standardized`);
-
-    if (!isDataOutdated) {
-      const savedData = await this.filesManager.readFromFile(`${JUSTJOIN_DATA_FILENAME}-standardized`);
-      if (savedData) return JSON.parse(savedData);
-    }
+    // const isDataOutdated = await this.isFileOutdated(`${JUSTJOIN_DATA_FILENAME}-standardized`);
+    // if (!isDataOutdated) {
+    //   const savedData = await this.filesManager.readFromFile(`${JUSTJOIN_DATA_FILENAME}-standardized`);
+    //   if (savedData) return JSON.parse(savedData);
+    // }
 
     const data = await this.saveScrappedData<JobOffer>({
       fileName: JUSTJOIN_DATA_FILENAME,
@@ -58,10 +57,11 @@ class ScrapperJustjoin extends ScrapperBase {
             if (contentType && contentType.includes("application/json")) {
               const res = await response.json();
               console.log("Response ok", url);
+
               offers.push(...res.data);
             }
           } catch (err) {
-            console.error("Error parsin JSON response", err);
+            console.error("Error parsing JSON response", err);
           }
         }
       });
@@ -75,7 +75,6 @@ class ScrapperJustjoin extends ScrapperBase {
         })
         .then(async () => {
           await page.click("#cookiescript_accept");
-
           console.log("Clicked cookie consent");
         })
         .catch(err => {
@@ -89,12 +88,11 @@ class ScrapperJustjoin extends ScrapperBase {
 
       await this.scrollToEndOfPage(page);
       console.log("CONTENT OK", content.length);
-      await page.close();
-      if (content) return [content?.props?.pageProps?.dehydratedState?.queries?.[0]?.state?.data?.pages?.[0]?.data, ...offers] as T[];
-      return;
+      // await page.close();
+      return [content?.props?.pageProps?.dehydratedState?.queries?.[0]?.state?.data?.pages?.[0]?.data, ...offers] as T[];
     } catch (err) {
       console.error(`Error processing page ${pageNumber}:`, err);
-      await page.close();
+      // await page.close();
       return;
     } finally {
       if (page) await page.close();
@@ -103,6 +101,7 @@ class ScrapperJustjoin extends ScrapperBase {
 
   private async scrollToEndOfPage(page: Page) {
     if (!page) return null;
+
     let footerExist = false;
     let prevScrollHeight = ((await this.page?.evaluate("document.body.scrollHeight")) as number) ?? 0;
     let currentScrollHeight: number = prevScrollHeight;
@@ -111,17 +110,19 @@ class ScrapperJustjoin extends ScrapperBase {
     let sameScrollHeightCount = 0;
 
     const wait = (duration = 30) => new Promise(resolve => setTimeout(resolve, duration));
-    // while (!footerExist && !endOfThePage) {
+
     while (!footerExist) {
+      await page.evaluate(() => window.scrollBy(0, 980));
+
       footerExist = await page.evaluate(() => {
         const footer = document.querySelector("footer");
         return Boolean(footer);
       });
 
-      await page.evaluate(() => window.scrollBy(0, 980));
       await wait();
       currentScrollHeight = await page.evaluate((): number => document.body.scrollHeight ?? 0);
       console.log({ prevScrollHeight, currentScrollHeight });
+      if (currentScrollHeight >= 15000) return true;
 
       if (scrollHeightMap.has(currentScrollHeight)) {
         sameScrollHeightCount = (scrollHeightMap.get(currentScrollHeight) || 0) + 1;
@@ -133,11 +134,11 @@ class ScrapperJustjoin extends ScrapperBase {
 
       if (sameScrollHeightCount > 1) {
         console.log("Scrolling has been stuck!");
-        await page.evaluate(() => document.body.scrollBy(0, -980));
+        await page.evaluate(() => document.body.scrollBy(0, -1860));
         sameScrollHeightCount = 0;
       }
 
-      prevScrollHeight += 600;
+      prevScrollHeight += 980;
     }
   }
 
@@ -180,12 +181,14 @@ class ScrapperJustjoin extends ScrapperBase {
   private standardizeSalary = (salary: JobOfferJustjoin["employmentTypes"] | undefined): JobOffer["salaryRange"] => {
     if (!salary) return [];
 
-    const type = salary?.[0].gross ? "netto" : "brutto";
     const min = salary.reduce((acc, curr): number => {
       if (!acc) return curr?.from ?? 0;
       return curr?.from && curr.from < acc ? curr?.from : acc;
     }, 0);
     const max = salary.reduce((acc, curr) => (curr?.to && curr.to > acc ? curr?.to : acc), 0);
+    if (!min || !max) return [];
+
+    const type = salary?.[0].gross ? "brutto" : "netto";
     const currency = (salary?.[0].currency ?? "pln") as "pln" | "usd";
 
     return [

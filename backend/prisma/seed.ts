@@ -110,15 +110,7 @@ async function main() {
           },
         },
         salaryRange: {
-          create: [
-            {
-              min: 0,
-              max: 2500,
-              currency: "pln",
-              type: "brutto",
-              timeUnit: "month",
-            },
-          ],
+          create: [],
         },
       },
     });

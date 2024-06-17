@@ -55,8 +55,6 @@ class OffersController {
     let page: Page | undefined;
 
     try {
-      const { query } = req;
-
       if (!this.browser) await this.initBrowser();
 
       const pracujScrapper = new ScrapperPracuj(this.browser, {
@@ -71,19 +69,18 @@ class OffersController {
 
       let data: JobOffer[] = [];
       if (isOutdated) {
-        data = await Promise.all([pracujScrapper.getScrappedData(query)]).then(res => res.flatMap(el => el.data));
-        // const data = await Promise.all([justjoinScrapper.getScrappedData(query)]).then(res => res.flatMap(el => el.data));
+        // data = await Promise.all([pracujScrapper.getScrappedData()]).then(res => res.flatMap(el => el.data));
+        data = await Promise.all([justjoinScrapper.getScrappedData()]).then(res => res.flatMap(el => el.data));
         // const data = await Promise.all([pracujScrapper.getScrappedData(query), justjoinScrapper.getScrappedData(query)]).then(res =>
         //   res.flatMap(el => el.data)
         // );
-
         await this.offersService.saveJobOffers(data);
       } else {
         data = await this.offersService.getJobOffers();
       }
 
-      await pracujScrapper.closePage();
-      await justjoinScrapper.closePage();
+      // await pracujScrapper.closePage();
+      // await justjoinScrapper.closePage();
 
       // page = await this.browser?.newPage();
       // await page?.goto("https://bot.sannysoft.com/");
