@@ -75,18 +75,23 @@ class OffersService {
 
   public async saveJobOffers(offers: JobOffer[]) {
     try {
-      const upsertOfferPromises = offers?.map(offer => {
-        const parsedOffer = OfferHelper.parseJobOfferToPrismaModel(offer);
+      if (!offers.length) return;
 
-        return this.prisma.jobOffer.upsert({
-          where: { id: offer?.id },
-          create: parsedOffer as never,
-          update: parsedOffer as never,
+      const upsertOfferPromises = offers
+        ?.filter(offer => offer?.positionName)
+        ?.map(offer => {
+          const parsedOffer = OfferHelper.parseJobOfferToPrismaModel(offer);
+
+          return this.prisma.jobOffer.upsert({
+            where: { id: offer?.id },
+            create: parsedOffer as never,
+            update: parsedOffer as never,
+          });
         });
-      });
 
       await this.prisma.$transaction(upsertOfferPromises);
-      await this.setOffersMetadata({ total: offers.length });
+      await this.setOffersMetadata({ total: offers?.length ?? 0 });
+      return;
     } catch (err) {
       throw new AppError({
         statusCode: 400,
@@ -175,8 +180,8 @@ class OfferHelper {
   public static parseJobOfferToPrismaModel(offer: JobOffer) {
     return {
       id: offer.id,
-      positionName: offer.positionName,
-      slug: offer.id,
+      positionName: offer?.positionName,
+      slug: offer?.slug ?? offer?.id,
       dataSourceCode: offer?.dataSourceCode,
       description: offer?.description,
       expirationDate: offer?.expirationDate,
@@ -191,14 +196,28 @@ class OfferHelper {
           value: el,
         })),
       },
-      salaryRange: {
-        create: offer?.salaryRange?.map(salary => ({
-          min: salary?.min,
-          max: salary?.max,
-          type: salary?.type,
-          timeUnit: salary?.timeUnit,
-        })),
-      },
+      salaryRange:
+        offer?.salaryRange && offer.salaryRange.length > 0
+          ? {
+              create: offer?.salaryRange.map(salary => ({
+                min: salary?.min,
+                max: salary?.max,
+                currency: salary?.currency,
+                type: salary?.type,
+                timeUnit: salary?.timeUnit,
+              })),
+            }
+          : undefined,
+      // salaryRange: {
+      //   create: offer?.salaryRange?.map(salary => ({
+      //     jobOfferId: offer?.id,
+      //     min: salary?.min,
+      //     max: salary?.max,
+      //     currency: salary?.currency,
+      //     type: salary?.type,
+      //     timeUnit: salary?.timeUnit,
+      //   })),
+      // },
 
       company: {
         connectOrCreate: {

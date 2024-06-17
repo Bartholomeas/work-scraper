@@ -69,13 +69,15 @@ model Workplace {
 
 model SalaryRange {
   id         String   @id @default(uuid())
-  min        Int
-  max        Int
+  min        Int      @default(0)
+  max        Int      @default(0)
   currency   String   @default("pln")
   type       String   @default("brutto")
   timeUnit   String   @default("month")
-  jobOfferId String   @unique
+  jobOfferId String
   jobOffer   JobOffer @relation(fields: [jobOfferId], references: [id])
+
+  @@index([jobOfferId])
 }
 
 model JobOffer {
