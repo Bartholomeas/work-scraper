@@ -13,7 +13,7 @@ class OffersRouter {
   getRouter() {
     const router = express.Router();
     puppeteer.use(StealthPlugin());
-    router.get("/metadata", this.offersController.checkMetadata);
+    router.get("/metadata", this.offersController.getOffersMetadata);
     router.get("/", this.offersController.getOffers);
     router.get("/:pageUrl", this.offersController.getOffers);
     return router;

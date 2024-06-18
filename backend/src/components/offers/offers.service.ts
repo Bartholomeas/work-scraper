@@ -8,6 +8,7 @@ import { PrismaInstance } from "@/components/libs/prisma.instance";
 import { ERROR_CODES } from "@/misc/error.constants";
 
 import type { JobOffer } from "shared/src/offers/offers.types";
+import { OFFERS_METADATA_ID } from "@/misc/constants";
 
 interface SetOffersMetadataProps {
   total: number;
@@ -18,6 +19,18 @@ class OffersService {
 
   constructor() {
     this.prisma = PrismaInstance.getInstance();
+  }
+
+  public async getOffersMetadata() {
+    try {
+      return await this.prisma.offersMetadata.findUnique({ where: { id: OFFERS_METADATA_ID } });
+    } catch (err) {
+      throw new AppError({
+        statusCode: 400,
+        code: ERROR_CODES.invalid_type,
+        message: JSON.stringify(err),
+      });
+    }
   }
 
   public async getJobOffers() {
@@ -104,7 +117,7 @@ class OffersService {
   private async setOffersMetadata({ total }: SetOffersMetadataProps) {
     try {
       await this.prisma.offersMetadata.upsert({
-        where: { id: "offers-metadata" },
+        where: { id: OFFERS_METADATA_ID },
         create: {
           total,
         },
@@ -125,7 +138,7 @@ class OffersService {
     try {
       const metadata = await this.prisma.offersMetadata.findUnique({
         where: {
-          id: "offers-metadata",
+          id: OFFERS_METADATA_ID,
         },
         select: {
           updatedAt: true,
@@ -151,6 +164,7 @@ type PrismaJobOffer = JobOffer & {
   technologies: { value: string }[];
   workSchedules: { value: string }[];
   positionLevels: { value: string }[];
+  offerUrls: { value: string }[];
   company?: { logoUrl: string | null; name: string };
 };
 
@@ -169,6 +183,8 @@ class OfferHelper {
         technologies: offer.technologies.map((t: { value: string }) => t.value) as JobOffer["technologies"],
         workSchedules: offer.workSchedules.map((w: { value: string }) => w.value) as JobOffer["workSchedules"],
         positionLevels: offer.positionLevels.map((p: { value: string }) => p.value) as JobOffer["positionLevels"],
+        offerUrls: offer.offerUrls.map((o: { value: string }) => o.value) as JobOffer["offerUrls"],
+        // offerUrls: offer.offerUrls.map((p: { value: string }) => p.value) as JobOffer["offerUrls"],
       };
 
       return newJobOffer;

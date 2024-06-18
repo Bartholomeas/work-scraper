@@ -7,6 +7,6 @@ const { data } = useGetOffersList();
 
 <template>
   <div class="flex flex-col gap-2" v-if="data && data?.data.length > 0">
-    <OffersSingleItem v-for="item in data?.data.slice(0, 25)" :key="item.id" :offer="item" />
+    <OffersSingleItem v-for="item in data?.data.slice(0, 15)" :key="item.id" :offer="item" />
   </div>
 </template>

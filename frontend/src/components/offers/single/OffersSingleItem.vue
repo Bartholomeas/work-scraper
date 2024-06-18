@@ -23,14 +23,14 @@ interface OffersTableRowProps {
 
 const { offer } = defineProps<OffersTableRowProps>();
 
-const minPrice = computed(() => formatPrice(offer?.salaryRange?.min, offer?.salaryRange?.currency));
-const maxPrice = computed(() => formatPrice(offer?.salaryRange?.max, offer?.salaryRange?.currency));
+const minPrice = computed(() => formatPrice(offer?.salaryRange[0]?.min, offer?.salaryRange[0]?.currency));
+const maxPrice = computed(() => formatPrice(offer?.salaryRange[0]?.max, offer?.salaryRange[0]?.currency));
 
 const salaryRangeString = computed(() =>
-  !offer?.salaryRange?.min || !offer?.salaryRange?.max
+  !offer?.salaryRange[0]?.min || !offer?.salaryRange[0]?.max
     ? undefined
-    : `${minPrice.value} - ${maxPrice.value}, ${offer?.salaryRange?.type ?? ""}` +
-      (offer?.salaryRange?.timeUnit ? ` / ${transformTimeUnitType(offer?.salaryRange?.timeUnit)}` : ""),
+    : `${minPrice.value} - ${maxPrice.value}, ${offer?.salaryRange[0]?.type ?? ""}` +
+      (offer?.salaryRange[0]?.timeUnit ? ` / ${transformTimeUnitType(offer?.salaryRange[0]?.timeUnit)}` : ""),
 );
 </script>
 
@@ -45,14 +45,14 @@ const salaryRangeString = computed(() =>
           :src="offer?.company?.logoUrl ?? ''"
           :alt="`Logo firmy ${offer?.company?.name}`"
           loading="lazy"
-          height="64"
-          width="64"
-          class="aspect-square rounded-md object-contain"
+          height="96"
+          width="96"
+          class="aspect-square rounded-md object-contain bg-white p-2"
         />
         <div class="flex flex-col">
           <h3 class="text-lg font-bold text-foreground">{{ offer?.positionName }}</h3>
           <OffersIconValueBox :icon="Building2" :value="offer?.company?.name" />
-          <OffersIconValueBox :icon="MapPin" :value="createStringFromArr(offer?.workplace)" />
+          <OffersIconValueBox :icon="MapPin" :value="createStringFromArr(offer?.workplaces)" />
           <OffersIconValueBox :icon="Calendar" :value="formatDate(offer?.expirationDate)" />
         </div>
       </div>

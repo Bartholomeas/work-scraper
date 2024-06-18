@@ -87,3 +87,9 @@ export const jobOffersResponseSchema = z.object({
   meta: paginationMetadataSchema,
   data: z.array(jobOfferSchema),
 });
+
+export const offersMetadataSchema = z.object({
+  id: z.literal("offers-metadata"),
+  updatedAt: z.string().date(),
+  total: z.number(),
+});
