@@ -32,8 +32,6 @@ const salaryRangeString = computed(() =>
     : `${minPrice.value} - ${maxPrice.value}, ${offer?.salaryRange[0]?.type ?? ""}` +
       (offer?.salaryRange[0]?.timeUnit ? ` / ${transformTimeUnitType(offer?.salaryRange[0]?.timeUnit)}` : ""),
 );
-
-console.log("XDD", offer?.offerUrls?.[0]);
 </script>
 
 <template>
@@ -47,9 +45,9 @@ console.log("XDD", offer?.offerUrls?.[0]);
           :src="offer?.company?.logoUrl ?? ''"
           :alt="`Logo firmy ${offer?.company?.name}`"
           loading="lazy"
-          height="64"
-          width="64"
-          class="aspect-square rounded-md object-contain"
+          height="96"
+          width="96"
+          class="aspect-square rounded-md object-contain bg-white p-2"
         />
         <div class="flex flex-col">
           <h3 class="text-lg font-bold text-foreground">{{ offer?.positionName }}</h3>

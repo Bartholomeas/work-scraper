@@ -3,6 +3,7 @@ backend/node_modules
 backend/prisma/migrations
 backend/prisma/*.db
 backend/**/*.db
+backend/**/**.db
 
 .env**
 public
