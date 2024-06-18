@@ -176,7 +176,6 @@ class OfferHelper {
   }
 
   public static parseJobOfferToPrismaModel(offer: JobOffer) {
-    console.log("MODEL TEGO OK", offer);
     return {
       id: offer.id,
       positionName: offer?.positionName,

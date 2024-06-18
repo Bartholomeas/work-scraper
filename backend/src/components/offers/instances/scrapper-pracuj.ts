@@ -10,7 +10,6 @@ import type { JobOfferPracuj } from "@/types/offers/pracuj.types";
 import {
   type CurrencyCodes,
   type JobOffer,
-  type JobQueryParams,
   type SalaryTypes,
   type ScrappedDataResponse,
   type TimeUnitTypes,
@@ -28,8 +27,7 @@ class ScrapperPracuj extends ScrapperBase {
     this.maxPages = 1;
   }
 
-  // public getScrappedData = async (query: JobQueryParams = {}): Promise<JobOffer[] | null> => {
-  public getScrappedData = async (query: JobQueryParams = {}): Promise<ScrappedDataResponse> => {
+  public getScrappedData = async (): Promise<ScrappedDataResponse> => {
     if (!this.page) await this.initializePage();
     // if (!this.page) return { createdAt: new Date(Date.now()).toISOString(), data: [] };
 
@@ -37,11 +35,6 @@ class ScrapperPracuj extends ScrapperBase {
       width: SCRAPPED_PAGE_WIDTH,
       height: SCRAPPED_PAGE_HEIGHT,
     });
-    const isDataOutdated = await this.isFileOutdated(`${PRACUJ_DATA_FILENAME}-standardized`);
-    if (!isDataOutdated) {
-      const savedData = await this.filesManager.readFromFile(`${PRACUJ_DATA_FILENAME}-standardized`);
-      if (savedData) return JSON.parse(savedData);
-    }
 
     const data = await this.saveScrappedData<JobOffer>({
       fileName: PRACUJ_DATA_FILENAME,

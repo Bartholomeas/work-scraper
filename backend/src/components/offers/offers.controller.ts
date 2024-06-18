@@ -70,10 +70,10 @@ class OffersController {
       let data: JobOffer[] = [];
       if (isOutdated) {
         // data = await Promise.all([pracujScrapper.getScrappedData()]).then(res => res.flatMap(el => el.data));
-        data = await Promise.all([justjoinScrapper.getScrappedData()]).then(res => res.flatMap(el => el.data));
-        // data = await Promise.all([pracujScrapper.getScrappedData(), justjoinScrapper.getScrappedData()]).then(res =>
-        //   res.flatMap(el => el.data),
-        // );
+        // data = await Promise.all([justjoinScrapper.getScrappedData()]).then(res => res.flatMap(el => el.data));
+        data = await Promise.all([pracujScrapper.getScrappedData(), justjoinScrapper.getScrappedData()]).then(res =>
+          res.flatMap(el => el.data),
+        );
         await this.offersService.saveJobOffers(data);
       } else {
         data = await this.offersService.getJobOffers();

@@ -126,7 +126,6 @@ class ScrapperJustjoin extends ScrapperBase {
         await page.evaluate(() => window.scrollBy(0, -1400));
         sameScrollHeightCount = 0;
       }
-      if (currentScrollHeight > 20000) return;
 
       scrollHeightMap.set(currentScrollHeight, (scrollHeightMap.get(currentScrollHeight) || 0) + 1);
     }
@@ -143,7 +142,6 @@ class ScrapperJustjoin extends ScrapperBase {
       const workSchedules = this.standardizeWorkSchedules(offer?.workingTime);
       const salaryRange = this.standardizeSalary(offer?.employmentTypes);
 
-      console.log("Multilokacja::: ", offer?.multilocation);
       const idHash = `${offer?.title}-${offer?.companyName}-${offer?.publishedAt}-justjoin`;
       return {
         id: generateId(idHash),

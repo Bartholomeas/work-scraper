@@ -69,27 +69,7 @@ abstract class ScrapperBase {
 
       const results = await Promise.all(pagePromises);
       const aggregatedData = results.filter(Boolean).flat() as T[];
-      // //TODO: writeToFileChunked probably is better in performance but getting errors while reading from file as it destroys structure and keeps multiple data arrays or smth like that. To check
-      // await this.filesManager.writeToFile({
-      //   data: aggregatedData,
-      //   meta: {
-      //     total: aggregatedData.length,
-      //   },
-      //   fileName: `${fileName}-data`,
-      // });
-      // await this.filesManager.writeToFile({
-      //   data: standardizedData,
-      //   meta: {
-      //     total: aggregatedData.length,
-      //   },
-      //   fileName: `${fileName}-standardized`,
-      // });
-      // return (await util
-      //   .promisify(this.standardizeData)(aggregatedData)
-      //   .catch(err => {
-      //     console.log("eror kurwa xdd", err, fileName);
-      //     return [];
-      //   })) as Awaited<Promise<JobOffer[]>>;
+
       return this.standardizeData(aggregatedData);
     } catch (err) {
       throw new AppError({
@@ -100,7 +80,6 @@ abstract class ScrapperBase {
     }
   };
 
-  // public abstract getScrappedData(query?: JobQueryParams): Promise<JobOffer[] | null>;
   public abstract getScrappedData(query?: JobQueryParams): Promise<ScrappedDataResponse>;
 
   protected abstract standardizeData(offers: unknown[]): JobOffer[];
