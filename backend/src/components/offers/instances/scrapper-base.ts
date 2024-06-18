@@ -6,6 +6,8 @@ import type { JobOffer, JobQueryParams, ScrappedDataResponse } from "@shared/off
 
 import { MINUTES_TO_OUTDATE } from "@/components/offers/helpers/offers.constants";
 import { FilesManagerController } from "@/components/files-manager/files-manager.controller";
+import { AppError } from "@/utils/app-error";
+import { ERROR_CODES } from "@/misc/error.constants";
 
 interface SaveScrappedDataToFileProps<T> {
   fileName: string;
@@ -57,39 +59,45 @@ abstract class ScrapperBase {
   };
 
   protected saveScrappedData = async <T extends object>({ fileName }: SaveScrappedDataToFileProps<T>): Promise<JobOffer[] | null> => {
-    const pagePromises: Promise<T[] | undefined>[] = [];
-    this.maxPages = await this.getMaxPages();
-
-    for (let pageNum = 1; pageNum <= this.maxPages; pageNum++) {
-      pagePromises.push(this.scrapePage<T>(pageNum));
-    }
-
-    const results = await Promise.all(pagePromises);
-    const aggregatedData = results.filter(Boolean).flat() as T[];
-    const standardizedData = this.standardizeData(aggregatedData);
-
     try {
-      //TODO: writeToFileChunked probably is better in performance but getting errors while reading from file as it destroys structure and keeps multiple data arrays or smth like that. To check
-      await this.filesManager.writeToFile({
-        data: aggregatedData,
-        meta: {
-          total: aggregatedData.length,
-        },
-        fileName: `${fileName}-data`,
-      }),
-        await this.filesManager.writeToFile({
-          data: standardizedData,
-          meta: {
-            total: aggregatedData.length,
-          },
-          fileName: `${fileName}-standardized`,
-        });
+      const pagePromises: Promise<T[] | undefined>[] = [];
+      this.maxPages = await this.getMaxPages();
+
+      for (let pageNum = 1; pageNum <= this.maxPages; pageNum++) {
+        pagePromises.push(this.scrapePage<T>(pageNum));
+      }
+
+      const results = await Promise.all(pagePromises);
+      const aggregatedData = results.filter(Boolean).flat() as T[];
+      // //TODO: writeToFileChunked probably is better in performance but getting errors while reading from file as it destroys structure and keeps multiple data arrays or smth like that. To check
+      // await this.filesManager.writeToFile({
+      //   data: aggregatedData,
+      //   meta: {
+      //     total: aggregatedData.length,
+      //   },
+      //   fileName: `${fileName}-data`,
+      // });
+      // await this.filesManager.writeToFile({
+      //   data: standardizedData,
+      //   meta: {
+      //     total: aggregatedData.length,
+      //   },
+      //   fileName: `${fileName}-standardized`,
+      // });
+      // return (await util
+      //   .promisify(this.standardizeData)(aggregatedData)
+      //   .catch(err => {
+      //     console.log("eror kurwa xdd", err, fileName);
+      //     return [];
+      //   })) as Awaited<Promise<JobOffer[]>>;
+      return this.standardizeData(aggregatedData);
     } catch (err) {
-      console.error("Error saving files", err);
-    } finally {
-      // await this.page?.close();
+      throw new AppError({
+        statusCode: 400,
+        code: ERROR_CODES.invalid_data,
+        message: `SaveScrappedData: ${JSON.stringify(err)}`,
+      });
     }
-    return standardizedData;
   };
 
   // public abstract getScrappedData(query?: JobQueryParams): Promise<JobOffer[] | null>;

@@ -8,7 +8,6 @@ import { JUSTJOIN_DATA_FILENAME } from "@/components/offers/helpers/offers.const
 
 import type { JobOffer, ScrappedDataResponse } from "shared/src/offers/offers.types";
 import type { JobOfferJustjoin } from "@/types/offers/justjoin.types";
-import { generateJobOfferSlug } from "@/utils/generate-job-offer-slug";
 
 const VIEWPORT_WIDTH = 800;
 const VIEWPORT_HEIGHT = 980;
@@ -24,12 +23,6 @@ class ScrapperJustjoin extends ScrapperBase {
   public getScrappedData = async (): Promise<ScrappedDataResponse> => {
     if (!this.page) await this.initializePage();
 
-    // const isDataOutdated = await this.isFileOutdated(`${JUSTJOIN_DATA_FILENAME}-standardized`);
-    // if (!isDataOutdated) {
-    //   const savedData = await this.filesManager.readFromFile(`${JUSTJOIN_DATA_FILENAME}-standardized`);
-    //   if (savedData) return JSON.parse(savedData);
-    // }
-
     const data = await this.saveScrappedData<JobOffer>({
       fileName: JUSTJOIN_DATA_FILENAME,
     });
@@ -38,7 +31,7 @@ class ScrapperJustjoin extends ScrapperBase {
   };
 
   protected async scrapePage<T>(pageNumber: number): Promise<T[] | undefined> {
-    const page = this.page ?? (await this?.browser?.newPage());
+    const page = this.page ?? (await this.browser?.newPage());
     if (!page) return;
 
     try {
@@ -46,7 +39,7 @@ class ScrapperJustjoin extends ScrapperBase {
         width: VIEWPORT_WIDTH,
         height: VIEWPORT_HEIGHT,
       });
-      // this.listenForDataRequest(page);
+
       const offers: T[] = [];
 
       page.on("response", async response => {
@@ -68,7 +61,6 @@ class ScrapperJustjoin extends ScrapperBase {
 
       await page.goto(this.url, { waitUntil: "networkidle2" });
 
-      // Its Client-Side cookie consent, so in headless mode it doesnt exist
       await page
         .waitForSelector("#cookiescript_accept", {
           timeout: 10000,
@@ -87,63 +79,63 @@ class ScrapperJustjoin extends ScrapperBase {
       });
 
       await this.scrollToEndOfPage(page);
-      console.log("CONTENT OK", content.length);
-      // await page.close();
       return [content?.props?.pageProps?.dehydratedState?.queries?.[0]?.state?.data?.pages?.[0]?.data, ...offers] as T[];
     } catch (err) {
       console.error(`Error processing page ${pageNumber}:`, err);
-      // await page.close();
       return;
     } finally {
-      if (page) await page.close();
+      if (page && !this.page) await page.close();
     }
   }
 
   private async scrollToEndOfPage(page: Page) {
     if (!page) return null;
 
-    let footerExist = false;
-    let prevScrollHeight = ((await this.page?.evaluate("document.body.scrollHeight")) as number) ?? 0;
+    const footerExist = false;
+    let prevScrollHeight = (await page.evaluate(() => document.body.scrollHeight)) as number;
     let currentScrollHeight: number = prevScrollHeight;
 
     const scrollHeightMap = new Map<number, number>();
     let sameScrollHeightCount = 0;
 
-    const wait = (duration = 30) => new Promise(resolve => setTimeout(resolve, duration));
+    const wait = (duration = 100) => new Promise(resolve => setTimeout(resolve, duration));
 
-    while (!footerExist) {
-      await page.evaluate(() => window.scrollBy(0, 980));
-
-      footerExist = await page.evaluate(() => {
+    const isFooterVisible = async () => {
+      return await page.evaluate(() => {
         const footer = document.querySelector("footer");
-        return Boolean(footer);
+        return footer && footer.getBoundingClientRect().top < window.innerHeight;
       });
+    };
 
-      await wait();
-      currentScrollHeight = await page.evaluate((): number => document.body.scrollHeight ?? 0);
+    while (!(await isFooterVisible())) {
+      await page.evaluate(() => window.scrollBy(0, 960));
+      await wait(100);
+
+      currentScrollHeight = await page.evaluate(() => document.body.scrollHeight ?? 0);
       console.log({ prevScrollHeight, currentScrollHeight });
-      if (currentScrollHeight >= 15000) return true;
 
-      if (scrollHeightMap.has(currentScrollHeight)) {
-        sameScrollHeightCount = (scrollHeightMap.get(currentScrollHeight) || 0) + 1;
-        scrollHeightMap.set(currentScrollHeight, sameScrollHeightCount);
+      if (currentScrollHeight > prevScrollHeight) {
+        prevScrollHeight = currentScrollHeight;
+        sameScrollHeightCount = 0;
       } else {
-        sameScrollHeightCount = 1;
-        scrollHeightMap.set(currentScrollHeight, 1);
+        sameScrollHeightCount += 1;
       }
 
-      if (sameScrollHeightCount > 1) {
+      if (sameScrollHeightCount > 3) {
         console.log("Scrolling has been stuck!");
-        await page.evaluate(() => document.body.scrollBy(0, -1860));
+        await page.evaluate(() => window.scrollBy(0, -1400));
         sameScrollHeightCount = 0;
       }
+      if (currentScrollHeight > 20000) return;
 
-      prevScrollHeight += 980;
+      scrollHeightMap.set(currentScrollHeight, (scrollHeightMap.get(currentScrollHeight) || 0) + 1);
     }
+
+    console.log("Footer found or end of page reached.");
   }
 
-  protected standardizeData(offers: JobOfferJustjoin[]): JobOffer[] {
-    if (!offers || !offers?.length) return [];
+  protected standardizeData = (offers: JobOfferJustjoin[]): JobOffer[] => {
+    if (!offers || !offers.length) return [];
     return offers.map((offer): JobOffer => {
       const positionLevels = this.standardizePositionLevels(offer?.experienceLevel);
       const contractTypes = this.standardizeContractTypes(offer?.employmentTypes);
@@ -151,8 +143,9 @@ class ScrapperJustjoin extends ScrapperBase {
       const workSchedules = this.standardizeWorkSchedules(offer?.workingTime);
       const salaryRange = this.standardizeSalary(offer?.employmentTypes);
 
+      console.log("Multilokacja::: ", offer?.multilocation);
       const idHash = `${offer?.title}-${offer?.companyName}-${offer?.publishedAt}-justjoin`;
-      const parsedOffer = {
+      return {
         id: generateId(idHash),
         dataSourceCode: "justjoin",
         slug: offer?.slug,
@@ -171,25 +164,29 @@ class ScrapperJustjoin extends ScrapperBase {
         createdAt: offer?.publishedAt,
         expirationDate: undefined,
         offerUrls: offer?.multilocation?.map(loc => `https://justjoin.it/offers/${loc?.slug}`),
-        workplaces: offer?.multilocation?.map(place => `${place.city}, ${place.street}`),
+        workplaces: offer?.multilocation?.map(place => {
+          let workplaceString = "";
+          if (place?.city) workplaceString += place.city;
+          if (place?.street) workplaceString += ` ${place.street}`;
+          return workplaceString;
+        }),
       } satisfies JobOffer;
-
-      return { ...parsedOffer, slug: generateJobOfferSlug(parsedOffer) } as JobOffer;
+      // return { ...parsedOffer, slug: generateJobOfferSlug(parsedOffer) } as JobOffer;
     });
-  }
+  };
 
-  private standardizeSalary = (salary: JobOfferJustjoin["employmentTypes"] | undefined): JobOffer["salaryRange"] => {
+  private standardizeSalary(salary: JobOfferJustjoin["employmentTypes"] | undefined): JobOffer["salaryRange"] {
     if (!salary) return [];
 
-    const min = salary.reduce((acc, curr): number => {
-      if (!acc) return curr?.from ?? 0;
-      return curr?.from && curr.from < acc ? curr?.from : acc;
+    const min = salary.reduce((acc, curr) => {
+      if (!acc) return curr.from ?? 0;
+      return curr.from && curr.from < acc ? curr.from : acc;
     }, 0);
-    const max = salary.reduce((acc, curr) => (curr?.to && curr.to > acc ? curr?.to : acc), 0);
+    const max = salary.reduce((acc, curr) => (curr.to && curr.to > acc ? curr.to : acc), 0);
     if (!min || !max) return [];
 
-    const type = salary?.[0].gross ? "brutto" : "netto";
-    const currency = (salary?.[0].currency ?? "pln") as "pln" | "usd";
+    const type = salary[0].gross ? "brutto" : "netto";
+    const currency = (salary[0].currency ?? "pln") as "pln" | "usd";
 
     return [
       {
@@ -200,14 +197,14 @@ class ScrapperJustjoin extends ScrapperBase {
         timeUnit: "month",
       },
     ];
-  };
+  }
 
-  standardizeContractTypes = (types: JobOfferJustjoin["employmentTypes"] | undefined): JobOffer["contractTypes"] => {
+  protected standardizeContractTypes(types: JobOfferJustjoin["employmentTypes"] | undefined): JobOffer["contractTypes"] {
     if (!types || !types.length) return [];
 
-    const standardizedTypes = types?.reduce(
+    const standardizedTypes = types.reduce(
       (acc, _type) => {
-        const type = _type?.type?.toLowerCase();
+        const type = _type.type.toLowerCase();
 
         switch (type) {
           case "b2b":
@@ -236,9 +233,9 @@ class ScrapperJustjoin extends ScrapperBase {
 
     if (isContractTypesArr(standardizedTypes)) return standardizedTypes;
     else return [];
-  };
+  }
 
-  standardizeWorkModes = (mode: JobOfferJustjoin["workplaceType"]): JobOffer["workModes"] => {
+  private standardizeWorkModes(mode: JobOfferJustjoin["workplaceType"]): JobOffer["workModes"] {
     switch (mode) {
       case "remote":
         return ["remote"];
@@ -249,9 +246,9 @@ class ScrapperJustjoin extends ScrapperBase {
       default:
         return [];
     }
-  };
+  }
 
-  standardizePositionLevels = (level: JobOfferJustjoin["experienceLevel"] | undefined): JobOffer["positionLevels"] => {
+  private standardizePositionLevels(level: JobOfferJustjoin["experienceLevel"] | undefined): JobOffer["positionLevels"] {
     switch (level) {
       case "junior":
         return ["junior"];
@@ -264,9 +261,9 @@ class ScrapperJustjoin extends ScrapperBase {
       default:
         return ["junior"];
     }
-  };
+  }
 
-  standardizeWorkSchedules = (schedule: JobOfferJustjoin["workingTime"] | undefined): JobOffer["workSchedules"] => {
+  private standardizeWorkSchedules(schedule: JobOfferJustjoin["workingTime"] | undefined): JobOffer["workSchedules"] {
     switch (schedule) {
       case "full_time":
         return ["full-time"];
@@ -279,19 +276,10 @@ class ScrapperJustjoin extends ScrapperBase {
       default:
         return ["full-time"];
     }
-  };
+  }
 
   protected async getMaxPages() {
     if (!this.page) return 1;
-
-    // // TODO: Uncomment that, added low pages to prevent overload
-    // const maxPagesElement = await this.page.$('span[data-test="top-pagination-max-page-number"]');
-    // let maxPagesValue = "1";
-    // if (maxPagesElement) {
-    //   const textContent = await this.page.evaluate(el => el?.textContent, maxPagesElement);
-    //   if (textContent) maxPagesValue = textContent ?? "1";
-    // }
-    // return parseInt(maxPagesValue);
     return 1;
   }
 }

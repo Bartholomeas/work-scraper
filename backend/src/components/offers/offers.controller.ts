@@ -71,16 +71,18 @@ class OffersController {
       if (isOutdated) {
         // data = await Promise.all([pracujScrapper.getScrappedData()]).then(res => res.flatMap(el => el.data));
         data = await Promise.all([justjoinScrapper.getScrappedData()]).then(res => res.flatMap(el => el.data));
-        // const data = await Promise.all([pracujScrapper.getScrappedData(query), justjoinScrapper.getScrappedData(query)]).then(res =>
-        //   res.flatMap(el => el.data)
+        // data = await Promise.all([pracujScrapper.getScrappedData(), justjoinScrapper.getScrappedData()]).then(res =>
+        //   res.flatMap(el => el.data),
         // );
         await this.offersService.saveJobOffers(data);
       } else {
         data = await this.offersService.getJobOffers();
       }
-
       // await pracujScrapper.closePage();
       // await justjoinScrapper.closePage();
+
+      await this.closeBrowser();
+      this.browser = undefined;
 
       // page = await this.browser?.newPage();
       // await page?.goto("https://bot.sannysoft.com/");
