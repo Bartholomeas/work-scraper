@@ -6,6 +6,7 @@ import {
   dataSourceCodesSchema,
   jobOfferSchema,
   jobOffersResponseSchema,
+  offersMetadataSchema,
   type offersQueryParameters,
   positionLevelsSchema,
   salaryTypeSchema,
@@ -37,3 +38,4 @@ export interface ScrappedDataResponse<T extends JobOffer[] = JobOffer[]> {
 }
 
 export type OffersQueryParams = z.infer<typeof offersQueryParameters>;
+export type OffersMetadataResponse = z.infer<typeof offersMetadataSchema>;

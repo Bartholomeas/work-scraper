@@ -36,7 +36,28 @@ class OffersController {
       const isOutdated = await this.offersService.checkDataIsOutdated();
       res.status(200).json({ isOutdated });
     } catch (err) {
-      console.log("checkMetadata err: ", err);
+      next(
+        new AppError({
+          statusCode: 500,
+          code: ERROR_CODES.internal_error,
+          message: JSON.stringify(err),
+        }),
+      );
+    }
+  };
+
+  public getOffersMetadata = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const data = await this.offersService.getOffersMetadata();
+      res.status(200).json(data);
+    } catch (err) {
+      next(
+        new AppError({
+          statusCode: 400,
+          code: ERROR_CODES.invalid_type,
+          message: JSON.stringify(err),
+        }),
+      );
     }
   };
 
