@@ -12,7 +12,7 @@ export const generateJobOfferSlug = (offer: JobOffer | undefined, additionalKeys
   if (!offer) return "";
   const slugKeys = [
     offer?.positionName,
-    offer?.company.name,
+    offer?.company?.name,
     (offer?.workplaces ?? []).join(" "),
     (offer?.positionLevels ?? []).join(" "),
     (offer?.technologies ?? []).join(" "),

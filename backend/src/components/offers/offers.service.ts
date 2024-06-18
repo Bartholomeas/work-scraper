@@ -161,7 +161,6 @@ class OfferHelper {
 
   public static parsePrismaToJobOffer<T extends PrismaJobOffer>(prismaOffers: T[]): JobOffer[] {
     return prismaOffers?.map(offer => {
-      // const newJobOffer: unknown = offer;
       const newJobOffer: JobOffer = {
         ...offer,
         workplaces: offer.workplaces.map((w: { value: string }) => w.value),
@@ -172,7 +171,6 @@ class OfferHelper {
         positionLevels: offer.positionLevels.map((p: { value: string }) => p.value) as JobOffer["positionLevels"],
       };
 
-      // return jobOfferSchema.parse(newJobOffer);
       return newJobOffer;
     });
   }
@@ -192,7 +190,7 @@ class OfferHelper {
       workSchedules: connectOrCreateArray(offer?.workSchedules),
       technologies: connectOrCreateArray(offer?.technologies),
       offerUrls: {
-        create: offer?.offerUrls.map(el => ({
+        create: offer?.offerUrls?.map(el => ({
           value: el,
         })),
       },
@@ -208,16 +206,6 @@ class OfferHelper {
               })),
             }
           : undefined,
-      // salaryRange: {
-      //   create: offer?.salaryRange?.map(salary => ({
-      //     jobOfferId: offer?.id,
-      //     min: salary?.min,
-      //     max: salary?.max,
-      //     currency: salary?.currency,
-      //     type: salary?.type,
-      //     timeUnit: salary?.timeUnit,
-      //   })),
-      // },
 
       company: {
         connectOrCreate: {

@@ -1,9 +1,5 @@
 export const connectOrCreateArray = (values: string[] | undefined) => {
-  if (!Array.isArray(values)) {
-    return {
-      create: [],
-    };
-  }
+  if (!Array.isArray(values)) return {};
 
   return {
     connectOrCreate: values?.map(_value => {

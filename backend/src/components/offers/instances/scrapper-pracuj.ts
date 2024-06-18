@@ -10,7 +10,6 @@ import type { JobOfferPracuj } from "@/types/offers/pracuj.types";
 import {
   type CurrencyCodes,
   type JobOffer,
-  type JobQueryParams,
   type SalaryTypes,
   type ScrappedDataResponse,
   type TimeUnitTypes,
@@ -28,8 +27,7 @@ class ScrapperPracuj extends ScrapperBase {
     this.maxPages = 1;
   }
 
-  // public getScrappedData = async (query: JobQueryParams = {}): Promise<JobOffer[] | null> => {
-  public getScrappedData = async (query: JobQueryParams = {}): Promise<ScrappedDataResponse> => {
+  public getScrappedData = async (): Promise<ScrappedDataResponse> => {
     if (!this.page) await this.initializePage();
     // if (!this.page) return { createdAt: new Date(Date.now()).toISOString(), data: [] };
 
@@ -37,11 +35,6 @@ class ScrapperPracuj extends ScrapperBase {
       width: SCRAPPED_PAGE_WIDTH,
       height: SCRAPPED_PAGE_HEIGHT,
     });
-    const isDataOutdated = await this.isFileOutdated(`${PRACUJ_DATA_FILENAME}-standardized`);
-    if (!isDataOutdated) {
-      const savedData = await this.filesManager.readFromFile(`${PRACUJ_DATA_FILENAME}-standardized`);
-      if (savedData) return JSON.parse(savedData);
-    }
 
     const data = await this.saveScrappedData<JobOffer>({
       fileName: PRACUJ_DATA_FILENAME,
@@ -112,14 +105,14 @@ class ScrapperPracuj extends ScrapperBase {
     if (!this.page) return 1;
 
     // // TODO: Uncomment that, added low pages to prevent overload
-    // const maxPagesElement = await this.page.$('span[data-test="top-pagination-max-page-number"]');
-    // let maxPagesValue = "1";
-    // if (maxPagesElement) {
-    //   const textContent = await this.page.evaluate(el => el?.textContent, maxPagesElement);
-    //   if (textContent) maxPagesValue = textContent ?? "1";
-    // }
-    // return parseInt(maxPagesValue);
-    return 10;
+    const maxPagesElement = await this.page.$('span[data-test="top-pagination-max-page-number"]');
+    let maxPagesValue = "1";
+    if (maxPagesElement) {
+      const textContent = await this.page.evaluate(el => el?.textContent, maxPagesElement);
+      if (textContent) maxPagesValue = textContent ?? "1";
+    }
+    return parseInt(maxPagesValue);
+    // return 10;
   }
 
   private transformSalaryTimeUnit = (val: string): TimeUnitTypes => {
@@ -212,7 +205,7 @@ class ScrapperPracuj extends ScrapperBase {
     else return [];
   };
   standardizePositionLevels = (levels: JobOfferPracuj["positionLevels"] | undefined): JobOffer["positionLevels"] => {
-    if (!levels || !levels.length) return [];
+    if (!Array.isArray(levels) || !levels?.length) return ["junior"];
 
     const standardizedLevels = levels.reduce(
       (acc, _level) => {
@@ -227,7 +220,7 @@ class ScrapperPracuj extends ScrapperBase {
     );
 
     if (isWorkPositionLevelsArr(standardizedLevels)) return standardizedLevels;
-    else return [];
+    else return ["junior"];
   };
 }
 
