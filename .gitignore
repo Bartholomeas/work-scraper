@@ -4,6 +4,7 @@ backend/prisma/migrations
 backend/prisma/*.db
 backend/**/*.db
 backend/**/**.db
+**.db
 
 .env**
 public
