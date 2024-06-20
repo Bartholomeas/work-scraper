@@ -92,7 +92,7 @@ class OffersController {
       if (isOutdated) {
         // data = await Promise.all([pracujScrapper.getScrappedData()]).then(res => res.flatMap(el => el.data));
         // data = await Promise.all([justjoinScrapper.getScrappedData()]).then(res => res.flatMap(el => el.data));
-        data = await Promise.all([pracujScrapper.getScrappedData(), justjoinScrapper.getScrappedData()]).then(res =>
+        data = await Promise.all([justjoinScrapper.getScrappedData(), pracujScrapper.getScrappedData()]).then(res =>
           res.flatMap(el => el.data),
         );
         await this.offersService.saveJobOffers(data);
@@ -139,16 +139,6 @@ class OffersController {
       }
       return categories && Array.isArray(categories) && categories.some(el => job.technologies?.includes(el.toLowerCase()));
     });
-    // const asyncFilter = promisify((arr: JobOffer[]) => {
-    //   arr.filter(job => {
-    //     if (search) {
-    //       if (job.positionName.toLowerCase().includes(search.toLowerCase())) return true;
-    //       else if (job.description?.toLowerCase().includes(search.toLowerCase())) return true;
-    //       else if (job.technologies?.some(cat => cat.includes(search.toLowerCase()))) return true;
-    //     }
-    //     return !!(categories && Array.isArray(categories) && categories.every(el => job.technologies.includes(el.toLowerCase())));
-    //   });
-    // });
   };
 
   private initBrowser = async () => {

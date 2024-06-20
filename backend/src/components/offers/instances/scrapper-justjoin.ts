@@ -63,14 +63,14 @@ class ScrapperJustjoin extends ScrapperBase {
 
       await page
         .waitForSelector("#cookiescript_accept", {
-          timeout: 10000,
+          timeout: 5000,
         })
         .then(async () => {
           await page.click("#cookiescript_accept");
           console.log("Clicked cookie consent");
         })
         .catch(err => {
-          console.log("Cookie consent cannot be clickable", err);
+          console.log("Cookie consent cannot be clicked", err);
         });
 
       const content = await page.evaluate(() => {

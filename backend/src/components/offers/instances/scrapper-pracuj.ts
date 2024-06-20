@@ -14,7 +14,8 @@ import {
   type ScrappedDataResponse,
   type TimeUnitTypes,
 } from "shared/src/offers/offers.types";
-import { generateJobOfferSlug } from "@/utils/generate-job-offer-slug";
+import { AppError } from "@/utils/app-error";
+import { ERROR_CODES } from "@/misc/error.constants";
 
 const SCRAPPED_PAGE_WIDTH = 1200;
 const SCRAPPED_PAGE_HEIGHT = 980;
@@ -29,7 +30,7 @@ class ScrapperPracuj extends ScrapperBase {
 
   public getScrappedData = async (): Promise<ScrappedDataResponse> => {
     if (!this.page) await this.initializePage();
-    // if (!this.page) return { createdAt: new Date(Date.now()).toISOString(), data: [] };
+    if (!this.page) return { createdAt: new Date(Date.now()).toISOString(), data: [] };
 
     await this.page?.setViewport({
       width: SCRAPPED_PAGE_WIDTH,
@@ -44,7 +45,7 @@ class ScrapperPracuj extends ScrapperBase {
 
   protected standardizeData(offers: JobOfferPracuj[]): JobOffer[] {
     if (!offers || !offers?.length) return [];
-    return offers.map((offer): JobOffer => {
+    return offers?.map((offer): JobOffer => {
       const positionLevels = this.standardizePositionLevels(offer?.positionLevels);
       const contractTypes = this.standardizeContractTypes(offer?.typesOfContract);
       const workSchedules = this.standardizeWorkSchedules(offer?.workSchedules);
@@ -74,36 +75,62 @@ class ScrapperPracuj extends ScrapperBase {
         workplaces: offer?.offers?.map(place => place?.displayWorkplace),
       } satisfies JobOffer;
 
-      return { ...parsedOffer, slug: generateJobOfferSlug(parsedOffer) } as JobOffer;
+      return parsedOffer;
+      // return { ...parsedOffer, slug: generateJobOfferSlug(parsedOffer) } as JobOffer;
     });
   }
 
+  // private async acceptCookieConsent(page: Page | undefined): Promise<void> {
+  //   if (!page) return;
+  //   try {
+  //     await page.waitForSelector('[data-test="button-submitCookie"]', { timeout: 5000 });
+  //     await page.click('[data-test="button-submitCookie"]');
+  //   } catch (err) {
+  //     console.log("Cannot press cookie consent.");
+  //   }
+  // }
+
   // Abstract class from ScrapperBase which is used inside base instance in saveScrappedDataToFile
-  protected scrapePage = async <T>(pageNumber: number): Promise<T[] | undefined> => {
-    const page = await this?.browser?.newPage();
-    if (!page) return;
+  protected scrapePage = async <T>(pageNumber: number, retries = 3): Promise<T[] | undefined> => {
+    const page = await this.browser?.newPage();
+    if (!page) return [];
 
     try {
       await page.goto(`${this.url}?pn=${pageNumber}`, { waitUntil: "networkidle2" });
+      // await this.acceptCookieConsent(page).catch(err => {
+      //   console.log("Cannot accept cookie consent: ", err);
+      //   return undefined;
+      // });
+
+      await page
+        .waitForSelector('script[id="__NEXT_DATA__"]', {
+          timeout: 10000,
+        })
+        .catch(err => {
+          console.log("Pracuj nextdata wait error: ", err);
+          return undefined;
+        });
 
       const content = await page.evaluate(() => {
         const scriptTag = document.querySelector('script[id="__NEXT_DATA__"]');
         return scriptTag ? JSON.parse(scriptTag.innerHTML) : undefined;
       });
-
-      await page.close();
       if (content) return content.props.pageProps.data.jobOffers.groupedOffers as T[];
-      return;
+      return [];
     } catch (err) {
-      console.error(`Error processing page ${pageNumber}:`, err);
+      if (retries > 0) return this.scrapePage<T>(pageNumber, retries - 1);
+      throw new AppError({
+        statusCode: 500,
+        code: ERROR_CODES.internal_error,
+        message: `scrapePage: ${JSON.stringify(err)}`,
+      });
+    } finally {
       await page.close();
-      return;
     }
   };
 
   protected async getMaxPages() {
     if (!this.page) return 1;
-
     // // TODO: Uncomment that, added low pages to prevent overload
     const maxPagesElement = await this.page.$('span[data-test="top-pagination-max-page-number"]');
     let maxPagesValue = "1";
@@ -112,7 +139,7 @@ class ScrapperPracuj extends ScrapperBase {
       if (textContent) maxPagesValue = textContent ?? "1";
     }
     return parseInt(maxPagesValue);
-    // return 10;
+    // return 15;
   }
 
   private transformSalaryTimeUnit = (val: string): TimeUnitTypes => {
