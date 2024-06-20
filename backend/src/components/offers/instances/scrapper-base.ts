@@ -59,6 +59,8 @@ abstract class ScrapperBase {
   };
 
   protected saveScrappedData = async <T extends object>({ fileName }: SaveScrappedDataToFileProps<T>): Promise<JobOffer[] | null> => {
+    let resultData: JobOffer[];
+
     try {
       const pagePromises: Promise<T[] | undefined>[] = [];
       this.maxPages = await this.getMaxPages();
@@ -67,10 +69,22 @@ abstract class ScrapperBase {
         pagePromises.push(this.scrapePage<T>(pageNum));
       }
 
-      const results = await Promise.all(pagePromises);
-      const aggregatedData = results.filter(Boolean).flat() as T[];
+      const XD = await Promise.allSettled(pagePromises);
 
-      return this.standardizeData(aggregatedData);
+      XD?.forEach((el, index) => {
+        console.log(el.status, index, { el });
+      });
+
+      const results = await Promise.all(pagePromises).catch(err => {
+        console.log(" PromiseALL ERROR:", err);
+        return [];
+      });
+      // await this.filesManager.writeToFileChunked({
+      //   data: results,
+      //   fileName: "TESTOWY",
+      // });
+      const aggregatedData = results.filter(Boolean).flat() as T[];
+      resultData = this.standardizeData(aggregatedData);
     } catch (err) {
       throw new AppError({
         statusCode: 400,
@@ -78,6 +92,7 @@ abstract class ScrapperBase {
         message: `SaveScrappedData: ${JSON.stringify(err)}`,
       });
     }
+    return resultData;
   };
 
   public abstract getScrappedData(query?: JobQueryParams): Promise<ScrappedDataResponse>;
