@@ -69,21 +69,15 @@ abstract class ScrapperBase {
         pagePromises.push(this.scrapePage<T>(pageNum));
       }
 
-      const XD = await Promise.allSettled(pagePromises);
-
-      XD?.forEach((el, index) => {
-        console.log(el.status, index, { el });
-      });
-
-      const results = await Promise.all(pagePromises).catch(err => {
-        console.log(" PromiseALL ERROR:", err);
-        return [];
-      });
-      // await this.filesManager.writeToFileChunked({
-      //   data: results,
-      //   fileName: "TESTOWY",
-      // });
-      const aggregatedData = results.filter(Boolean).flat() as T[];
+      // const results = await Promise.allSettled(pagePromises).then(results =>
+      //   results
+      //     .filter(el => el.status === "fulfilled")
+      //     .map(el => {
+      //       if ("value" in el) return el.value;
+      //     }),
+      // );
+      const results = await Promise.all(pagePromises);
+      const aggregatedData = results.flat() as T[];
       resultData = this.standardizeData(aggregatedData);
     } catch (err) {
       throw new AppError({

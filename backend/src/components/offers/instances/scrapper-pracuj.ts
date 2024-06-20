@@ -1,4 +1,4 @@
-import { type Browser, type Page } from "puppeteer";
+import { type Browser } from "puppeteer";
 
 import { generateId } from "@/utils/generate-id";
 
@@ -62,19 +62,17 @@ class ScrapperPracuj extends ScrapperBase {
           logoUrl: offer?.companyLogoUri,
           name: offer?.companyName,
         },
-        positionLevels: [],
-        contractTypes: [],
-        workModes: [],
-        workSchedules: [],
+        positionLevels,
+        contractTypes,
+        workModes,
+        workSchedules,
         salaryRange,
         technologies: offer?.technologies,
         description: offer?.jobDescription,
         createdAt: offer?.lastPublicated,
         expirationDate: offer?.expirationDate,
-        offerUrls: [],
-        workplaces: [],
-        // offerUrls: offer?.offers?.map(url => url?.offerAbsoluteUri),
-        // workplaces: offer?.offers?.map(place => place?.displayWorkplace),
+        offerUrls: offer?.offers?.map(url => url?.offerAbsoluteUri),
+        workplaces: offer?.offers?.map(place => place?.displayWorkplace),
       } satisfies JobOffer;
 
       return parsedOffer;
@@ -82,15 +80,15 @@ class ScrapperPracuj extends ScrapperBase {
     });
   }
 
-  private async acceptCookieConsent(page: Page | undefined): Promise<void> {
-    if (!page) return;
-    try {
-      await page.waitForSelector('[data-test="button-submitCookie"]', { timeout: 5000 });
-      await page.click('[data-test="button-submitCookie"]');
-    } catch (err) {
-      console.log("Cannot press cookie consent.");
-    }
-  }
+  // private async acceptCookieConsent(page: Page | undefined): Promise<void> {
+  //   if (!page) return;
+  //   try {
+  //     await page.waitForSelector('[data-test="button-submitCookie"]', { timeout: 5000 });
+  //     await page.click('[data-test="button-submitCookie"]');
+  //   } catch (err) {
+  //     console.log("Cannot press cookie consent.");
+  //   }
+  // }
 
   // Abstract class from ScrapperBase which is used inside base instance in saveScrappedDataToFile
   protected scrapePage = async <T>(pageNumber: number, retries = 3): Promise<T[] | undefined> => {
@@ -99,14 +97,14 @@ class ScrapperPracuj extends ScrapperBase {
 
     try {
       await page.goto(`${this.url}?pn=${pageNumber}`, { waitUntil: "networkidle2" });
-      await this.acceptCookieConsent(page).catch(err => {
-        console.log("Cannot accept cookie consent: ", err);
-        return undefined;
-      });
+      // await this.acceptCookieConsent(page).catch(err => {
+      //   console.log("Cannot accept cookie consent: ", err);
+      //   return undefined;
+      // });
 
       await page
         .waitForSelector('script[id="__NEXT_DATA__"]', {
-          timeout: 20000,
+          timeout: 10000,
         })
         .catch(err => {
           console.log("Pracuj nextdata wait error: ", err);
