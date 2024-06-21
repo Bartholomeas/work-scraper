@@ -78,17 +78,19 @@ export const offerTechCategories = z.union([
   z.literal("ruby on rails"),
 ]);
 
+const stringToArray = (val: unknown) => (typeof val === "string" ? val.split(",").map(v => v.trim()) : val);
+
 export const offersQueryParameters = z
   .object({
     search: z.string().optional(),
-    categories: z.array(offerTechCategories).optional(),
     orderBy: z.enum(["createdAt", "expirationDate", "salary"]).default("createdAt"),
     sortOrder: z.enum(["asc", "desc"]).default("desc"),
-    positionLevels: z.array(positionLevelsSchema).optional(),
-    contractTypes: z.array(contractTypeCodesSchema).optional(),
-    workModes: z.array(workModesSchema).optional(),
-    workSchedulesSchema: z.array(workSchedulesSchema).optional(),
-    dataSource: z.array(dataSourceCodesSchema).optional(),
+    categories: z.preprocess(stringToArray, z.array(offerTechCategories)).optional(),
+    positionLevels: z.preprocess(stringToArray, z.array(positionLevelsSchema)).optional(),
+    contractTypes: z.preprocess(stringToArray, z.array(contractTypeCodesSchema)).optional(),
+    workModes: z.preprocess(stringToArray, z.array(workModesSchema)).optional(),
+    workSchedules: z.preprocess(stringToArray, z.array(workSchedulesSchema)).optional(),
+    dataSources: z.preprocess(stringToArray, z.array(dataSourceCodesSchema)).optional(),
   })
   .extend(paginationSchema.shape)
   .strip();

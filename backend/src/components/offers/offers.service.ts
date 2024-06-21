@@ -41,6 +41,11 @@ class OffersService {
         where: {
           ...OfferHelper.getSearchConditions(params?.search),
           ...OfferHelper.getCategoriesConditions(params?.categories),
+          ...OfferHelper.getPositionLevelsConditions(params?.positionLevels),
+          ...OfferHelper.getContractTypesConditions(params?.contractTypes),
+          ...OfferHelper.getWorkModesConditions(params?.workModes),
+          ...OfferHelper.getWorkSchedulesConditions(params?.workSchedules),
+          // ...OfferHelper.getDataSourcesConditions(params?.dataSources),
         },
         include: {
           company: true,
@@ -154,7 +159,6 @@ class OffersService {
         statusCode: 400,
         code: ERROR_CODES.invalid_data,
         message: JSON.stringify(err),
-        // message: ERROR_MESSAGES.invalid_data,
       });
     }
   }
@@ -190,20 +194,6 @@ class OfferHelper {
     };
   }
 
-  public static getCategoriesConditions(categories?: OffersQueryParams["categories"]) {
-    return Array.isArray(categories) && categories.length > 0
-      ? {
-          positionLevels: {
-            some: {
-              value: {
-                in: categories,
-              },
-            },
-          },
-        }
-      : {};
-  }
-
   public static getSearchConditions(search?: OffersQueryParams["search"]) {
     return search?.trim()
       ? {
@@ -219,6 +209,90 @@ class OfferHelper {
               },
             },
           ],
+        }
+      : {};
+  }
+
+  public static getCategoriesConditions(categories?: OffersQueryParams["categories"]) {
+    return Array.isArray(categories) && categories.length > 0
+      ? {
+          AND: categories.map(category => ({
+            technologies: {
+              some: {
+                value: category,
+              },
+            },
+          })),
+        }
+      : {};
+  }
+
+  public static getPositionLevelsConditions(positionLevels?: OffersQueryParams["positionLevels"]) {
+    return Array.isArray(positionLevels) && positionLevels.length > 0
+      ? {
+          AND: positionLevels.map(value => ({
+            positionLevels: {
+              some: {
+                value,
+              },
+            },
+          })),
+        }
+      : {};
+  }
+
+  public static getContractTypesConditions(contractTypes?: OffersQueryParams["contractTypes"]) {
+    return Array.isArray(contractTypes) && contractTypes.length > 0
+      ? {
+          AND: contractTypes.map(value => ({
+            contractTypes: {
+              some: {
+                value,
+              },
+            },
+          })),
+        }
+      : {};
+  }
+
+  public static getWorkModesConditions(workModes?: OffersQueryParams["workModes"]) {
+    return Array.isArray(workModes) && workModes.length > 0
+      ? {
+          AND: workModes.map(value => ({
+            workModes: {
+              some: {
+                value,
+              },
+            },
+          })),
+        }
+      : {};
+  }
+
+  public static getWorkSchedulesConditions(workSchedules?: OffersQueryParams["workSchedules"]) {
+    return Array.isArray(workSchedules) && workSchedules.length > 0
+      ? {
+          AND: workSchedules.map(value => ({
+            workSchedules: {
+              some: {
+                value,
+              },
+            },
+          })),
+        }
+      : {};
+  }
+
+  public static getDataSourcesConditions(dataSources?: OffersQueryParams["dataSources"]) {
+    return Array.isArray(dataSources) && dataSources.length > 0
+      ? {
+          AND: dataSources.map(value => ({
+            dataSource: {
+              some: {
+                value,
+              },
+            },
+          })),
         }
       : {};
   }
