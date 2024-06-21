@@ -81,6 +81,13 @@ export const offerTechCategories = z.union([
 export const offersQueryParameters = z.object({
   search: z.string().optional(),
   categories: z.array(offerTechCategories).optional(),
+  orderBy: z.enum(["createdAt", "expirationDate", "salary"]).default("createdAt"),
+  sortOrder: z.enum(["asc", "desc"]).default("desc"),
+  positionLevels: z.array(positionLevelsSchema).optional(),
+  contractTypes: z.array(contractTypeCodesSchema).optional(),
+  workModes: z.array(workModesSchema).optional(),
+  workSchedulesSchema: z.array(workSchedulesSchema).optional(),
+  dataSource: z.array(dataSourceCodesSchema).optional(),
 });
 
 export const jobOffersResponseSchema = z.object({

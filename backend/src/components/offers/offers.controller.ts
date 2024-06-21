@@ -3,7 +3,7 @@ import { Browser, executablePath } from "puppeteer";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 
-import { ERROR_CODES } from "@/misc/error.constants";
+import { ERROR_CODES, ERROR_MESSAGES } from "@/misc/error.constants";
 import { AppError } from "@/utils/app-error";
 
 import { JUSTJOIN_URL, PRACUJ_URL } from "@/components/offers/helpers/offers.constants";
@@ -12,6 +12,7 @@ import { ScrapperJustjoin } from "@/components/offers/instances/scrapper-justjoi
 
 import type { OffersService } from "@/components/offers/offers.service";
 import type { JobOffer, OffersQueryParams } from "@shared/offers/offers.types";
+import { offersQueryParameters } from "@shared/offers/offers.schemas";
 
 puppeteer.use(StealthPlugin());
 
@@ -59,7 +60,7 @@ class OffersController {
     }
   };
 
-  private async checkScrapperIsUnrecognizable() {
+  private async checkScrapperIsUndetectable() {
     if (!this.browser) await this.initBrowser();
     const page = await this.browser?.newPage();
     try {
@@ -74,7 +75,7 @@ class OffersController {
         optimizeForSpeed: true,
       });
     } catch (err) {
-      console.log("Scrapper is recognizable", err);
+      console.log("Scrapper is easily detectable", err);
       throw new AppError({
         statusCode: 500,
         code: ERROR_CODES.internal_error,
@@ -108,11 +109,8 @@ class OffersController {
         await this.offersService.saveJobOffers(data);
       }
 
-      await this.closeBrowser();
-
       return data;
     } catch (err) {
-      // if (page) await page.close();
       if (err instanceof AppError) throw err;
       else
         throw new AppError({
@@ -120,24 +118,31 @@ class OffersController {
           code: ERROR_CODES.internal_error,
           message: JSON.stringify(err),
         });
+    } finally {
+      await this.closeBrowser();
     }
   }
 
   public getOffers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    // const parsedParams = offersQueryParameters.safeParse(req.params);
-    console.log("Kekw", req.query);
     try {
-      const data = await this.scrapeOffersData();
+      const queryParams = offersQueryParameters.safeParse(req.query);
+      console.log("queryParams", queryParams);
+      if (queryParams.error)
+        return next(
+          new AppError({
+            statusCode: 400,
+            code: ERROR_CODES.invalid_data,
+            message: `${ERROR_MESSAGES.invalid_data} Query parameter is not correct`,
+          }),
+        );
 
-      // if (parsedParams.error) {
-      //   next(
-      //     new AppError({
-      //       statusCode: 400,
-      //       code: ERROR_CODES.invalid_type,
-      //       message: JSON.stringify(parsedParams.error),
-      //     }),
-      //   );
-      // }
+      const data = await this.offersService.getJobOffers(queryParams.data);
+
+      res.status(200).json({
+        createdAt: new Date(Date.now()),
+        total: data?.length,
+        data,
+      });
     } catch (err) {
       next(err);
     }

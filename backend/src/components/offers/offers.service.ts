@@ -7,7 +7,7 @@ import { connectOrCreateArray } from "@/utils/prisma";
 import { PrismaInstance } from "@/components/libs/prisma.instance";
 import { ERROR_CODES } from "@/misc/error.constants";
 
-import type { JobOffer } from "shared/src/offers/offers.types";
+import type { JobOffer, OffersQueryParams } from "shared/src/offers/offers.types";
 import { OFFERS_METADATA_ID } from "@/misc/constants";
 
 interface SetOffersMetadataProps {
@@ -33,12 +33,14 @@ class OffersService {
     }
   }
 
-  public async getJobOffers() {
+  public async getJobOffers(params: OffersQueryParams) {
+    console.log("Parametry ok: ", params);
     try {
       const data = await this.prisma.jobOffer.findMany({
         orderBy: {
-          expirationDate: "asc",
+          [params.orderBy]: params?.sortOrder,
         },
+
         include: {
           company: true,
           salaryRange: true,
