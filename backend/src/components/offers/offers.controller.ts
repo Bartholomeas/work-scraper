@@ -1,12 +1,10 @@
 import { NextFunction, type Request, type Response } from "express";
-import { Browser, executablePath, Page } from "puppeteer";
+import { Browser, executablePath } from "puppeteer";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 
 import { ERROR_CODES } from "@/misc/error.constants";
 import { AppError } from "@/utils/app-error";
-
-import { offersQueryParameters } from "@shared/offers/offers.schemas";
 
 import { JUSTJOIN_URL, PRACUJ_URL } from "@/components/offers/helpers/offers.constants";
 import { ScrapperPracuj } from "@/components/offers/instances/scrapper-pracuj";
@@ -61,20 +59,34 @@ class OffersController {
     }
   };
 
-  public getOffers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const parsedParams = offersQueryParameters.safeParse(req.body);
-    if (parsedParams.error) {
-      next(
-        new AppError({
-          statusCode: 400,
-          code: ERROR_CODES.invalid_type,
-          message: JSON.stringify(parsedParams.error),
-        }),
-      );
+  private async checkScrapperIsUnrecognizable() {
+    if (!this.browser) await this.initBrowser();
+    const page = await this.browser?.newPage();
+    try {
+      await page?.goto("https://bot.sannysoft.com/");
+
+      const date = new Date(Date.now()).toLocaleDateString("pl").toString();
+      const time = `${new Date(Date.now()).getHours()}:${new Date(Date.now()).getMinutes()}:${new Date(Date.now()).getSeconds()}`;
+
+      await page?.screenshot({
+        path: `./public/images/test-${date}-${time}.jpeg`,
+        type: "jpeg",
+        optimizeForSpeed: true,
+      });
+    } catch (err) {
+      console.log("Scrapper is recognizable", err);
+      throw new AppError({
+        statusCode: 500,
+        code: ERROR_CODES.internal_error,
+        message: JSON.stringify(err),
+      });
+    } finally {
+      await page?.close();
+      await this.closeBrowser();
     }
+  }
 
-    let page: Page | undefined;
-
+  private async scrapeOffersData() {
     try {
       if (!this.browser) await this.initBrowser();
 
@@ -90,39 +102,43 @@ class OffersController {
 
       let data: JobOffer[] = [];
       if (isOutdated) {
-        // data = await Promise.all([pracujScrapper.getScrappedData()]).then(res => res.flatMap(el => el.data));
-        // data = await Promise.all([justjoinScrapper.getScrappedData()]).then(res => res.flatMap(el => el.data));
         data = await Promise.all([justjoinScrapper.getScrappedData(), pracujScrapper.getScrappedData()]).then(res =>
           res.flatMap(el => el.data),
         );
         await this.offersService.saveJobOffers(data);
-      } else {
-        data = await this.offersService.getJobOffers();
       }
-      // await pracujScrapper.closePage();
-      // await justjoinScrapper.closePage();
 
       await this.closeBrowser();
-      this.browser = undefined;
 
-      // page = await this.browser?.newPage();
-      // await page?.goto("https://bot.sannysoft.com/");
-      //
-      // const date = new Date(Date.now()).toLocaleDateString("pl").toString();
-      // const time = `${new Date(Date.now()).getHours()}:${new Date(Date.now()).getMinutes()}:${new Date(Date.now()).getSeconds()}`;
-      //
-      // await page?.screenshot({
-      //   path: `./public/images/test-${date}-${time}.jpeg`,
-      //   type: "jpeg",
-      //   optimizeForSpeed: true,
-      // });
-      res.status(200).json({
-        createdAt: new Date(Date.now()),
-        total: data?.length,
-        data: this.filterData({ data, queryParams: parsedParams.data }),
-      });
+      return data;
     } catch (err) {
-      if (page) await page.close();
+      // if (page) await page.close();
+      if (err instanceof AppError) throw err;
+      else
+        throw new AppError({
+          statusCode: 500,
+          code: ERROR_CODES.internal_error,
+          message: JSON.stringify(err),
+        });
+    }
+  }
+
+  public getOffers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    // const parsedParams = offersQueryParameters.safeParse(req.params);
+    console.log("Kekw", req.query);
+    try {
+      const data = await this.scrapeOffersData();
+
+      // if (parsedParams.error) {
+      //   next(
+      //     new AppError({
+      //       statusCode: 400,
+      //       code: ERROR_CODES.invalid_type,
+      //       message: JSON.stringify(parsedParams.error),
+      //     }),
+      //   );
+      // }
+    } catch (err) {
       next(err);
     }
   };
@@ -147,7 +163,10 @@ class OffersController {
   };
 
   private closeBrowser = async () => {
-    if (this.browser) await this.browser.close();
+    if (this.browser) {
+      await this.browser.close();
+      this.browser = undefined;
+    }
     return;
   };
 }
