@@ -33,14 +33,15 @@ class OffersService {
     }
   }
 
-  public async getJobOffers(params: OffersQueryParams) {
+  public async getJobOffers(params: OffersQueryParams | undefined) {
     console.log("Parametry ok: ", params);
     try {
       const data = await this.prisma.jobOffer.findMany({
-        orderBy: {
-          [params.orderBy]: params?.sortOrder,
+        ...OfferHelper.getDefaultParams(params),
+        where: {
+          ...OfferHelper.getSearchConditions(params?.search),
+          ...OfferHelper.getCategoriesConditions(params?.categories),
         },
-
         include: {
           company: true,
           salaryRange: true,
@@ -174,6 +175,53 @@ class OfferHelper {
   private static keysToMap = ["workplaces", "workModes", "contractTypes", "technologies", "workSchedules", "positionLevels"] as const;
 
   constructor() {}
+
+  public static getDefaultParams(params: OffersQueryParams | undefined) {
+    return {
+      take: params?.perPage ?? 24,
+      skip: (params?.perPage ?? 24) * ((params?.page ?? 1) - 1),
+      // take: params?.perPage ? parseInt(params?.perPage) : 24,
+      // skip: (params?.perPage ? parseInt(params?.perPage) : 24) * ((params?.page ? parseInt(params?.page) : 1) - 1),
+      orderBy: params?.orderBy
+        ? {
+            [params.orderBy]: params?.sortOrder,
+          }
+        : {},
+    };
+  }
+
+  public static getCategoriesConditions(categories?: OffersQueryParams["categories"]) {
+    return Array.isArray(categories) && categories.length > 0
+      ? {
+          positionLevels: {
+            some: {
+              value: {
+                in: categories,
+              },
+            },
+          },
+        }
+      : {};
+  }
+
+  public static getSearchConditions(search?: OffersQueryParams["search"]) {
+    return search?.trim()
+      ? {
+          OR: [
+            {
+              positionName: {
+                contains: search,
+              },
+            },
+            {
+              description: {
+                contains: search,
+              },
+            },
+          ],
+        }
+      : {};
+  }
 
   public static parsePrismaToJobOffer<T extends PrismaJobOffer>(prismaOffers: T[]): JobOffer[] {
     return prismaOffers?.map(offer => {

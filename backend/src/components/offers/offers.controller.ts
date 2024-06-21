@@ -3,7 +3,7 @@ import { Browser, executablePath } from "puppeteer";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 
-import { ERROR_CODES, ERROR_MESSAGES } from "@/misc/error.constants";
+import { ERROR_CODES } from "@/misc/error.constants";
 import { AppError } from "@/utils/app-error";
 
 import { JUSTJOIN_URL, PRACUJ_URL } from "@/components/offers/helpers/offers.constants";
@@ -125,18 +125,18 @@ class OffersController {
 
   public getOffers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const queryParams = offersQueryParameters.safeParse(req.query);
-      console.log("queryParams", queryParams);
-      if (queryParams.error)
-        return next(
-          new AppError({
-            statusCode: 400,
-            code: ERROR_CODES.invalid_data,
-            message: `${ERROR_MESSAGES.invalid_data} Query parameter is not correct`,
-          }),
-        );
+      const { data: queryParams, success } = offersQueryParameters.safeParse(req.query);
+      // console.log("XDD queryParams", queryParams);
+      // if (queryParams.error)
+      //   return next(
+      //     new AppError({
+      //       statusCode: 400,
+      //       code: ERROR_CODES.invalid_data,
+      //       message: `${ERROR_MESSAGES.invalid_data} Query parameter is not correct`,
+      //     }),
+      //   );
 
-      const data = await this.offersService.getJobOffers(queryParams.data);
+      const data = await this.offersService.getJobOffers(success ? queryParams : undefined);
 
       res.status(200).json({
         createdAt: new Date(Date.now()),
