@@ -126,21 +126,12 @@ class OffersController {
   public getOffers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { data: queryParams, success } = offersQueryParameters.safeParse(req.query);
-      // console.log("XDD queryParams", queryParams);
-      // if (queryParams.error)
-      //   return next(
-      //     new AppError({
-      //       statusCode: 400,
-      //       code: ERROR_CODES.invalid_data,
-      //       message: `${ERROR_MESSAGES.invalid_data} Query parameter is not correct`,
-      //     }),
-      //   );
 
-      const data = await this.offersService.getJobOffers(success ? queryParams : undefined);
+      const { data, meta } = await this.offersService.getJobOffers(success ? queryParams : undefined);
 
       res.status(200).json({
         createdAt: new Date(Date.now()),
-        total: data?.length,
+        meta,
         data,
       });
     } catch (err) {
