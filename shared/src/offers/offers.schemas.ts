@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { paginationMetadataSchema } from "../general/query.schemas";
+import { paginationMetadataSchema, paginationSchema } from "../general/query.schemas";
 
 export const positionLevelsSchema = z.enum(["intern", "junior", "mid", "senior", "manager"]);
 export const contractTypeCodesSchema = z.enum(["uz", "uop", "b2b", "uod", "intern"]);
@@ -78,10 +78,22 @@ export const offerTechCategories = z.union([
   z.literal("ruby on rails"),
 ]);
 
-export const offersQueryParameters = z.object({
-  search: z.string().optional(),
-  categories: z.array(offerTechCategories).optional(),
-});
+const stringToArray = (val: unknown) => (typeof val === "string" ? val.split(",").map(v => v.trim()) : val);
+
+export const offersQueryParameters = z
+  .object({
+    search: z.string().optional(),
+    orderBy: z.enum(["createdAt", "expirationDate", "salary"]).default("createdAt"),
+    sortOrder: z.enum(["asc", "desc"]).default("desc"),
+    categories: z.preprocess(stringToArray, z.array(offerTechCategories)).optional(),
+    positionLevels: z.preprocess(stringToArray, z.array(positionLevelsSchema)).optional(),
+    contractTypes: z.preprocess(stringToArray, z.array(contractTypeCodesSchema)).optional(),
+    workModes: z.preprocess(stringToArray, z.array(workModesSchema)).optional(),
+    workSchedules: z.preprocess(stringToArray, z.array(workSchedulesSchema)).optional(),
+    dataSources: z.preprocess(stringToArray, z.array(dataSourceCodesSchema)).optional(),
+  })
+  .extend(paginationSchema.shape)
+  .strip();
 
 export const jobOffersResponseSchema = z.object({
   meta: paginationMetadataSchema,
