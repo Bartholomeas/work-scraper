@@ -7,13 +7,14 @@ import compression from "compression";
 import cookieParser from "cookie-parser";
 
 import { BASE_URL } from "@/misc/constants";
-import { AppError, type AppErrorInterface } from "src/utils/app-error";
+import { AppError, type AppErrorInterface } from "@/utils/app-error";
 
-import { errorHandler } from "src/middleware/error-handler";
+import { errorHandler } from "@/middleware/error-handler";
 
-import { authModule } from "src/components/auth/auth.module";
-import { offersModule } from "src/components/offers/offers.module";
-import { ErrorController } from "src/components/error/error.controller";
+import { authModule } from "@/components/auth/auth.module";
+import { offersModule } from "@/components/offers/offers.module";
+import { ErrorController } from "@/components/error/error.controller";
+import { ERROR_CODES } from "@/misc/error.constants";
 
 // For some reason imported in tsconfig doesnt work :(
 declare global {
@@ -56,14 +57,15 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 app.use(BASE_URL + "/auth", authModule.router);
 app.use(BASE_URL + "/offers", offersModule.router);
 
-app.use(errorHandler);
 app.all("*", (req, res, next) => {
   next(
     new AppError({
-      message: `Cannot find ${req.originalUrl}`,
       statusCode: 404,
+      code: ERROR_CODES.not_found,
+      message: `Cannot find ${req.originalUrl}`,
     }),
   );
 });
+app.use(errorHandler);
 
 app.use((err: AppErrorInterface, req: Request, res: Response) => new ErrorController(err, req, res));
