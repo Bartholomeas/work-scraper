@@ -137,7 +137,8 @@ class OffersService {
         });
 
       await this.prisma.$transaction(upsertOfferPromises);
-      await this.setOffersMetadata({ total: offers?.length ?? 0 });
+      const totalCount = await this.prisma.jobOffer.count({});
+      await this.setOffersMetadata({ total: totalCount ?? 0 });
       return;
     } catch (err) {
       throw new AppError({

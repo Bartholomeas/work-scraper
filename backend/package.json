@@ -5,15 +5,18 @@
   "main": "./index.js",
   "scripts": {
     "build": "tsc",
-    "dev": "nodemon src/server.ts",
+    "dev": "NODE_ENV=development && nodemon src/server.ts",
     "start": "node dist/server.js",
     "lint": "eslint src/**/*.ts",
     "format": "eslint src/**/*.ts --fix",
-    "db:push": "pnpx prisma db push",
+    "db:push": "NODE_ENV=development && dotenv -e .env.development -- pnpx prisma db push",
+    "db:push:test": "NODE_ENV=test && dotenv -e .env.test -- pnpx prisma db push",
     "db:studio": "pnpx prisma studio",
     "postinstall": "pnpx prisma generate",
-    "seed": "ts-node ./prisma/seed.ts",
-    "test": "jest --verbose"
+    "seed": "NODE_ENV=development && dotenv -e .env.development -- ts-node ./prisma/seed.ts",
+    "seed:dev": "NODE_ENV=development && ts-node ./prisma/seed.ts",
+    "seed:test": "NODE_ENV=test && dotenv -e .env.test -- ts-node ./prisma/seed.ts",
+    "test": "NODE_ENV=test && dotenv -e .env.test -- jest --watchAll"
   },
   "_moduleAliases": {
     "@": "dist"
@@ -56,6 +59,7 @@
     "@types/supertest": "^6.0.2",
     "@typescript-eslint/eslint-plugin": "^7.9.0",
     "@typescript-eslint/parser": "^7.9.0",
+    "dotenv-cli": "^7.4.2",
     "eslint": "^9.2.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.29.1",

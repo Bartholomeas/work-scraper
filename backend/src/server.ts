@@ -1,8 +1,12 @@
 import "tsconfig-paths/register";
-
-import dotenv from "dotenv";
 //URGENT: dotenv.config() MUST !!! be before other imports. Auto rearrange may change order and then app cannot get .env properties.
-dotenv.config();
+// dotenv.config({
+//   path: `.env.${process.env.NODE_ENV}`,
+// });
+import dotenv from "dotenv";
+const envFile = `.env.${process.env.NODE_ENV ?? "development"}`;
+dotenv.config({ path: envFile });
+console.log({ envFile, DBenv: process.env.DATABASE_URL });
 
 import { PORT } from "src/misc/constants";
 import { app } from "src/app";

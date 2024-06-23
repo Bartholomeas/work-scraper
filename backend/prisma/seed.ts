@@ -3,17 +3,7 @@ import { PrismaInstance } from "./../src/components/libs/prisma.instance";
 import { connectOrCreateArray } from "./../src/utils/prisma";
 import { generateJobOfferSlug } from "./../src/utils/generate-job-offer-slug";
 
-// import { PrismaInstance } from "src/components/libs/prisma.instance";
-// import { generateJobOfferSlug } from "src/utils/generate-job-offer-slug";
-
 const prisma = PrismaInstance.getInstance();
-
-const positionLevels = ["intern", "junior", "mid", "senior", "manager"];
-const contractTypes = ["uz", "uop", "b2b", "uod", "intern"];
-const workModes = ["remote", "hybrid", "stationary"];
-const workSchedules = ["full-time", "part-time", "internship", "freelance"];
-
-// const dataSources = ["pracuj", "justjoin"];
 
 const mockOffer: JobOffer = {
   id: "aSDAJS4jasdj5r",
@@ -70,7 +60,7 @@ const cleanupDb = async () => {
   }
 };
 
-async function main() {
+export async function seedDb() {
   try {
     await cleanupDb();
     const existingOffersCount = await prisma.jobOffer
@@ -121,7 +111,7 @@ async function main() {
   }
 }
 
-main()
+seedDb()
   .then(async () => {
     await prisma.$disconnect();
   })

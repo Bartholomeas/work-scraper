@@ -12,7 +12,7 @@
       ],
       "@shared/*": [
         "../shared/src/*"
-      ],
+      ]
     },
     "typeRoots": [
       "node_modules/@types"
@@ -31,6 +31,7 @@
     "./src/**/*.ts",
     "./src/**/__tests__/*.ts",
     "./prisma/**/*.ts",
+    "./jest.setup.ts",
     "tests/**/*.ts"
   ],
   "exclude": [

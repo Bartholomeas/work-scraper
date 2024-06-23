@@ -11,15 +11,10 @@ import { ScrapperPracuj } from "@/components/offers/instances/scrapper-pracuj";
 import { ScrapperJustjoin } from "@/components/offers/instances/scrapper-justjoin";
 
 import type { OffersService } from "@/components/offers/offers.service";
-import type { JobOffer, OffersQueryParams } from "@shared/offers/offers.types";
+import type { JobOffer } from "@shared/offers/offers.types";
 import { offersQueryParameters } from "@shared/offers/offers.schemas";
 
 puppeteer.use(StealthPlugin());
-
-interface FilterDataProps {
-  data: JobOffer[];
-  queryParams?: OffersQueryParams;
-}
 
 class OffersController {
   private offersService: OffersService;
@@ -27,23 +22,8 @@ class OffersController {
 
   constructor(offersService: OffersService) {
     this.offersService = offersService;
-    this.initBrowser();
+    this.getBrowserInstance();
   }
-
-  public checkMetadata = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const isOutdated = await this.offersService.checkDataIsOutdated();
-      res.status(200).json({ isOutdated });
-    } catch (err) {
-      next(
-        new AppError({
-          statusCode: 500,
-          code: ERROR_CODES.internal_error,
-          message: JSON.stringify(err),
-        }),
-      );
-    }
-  };
 
   public getOffersMetadata = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -61,9 +41,10 @@ class OffersController {
   };
 
   private async checkScrapperIsUndetectable() {
-    if (!this.browser) await this.initBrowser();
-    const page = await this.browser?.newPage();
     try {
+      await this.getBrowserInstance();
+      const page = await this.browser?.newPage();
+
       await page?.goto("https://bot.sannysoft.com/");
 
       const date = new Date(Date.now()).toLocaleDateString("pl").toString();
@@ -82,14 +63,13 @@ class OffersController {
         message: JSON.stringify(err),
       });
     } finally {
-      await page?.close();
-      await this.closeBrowser();
+      await this.closeBrowserInstance();
     }
   }
 
-  private async scrapeOffersData() {
+  public scrapeOffersData = async () => {
     try {
-      if (!this.browser) await this.initBrowser();
+      await this.getBrowserInstance();
 
       const pracujScrapper = new ScrapperPracuj(this.browser, {
         url: PRACUJ_URL,
@@ -97,17 +77,18 @@ class OffersController {
       const justjoinScrapper = new ScrapperJustjoin(this.browser, {
         url: JUSTJOIN_URL,
       });
-
       await Promise.all([pracujScrapper.initializePage(), justjoinScrapper.initializePage()]);
-      const isOutdated = await this.offersService.checkDataIsOutdated();
 
+      const isOutdated = await this.offersService.checkDataIsOutdated();
       let data: JobOffer[] = [];
+
       if (isOutdated) {
-        data = await Promise.all([justjoinScrapper.getScrappedData(), pracujScrapper.getScrappedData()]).then(res =>
+        data = await Promise.all([pracujScrapper.getScrappedData(), justjoinScrapper.getScrappedData()]).then(res =>
           res.flatMap(el => el.data),
         );
         await this.offersService.saveJobOffers(data);
       }
+      await this.closeBrowserInstance();
 
       return data;
     } catch (err) {
@@ -119,9 +100,9 @@ class OffersController {
           message: JSON.stringify(err),
         });
     } finally {
-      await this.closeBrowser();
+      await this.closeBrowserInstance();
     }
-  }
+  };
 
   public getOffers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -139,29 +120,34 @@ class OffersController {
     }
   };
 
-  private filterData = ({ data = [], queryParams }: FilterDataProps): JobOffer[] => {
-    const { search: _search, categories } = queryParams ?? {};
-    if (!_search && !categories) return data;
-    const search = _search?.toLowerCase();
-    return data.filter(job => {
-      if (search) {
-        if (job.positionName && job.positionName.toLowerCase().includes(search)) return true;
-        else if (job.description && job.description.toLowerCase().includes(search)) return true;
-        else if (job.technologies?.some(cat => cat.includes(search))) return true;
+  // private filterData = ({ data = [], queryParams }: FilterDataProps): JobOffer[] => {
+  //   const { search: _search, categories } = queryParams ?? {};
+  //   if (!_search && !categories) return data;
+  //   const search = _search?.toLowerCase();
+  //   return data.filter(job => {
+  //     if (search) {
+  //       if (job.positionName && job.positionName.toLowerCase().includes(search)) return true;
+  //       else if (job.description && job.description.toLowerCase().includes(search)) return true;
+  //       else if (job.technologies?.some(cat => cat.includes(search))) return true;
+  //     }
+  //     return categories && Array.isArray(categories) && categories.some(el => job.technologies?.includes(el.toLowerCase()));
+  //   });
+  // };
+
+  private getBrowserInstance = async (): Promise<Browser> => {
+    if (!this.browser) this.browser = await puppeteer.launch({ headless: true, executablePath: executablePath() });
+    return this.browser;
+  };
+
+  private closeBrowserInstance = async (): Promise<void> => {
+    try {
+      if (this.browser) {
+        await this.browser.close();
+        this.browser = undefined;
       }
-      return categories && Array.isArray(categories) && categories.some(el => job.technologies?.includes(el.toLowerCase()));
-    });
-  };
-
-  private initBrowser = async () => {
-    if (this.browser) return this.browser;
-    return (this.browser = await puppeteer.launch({ headless: true, executablePath: executablePath() }));
-  };
-
-  private closeBrowser = async () => {
-    if (this.browser) {
-      await this.browser.close();
-      this.browser = undefined;
+    } catch (err) {
+      console.log("Closing browser instance", err);
+      return;
     }
     return;
   };
