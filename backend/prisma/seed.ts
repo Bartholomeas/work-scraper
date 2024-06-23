@@ -1,24 +1,23 @@
 import type { JobOffer } from "shared/src/offers/offers.types";
 import { PrismaInstance } from "./../src/components/libs/prisma.instance";
-import { connectOrCreateArray } from "./../src/utils/prisma";
-import { generateJobOfferSlug } from "./../src/utils/generate-job-offer-slug";
 import { PrismaClient } from "@prisma/client";
+import { OfferHelper } from "./../src/components/offers/helpers/offer-helper";
 
 const prisma = PrismaInstance.getInstance();
 
-const mockOffer: JobOffer = {
-  id: "aSDAJS4jasdj5r",
-  slug: "",
-  positionName: "TEST gineer",
+export const mockOffer: JobOffer = {
+  id: "TestId123",
+  slug: "test-slug",
+  positionName: "Test Developer",
   createdAt: new Date().toISOString(),
-  // updatedAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
   dataSourceCode: "justjoin",
   companyName: "Google",
-  description: "",
+  description: "Description of this offer",
   // createdAt: new Date().toISOString(),
   company: {
     name: "Google",
-    logoUrl: null,
+    logoUrl: "/xd",
   },
   salaryRange: [
     {
@@ -35,7 +34,7 @@ const mockOffer: JobOffer = {
   workModes: ["remote"],
   workSchedules: ["freelance"],
   technologies: ["Javascript", "Nodejs", "Typescript"],
-  offerUrls: [""],
+  offerUrls: ["www.google.pl"],
   workplaces: ["Zielona Góra"],
 };
 
@@ -71,39 +70,11 @@ export async function seedDb(prismaClient: PrismaClient) {
       .catch(() => 0);
 
     await prismaClient.offersMetadata.create({
-      data: { total: 1 },
+      data: { total: existingOffersCount },
     });
 
     await prismaClient.jobOffer.create({
-      data: {
-        positionName: mockOffer.positionName!,
-        slug: generateJobOfferSlug(mockOffer, existingOffersCount > 0 ? [(existingOffersCount + 1).toString()] : []),
-        positionLevels: connectOrCreateArray(mockOffer?.positionLevels),
-        contractTypes: connectOrCreateArray(mockOffer?.contractTypes),
-        workModes: connectOrCreateArray(mockOffer?.workModes),
-        workSchedules: connectOrCreateArray(mockOffer?.workSchedules),
-        technologies: connectOrCreateArray(mockOffer?.technologies),
-        workplaces: {
-          connectOrCreate: mockOffer?.workplaces?.map(value => ({
-            where: { value },
-            create: { value },
-          })),
-        },
-        // workplaces: connectOrCreateField(mockOffer?.workplaces),
-
-        company: {
-          connectOrCreate: {
-            where: { name: mockOffer.company?.name },
-            create: {
-              name: mockOffer.company?.name ?? "Undefined name",
-              logoUrl: null,
-            },
-          },
-        },
-        salaryRange: {
-          create: [],
-        },
-      },
+      data: OfferHelper.parseJobOfferToPrismaModel(mockOffer),
     });
 
     // await Promise.all([positionLevelsPromise]);

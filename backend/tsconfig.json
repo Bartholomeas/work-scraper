@@ -29,8 +29,10 @@
   },
   "include": [
     "./src/**/*.ts",
+    "./src/components/**/**/*.ts",
     "./src/**/__tests__/*.ts",
     "./prisma/**/*.ts",
+    "./prisma/seed.ts",
     "./jest.setup.ts",
     "tests/**/*.ts"
   ],

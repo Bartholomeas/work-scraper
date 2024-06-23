@@ -109,10 +109,9 @@ class ScrapperJustjoin extends ScrapperBase {
 
     while (!(await isFooterVisible())) {
       await page.evaluate(() => window.scrollBy(0, 960));
-      await wait(100);
+      await wait(200);
 
       currentScrollHeight = await page.evaluate(() => document.body.scrollHeight ?? 0);
-      console.log({ prevScrollHeight, currentScrollHeight });
 
       if (currentScrollHeight > prevScrollHeight) {
         prevScrollHeight = currentScrollHeight;
@@ -122,6 +121,7 @@ class ScrapperJustjoin extends ScrapperBase {
       }
 
       if (sameScrollHeightCount > 3) {
+        console.log({ prevScrollHeight, currentScrollHeight });
         console.log("Scrolling has been stuck!");
         await page.evaluate(() => window.scrollBy(0, -1400));
         sameScrollHeightCount = 0;
