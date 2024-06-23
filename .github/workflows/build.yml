@@ -6,7 +6,9 @@ on:
     branches: [ "main" ]
   pull_request:
     types: [ opened,synchronize ]
-
+env:
+  DATABASE_URL: file:./test.db?mode=memory&cache=shared
+  
 jobs:
   build:
     name: Build and Test
@@ -36,9 +38,9 @@ jobs:
 
       - name: Set up environment variables
         run: echo "env DATABASE_URL=${{ secrets.DATABASE_URL }}"
-
-#      - name: Test
-#        run: pnpm run test
+      
+      #      - name: Test
+      #        run: pnpm run test
 
       - name: Build
         run: pnpm run build
