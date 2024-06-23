@@ -14,8 +14,8 @@
     "start": "turbo run start",
     "build": "turbo run build",
     "lint": "turbo run lint",
+    "test": "turbo run test",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
-
   },
   "dependencies": {
     "turbo": "^1.13.3"
