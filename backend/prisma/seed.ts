@@ -2,6 +2,7 @@ import type { JobOffer } from "shared/src/offers/offers.types";
 import { PrismaInstance } from "./../src/components/libs/prisma.instance";
 import { connectOrCreateArray } from "./../src/utils/prisma";
 import { generateJobOfferSlug } from "./../src/utils/generate-job-offer-slug";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = PrismaInstance.getInstance();
 
@@ -38,18 +39,18 @@ const mockOffer: JobOffer = {
   workplaces: ["Zielona Góra"],
 };
 
-const cleanupDb = async () => {
+const cleanupDb = async (prismaClient: PrismaClient) => {
   try {
-    await prisma.jobOffer.deleteMany();
-    await prisma.offersMetadata.deleteMany();
-    await prisma.salaryRange.deleteMany();
-    await prisma.company.deleteMany();
-    await prisma.workSchedule.deleteMany();
-    await prisma.contractType.deleteMany();
-    await prisma.workMode.deleteMany();
-    await prisma.positionLevel.deleteMany();
+    await prismaClient.jobOffer.deleteMany();
+    await prismaClient.offersMetadata.deleteMany();
+    await prismaClient.salaryRange.deleteMany();
+    await prismaClient.company.deleteMany();
+    await prismaClient.workSchedule.deleteMany();
+    await prismaClient.contractType.deleteMany();
+    await prismaClient.workMode.deleteMany();
+    await prismaClient.positionLevel.deleteMany();
 
-    // await prisma.offersMetadata.delete({
+    // await prismaClient.offersMetadata.delete({
     //   where: {
     //     id: "offers-metadata",
     //   },
@@ -60,20 +61,20 @@ const cleanupDb = async () => {
   }
 };
 
-export async function seedDb() {
+export async function seedDb(prismaClient: PrismaClient) {
   try {
-    await cleanupDb();
-    const existingOffersCount = await prisma.jobOffer
+    await cleanupDb(prismaClient);
+    const existingOffersCount = await prismaClient.jobOffer
       .count({
         where: { positionName: mockOffer.positionName },
       })
       .catch(() => 0);
 
-    await prisma.offersMetadata.create({
+    await prismaClient.offersMetadata.create({
       data: { total: 1 },
     });
 
-    await prisma.jobOffer.create({
+    await prismaClient.jobOffer.create({
       data: {
         positionName: mockOffer.positionName!,
         slug: generateJobOfferSlug(mockOffer, existingOffersCount > 0 ? [(existingOffersCount + 1).toString()] : []),
@@ -109,11 +110,12 @@ export async function seedDb() {
   } catch (err) {
     console.error({ SeedError: err });
   }
+  return prismaClient;
 }
 
-seedDb()
-  .then(async () => {
-    await prisma.$disconnect();
+seedDb(prisma)
+  .then(async (prismaClient: PrismaClient) => {
+    await prismaClient.$disconnect();
   })
   .catch(async e => {
     console.log(e);
