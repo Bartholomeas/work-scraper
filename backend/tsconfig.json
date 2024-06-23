@@ -18,6 +18,7 @@
       "node_modules/@types"
     ],
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "strictNullChecks": true,
@@ -28,7 +29,12 @@
   },
   "include": [
     "./src/**/*.ts",
-    "./prisma/**/*.ts"
+    "./src/components/**/**/*.ts",
+    "./src/**/__tests__/*.ts",
+    "./prisma/**/*.ts",
+    "./prisma/seed.ts",
+    "./jest.setup.ts",
+    "tests/**/*.ts"
   ],
   "exclude": [
     "node_modules",

@@ -1,6 +1,6 @@
-import { AuthController } from "src/components/auth/auth.controller";
-import { AuthService } from "src/components/auth/auth.service";
-import { AuthRouter } from "./auth.router";
+import { AuthService } from "@/components/auth/auth.service";
+import { AuthController } from "@/components/auth/auth.controller";
+import { AuthRouter } from "@/components/auth/auth.router";
 
 const service = new AuthService();
 const controller = new AuthController(service);

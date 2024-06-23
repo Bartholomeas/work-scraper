@@ -1,33 +1,23 @@
 import type { JobOffer } from "shared/src/offers/offers.types";
 import { PrismaInstance } from "./../src/components/libs/prisma.instance";
-import { connectOrCreateArray } from "./../src/utils/prisma";
-import { generateJobOfferSlug } from "./../src/utils/generate-job-offer-slug";
-
-// import { PrismaInstance } from "src/components/libs/prisma.instance";
-// import { generateJobOfferSlug } from "src/utils/generate-job-offer-slug";
+import { PrismaClient } from "@prisma/client";
+import { OfferHelper } from "./../src/components/offers/helpers/offer-helper";
 
 const prisma = PrismaInstance.getInstance();
 
-const positionLevels = ["intern", "junior", "mid", "senior", "manager"];
-const contractTypes = ["uz", "uop", "b2b", "uod", "intern"];
-const workModes = ["remote", "hybrid", "stationary"];
-const workSchedules = ["full-time", "part-time", "internship", "freelance"];
-
-// const dataSources = ["pracuj", "justjoin"];
-
-const mockOffer: JobOffer = {
-  id: "aSDAJS4jasdj5r",
-  slug: "",
-  positionName: "TEST gineer",
+export const mockOffer: JobOffer = {
+  id: "TestId123",
+  slug: "test-slug",
+  positionName: "Test Developer",
   createdAt: new Date().toISOString(),
-  // updatedAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
   dataSourceCode: "justjoin",
   companyName: "Google",
-  description: "",
+  description: "Description of this offer",
   // createdAt: new Date().toISOString(),
   company: {
     name: "Google",
-    logoUrl: null,
+    logoUrl: "/xd",
   },
   salaryRange: [
     {
@@ -44,22 +34,22 @@ const mockOffer: JobOffer = {
   workModes: ["remote"],
   workSchedules: ["freelance"],
   technologies: ["Javascript", "Nodejs", "Typescript"],
-  offerUrls: [""],
+  offerUrls: ["www.google.pl"],
   workplaces: ["Zielona Góra"],
 };
 
-const cleanupDb = async () => {
+const cleanupDb = async (prismaClient: PrismaClient) => {
   try {
-    await prisma.jobOffer.deleteMany();
-    await prisma.offersMetadata.deleteMany();
-    await prisma.salaryRange.deleteMany();
-    await prisma.company.deleteMany();
-    await prisma.workSchedule.deleteMany();
-    await prisma.contractType.deleteMany();
-    await prisma.workMode.deleteMany();
-    await prisma.positionLevel.deleteMany();
+    await prismaClient.jobOffer.deleteMany();
+    await prismaClient.offersMetadata.deleteMany();
+    await prismaClient.salaryRange.deleteMany();
+    await prismaClient.company.deleteMany();
+    await prismaClient.workSchedule.deleteMany();
+    await prismaClient.contractType.deleteMany();
+    await prismaClient.workMode.deleteMany();
+    await prismaClient.positionLevel.deleteMany();
 
-    // await prisma.offersMetadata.delete({
+    // await prismaClient.offersMetadata.delete({
     //   where: {
     //     id: "offers-metadata",
     //   },
@@ -70,60 +60,33 @@ const cleanupDb = async () => {
   }
 };
 
-async function main() {
+export async function seedDb(prismaClient: PrismaClient) {
   try {
-    await cleanupDb();
-    const existingOffersCount = await prisma.jobOffer
+    await cleanupDb(prismaClient);
+    const existingOffersCount = await prismaClient.jobOffer
       .count({
         where: { positionName: mockOffer.positionName },
       })
       .catch(() => 0);
 
-    await prisma.offersMetadata.create({
-      data: { total: 1 },
+    await prismaClient.offersMetadata.create({
+      data: { total: existingOffersCount },
     });
 
-    await prisma.jobOffer.create({
-      data: {
-        positionName: mockOffer.positionName!,
-        slug: generateJobOfferSlug(mockOffer, existingOffersCount > 0 ? [(existingOffersCount + 1).toString()] : []),
-        positionLevels: connectOrCreateArray(mockOffer?.positionLevels),
-        contractTypes: connectOrCreateArray(mockOffer?.contractTypes),
-        workModes: connectOrCreateArray(mockOffer?.workModes),
-        workSchedules: connectOrCreateArray(mockOffer?.workSchedules),
-        technologies: connectOrCreateArray(mockOffer?.technologies),
-        workplaces: {
-          connectOrCreate: mockOffer?.workplaces?.map(value => ({
-            where: { value },
-            create: { value },
-          })),
-        },
-        // workplaces: connectOrCreateField(mockOffer?.workplaces),
-
-        company: {
-          connectOrCreate: {
-            where: { name: mockOffer.company?.name },
-            create: {
-              name: mockOffer.company?.name ?? "Undefined name",
-              logoUrl: null,
-            },
-          },
-        },
-        salaryRange: {
-          create: [],
-        },
-      },
+    await prismaClient.jobOffer.create({
+      data: OfferHelper.parseJobOfferToPrismaModel(mockOffer),
     });
 
     // await Promise.all([positionLevelsPromise]);
   } catch (err) {
     console.error({ SeedError: err });
   }
+  return prismaClient;
 }
 
-main()
-  .then(async () => {
-    await prisma.$disconnect();
+seedDb(prisma)
+  .then(async (prismaClient: PrismaClient) => {
+    await prismaClient.$disconnect();
   })
   .catch(async e => {
     console.log(e);

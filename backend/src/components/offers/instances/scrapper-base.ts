@@ -68,7 +68,6 @@ abstract class ScrapperBase {
         const scrappedPage = await this.scrapePage<T>(pageNum);
         if (scrappedPage) results.push(scrappedPage);
       }
-
       const aggregatedData = results.flat() as T[];
       return this.standardizeData(aggregatedData);
     } catch (err) {

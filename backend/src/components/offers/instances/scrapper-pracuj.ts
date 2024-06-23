@@ -1,4 +1,4 @@
-import { type Browser } from "puppeteer";
+import { type Browser, type Page } from "puppeteer";
 
 import { generateId } from "@/utils/generate-id";
 
@@ -80,27 +80,27 @@ class ScrapperPracuj extends ScrapperBase {
     });
   }
 
-  // private async acceptCookieConsent(page: Page | undefined): Promise<void> {
-  //   if (!page) return;
-  //   try {
-  //     await page.waitForSelector('[data-test="button-submitCookie"]', { timeout: 5000 });
-  //     await page.click('[data-test="button-submitCookie"]');
-  //   } catch (err) {
-  //     console.log("Cannot press cookie consent.");
-  //   }
-  // }
+  private async acceptCookieConsent(page: Page | undefined): Promise<void> {
+    if (!page) return;
+    try {
+      await page.waitForSelector('[data-test="button-submitCookie"]', { timeout: 5000 });
+      await page.click('[data-test="button-submitCookie"]');
+    } catch (err) {
+      console.log("Cannot press cookie consent.");
+    }
+  }
 
   // Abstract class from ScrapperBase which is used inside base instance in saveScrappedDataToFile
   protected scrapePage = async <T>(pageNumber: number, retries = 3): Promise<T[] | undefined> => {
     const page = await this.browser?.newPage();
     if (!page) return [];
-
     try {
+      console.log(`Scrapping Pracuj.pl page: ${pageNumber}`);
       await page.goto(`${this.url}?pn=${pageNumber}`, { waitUntil: "networkidle2" });
-      // await this.acceptCookieConsent(page).catch(err => {
-      //   console.log("Cannot accept cookie consent: ", err);
-      //   return undefined;
-      // });
+      await this.acceptCookieConsent(page).catch(err => {
+        console.log("Cannot accept cookie consent: ", err);
+        return undefined;
+      });
 
       await page
         .waitForSelector('script[id="__NEXT_DATA__"]', {
@@ -139,7 +139,7 @@ class ScrapperPracuj extends ScrapperBase {
       if (textContent) maxPagesValue = textContent ?? "1";
     }
     return parseInt(maxPagesValue);
-    // return 15;
+    // return 5;
   }
 
   private transformSalaryTimeUnit = (val: string): TimeUnitTypes => {
