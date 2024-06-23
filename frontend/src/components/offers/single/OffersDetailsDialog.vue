@@ -45,7 +45,7 @@ const { offer, salaryText } = defineProps<OffersDetailsDialogProps>();
         <p class="font-bold text-lg text-primary md:mb-2 text-right">{{ salaryText }}</p>
         <div class="flex justify-around gap-2">
           <OffersIconValueBox :icon="Building2" :value="offer?.company?.name" />
-          <OffersIconValueBox :icon="MapPin" :value="createStringFromArr(offer?.workplace)" />
+          <OffersIconValueBox :icon="MapPin" :value="createStringFromArr(offer?.workplaces)" />
           <OffersIconValueBox :icon="Calendar" :value="formatDate(offer?.expirationDate)" />
         </div>
         <OfferBadges :position-levels="offer?.positionLevels" :work-modes="offer?.workModes" :contract-types="offer?.contractTypes" />
