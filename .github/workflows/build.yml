@@ -2,6 +2,10 @@ name: Build
 
 on:
   workflow_dispatch:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    types: [ opened,synchronize ]
 
 jobs:
   build:
@@ -28,8 +32,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Lint projects
+        run: pnpm run lint
+
       - name: Build
         run: pnpm run build
 
       - name: Test
         run: pnpm run test
+
+      - name: Completed
+        run: echo "Project easily did this Pipeline, congratz!"
