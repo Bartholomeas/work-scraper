@@ -80,6 +80,8 @@ export async function seedDb(prismaClient: PrismaClient) {
     // await Promise.all([positionLevelsPromise]);
   } catch (err) {
     console.error({ SeedError: err });
+  } finally {
+    await prismaClient.$disconnect();
   }
   return prismaClient;
 }

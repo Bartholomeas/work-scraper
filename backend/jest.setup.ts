@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { DATABASE_URL } from "./src/misc/constants";
 import { seedDb } from "./prisma/seed";
 
-const prisma = new PrismaClient({
+export const testPrisma = new PrismaClient({
   datasources: {
     db: {
       url: DATABASE_URL ?? "./test.db",
@@ -12,11 +12,11 @@ const prisma = new PrismaClient({
 
 // const seedTest = async () => {
 //   try {
-//     // await prisma.offersMetadata.deleteMany();
-//     // await prisma.offersMetadata.create({
+//     // await testPrisma.offersMetadata.deleteMany();
+//     // await testPrisma.offersMetadata.create({
 //     //   data: { total: 420 },
 //     // });
-//     const offersMetadata = await prisma.offersMetadata.findUnique({
+//     const offersMetadata = await testPrisma.offersMetadata.findUnique({
 //       where: {
 //         id: "offers-metadata",
 //       },
@@ -29,5 +29,5 @@ const prisma = new PrismaClient({
 module.exports = async () => {
   // jest.useFakeTimers();
   console.log("Seeding test.db", process.env.DATABASE_URL);
-  await seedDb(prisma);
+  await seedDb(testPrisma);
 };
