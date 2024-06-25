@@ -6,8 +6,9 @@
   "scripts": {
     "build": "tsc",
     "dev": "NODE_ENV=development && nodemon src/server.ts",
-    "start": "node dist/server.js",
+    "start": "node ./dist/backend/src/server.js",
     "lint": "eslint src/**/*.ts",
+    "type-check": "tsc --noEmit",
     "format": "eslint src/**/*.ts --fix",
     "db:push": "NODE_ENV=development && dotenv -e .env.development -- pnpx prisma db push",
     "db:push:test": "NODE_ENV=test && dotenv -e .env.test -- pnpx prisma db push",

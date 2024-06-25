@@ -7,9 +7,8 @@ import dotenv from "dotenv";
 const envFile = `.env.${process.env.NODE_ENV ?? "development"}`;
 dotenv.config({ path: envFile });
 console.log({ envFile, DBenv: process.env.DATABASE_URL });
-
-import { PORT } from "src/misc/constants";
-import { app } from "src/app";
+import { PORT } from "@/misc/constants";
+import { app } from "@/app";
 
 const port = PORT || 8080;
 const server = app.listen(port, () => {
