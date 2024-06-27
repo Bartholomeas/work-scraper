@@ -1,4 +1,4 @@
-import express from "express";
+import express, { type Router } from "express";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { OffersController } from "./offers.controller";
@@ -10,7 +10,7 @@ class OffersRouter {
     this.offersController = offersController;
   }
 
-  getRouter() {
+  getRouter(): Router {
     const router = express.Router();
     puppeteer.use(StealthPlugin());
     router.get("/metadata", this.offersController.getOffersMetadata);

@@ -1,4 +1,4 @@
-import type { ErrorCodes } from "apps/backend/src/types/error.types";
+import type { ErrorCodes } from "@/types/error.types";
 
 export const ERROR_CODES: Record<ErrorCodes, ErrorCodes> = {
   not_found: "not_found",

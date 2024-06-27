@@ -1,6 +1,6 @@
 import slugify from "slugify";
-import { SLUGIFY_CONFIG } from "./../lib/slugify";
-import type { JobOffer } from "@shared/offers/offers.types";
+import { SLUGIFY_CONFIG } from "@/lib/slugify";
+import type { JobOffer } from "shared/src/offers/offers.types";
 
 /**
  * @description - Free to use keys string but preffered keys are: [positionName, companyName, workplace[0],positionLevels[0]]

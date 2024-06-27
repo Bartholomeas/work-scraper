@@ -2,12 +2,13 @@ import path from "node:path";
 import { type Browser, type Page } from "puppeteer";
 import dayjs from "dayjs";
 
-import type { JobOffer, JobQueryParams, ScrappedDataResponse } from "@shared/offers/offers.types";
+import { AppError } from "@/utils/app-error";
+import { ERROR_CODES } from "@/misc/error.constants";
 
 import { MINUTES_TO_OUTDATE } from "@/components/offers/helpers/offers.constants";
 import { FilesManagerController } from "@/components/files-manager/files-manager.controller";
-import { AppError } from "@/utils/app-error";
-import { ERROR_CODES } from "@/misc/error.constants";
+
+import type { JobOffer, JobQueryParams, ScrappedDataResponse } from "shared/src/offers/offers.types";
 
 interface SaveScrappedDataToFileProps<T> {
   fileName: string;

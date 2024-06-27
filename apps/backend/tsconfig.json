@@ -1,5 +1,7 @@
 {
-  "extends": "tsconfig/base.json",
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "tsconfig/backend.json",
+  "display": "Backend",
   "compilerOptions": {
     "target": "ES2019",
     "module": "CommonJS",
@@ -19,7 +21,7 @@
       "DOM"
     ],
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": "./",
     "forceConsistentCasingInFileNames": true,
     "typeRoots": [
       "types",
@@ -28,7 +30,6 @@
     ]
   },
   "include": [
-    "prisma/**/*.ts",
     "prisma/*",
     "src/**/*"
   ],

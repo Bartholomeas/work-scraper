@@ -1,4 +1,4 @@
-import express from "express";
+import express, { type Router } from "express";
 
 import { validateBody } from "@/middleware/validate-body";
 import { signInSchema, signUpSchema } from "@/schemas/auth.schemas";
@@ -11,7 +11,7 @@ class AuthRouter {
     this.authController = authController;
   }
 
-  getRouter() {
+  public getRouter(): Router {
     const router = express.Router();
     router.get("/me", this.authController.protectRoute, this.authController.getMe);
     router.post("/sign-up", validateBody(signUpSchema), this.authController.signUp);
