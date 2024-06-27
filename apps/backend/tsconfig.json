@@ -1,0 +1,38 @@
+{
+  "extends": "tsconfig/base.json",
+  "compilerOptions": {
+    "target": "ES2019",
+    "module": "CommonJS",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "src/*"
+      ]
+    },
+    "allowJs": true,
+    "alwaysStrict": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "noImplicitAny": true,
+    "lib": [
+      "ES2019"
+    ],
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "forceConsistentCasingInFileNames": true,
+    "typeRoots": [
+      "types",
+      "node_modules/@types",
+      "node_modules/types"
+    ]
+  },
+  "include": [
+    "prisma/**/*.ts",
+    "prisma/*"
+  ],
+  "exclude": [
+    "node_modules/**/*",
+    "**/dist/**/*",
+    "public/**/*"
+  ]
+}
