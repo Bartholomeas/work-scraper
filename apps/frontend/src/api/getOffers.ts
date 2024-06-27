@@ -1,7 +1,8 @@
 import { useQuery } from "vue-query/esm";
-import { fetcher } from "apps/frontend/src/utils/fetcher";
-import { OFFERS_LIST_KEY } from "@/api/keys";
+
 import type { JobOffersResponse } from "shared/src/offers/offers.types";
+import { fetcher } from "@/utils/fetcher";
+import { OFFERS_LIST_KEY } from "@api/keys";
 
 const getOffersList = async (): Promise<JobOffersResponse | undefined> => {
   try {

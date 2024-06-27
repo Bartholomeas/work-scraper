@@ -11,10 +11,10 @@ export default defineConfig({
       plugins: [tailwind(), autoprefixer()],
     },
   },
-  plugins: [vue()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  plugins: [vue()],
 });

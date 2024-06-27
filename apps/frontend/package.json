@@ -3,6 +3,9 @@
   "private": true,
   "version": "0.0.1",
   "type": "module",
+  "imports": {
+    "@/*": "./src/*"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc && vite build",
@@ -43,6 +46,7 @@
     "typescript": "^5.2.2",
     "vite": "^5.2.0",
     "vite-plugin-eslint": "^1.8.1",
-    "vue-tsc": "^2.0.6"
+    "vue-tsc": "^2.0.6",
+    "tsconfig": "workspace:*"
   }
 }
