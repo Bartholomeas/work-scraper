@@ -2,14 +2,17 @@ import { NextFunction, type Request, type Response } from "express";
 import { Browser, executablePath } from "puppeteer";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
-import type { OffersService } from "apps/backend/src/components/offers/offers.service";
-import { AppError } from "apps/backend/src/utils/app-error";
-import { ERROR_CODES } from "apps/backend/src/misc/error.constants";
-import { ScrapperPracuj } from "apps/backend/src/components/offers/instances/scrapper-pracuj";
-import { JUSTJOIN_URL, PRACUJ_URL } from "apps/backend/src/components/offers/helpers/offers.constants";
-import { ScrapperJustjoin } from "apps/backend/src/components/offers/instances/scrapper-justjoin";
-import type { JobOffer } from "shared/src/offers/offers.types";
+
 import { offersQueryParameters } from "shared/src/offers/offers.schemas";
+import type { JobOffer } from "shared/src/offers/offers.types";
+
+import { AppError } from "@/utils/app-error";
+import { ERROR_CODES } from "@/misc/error.constants";
+
+import type { OffersService } from "@/components/offers/offers.service";
+import { ScrapperPracuj } from "@/components/offers/instances/scrapper-pracuj";
+import { JUSTJOIN_URL, PRACUJ_URL } from "@/components/offers/helpers/offers.constants";
+import { ScrapperJustjoin } from "@/components/offers/instances/scrapper-justjoin";
 
 puppeteer.use(StealthPlugin());
 

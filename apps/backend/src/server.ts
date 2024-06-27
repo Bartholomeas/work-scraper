@@ -4,12 +4,12 @@ import "tsconfig-paths/register";
 //   path: `.env.${process.env.NODE_ENV}`,
 // });
 import dotenv from "dotenv";
+import { PORT } from "@/misc/constants";
+import { app } from "@/app";
+
 const envFile = `.env.${process.env.NODE_ENV ?? "development"}`;
 dotenv.config({ path: envFile });
 console.log({ envFile, DBenv: process.env.DATABASE_URL });
-
-import { PORT } from "@/misc/constants";
-import { app } from "@/app";
 
 const port = PORT || 8080;
 const server = app.listen(port, () => {

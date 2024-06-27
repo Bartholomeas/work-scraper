@@ -15,7 +15,8 @@
     "resolveJsonModule": true,
     "noImplicitAny": true,
     "lib": [
-      "ES2019"
+      "ES2019",
+      "DOM"
     ],
     "outDir": "./dist",
     "rootDir": "./src",
@@ -28,7 +29,8 @@
   },
   "include": [
     "prisma/**/*.ts",
-    "prisma/*"
+    "prisma/*",
+    "src/**/*"
   ],
   "exclude": [
     "node_modules/**/*",

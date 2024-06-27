@@ -2,18 +2,14 @@ import { type Browser, type Page } from "puppeteer";
 
 import type { CurrencyCodes, JobOffer, SalaryTypes, ScrappedDataResponse, TimeUnitTypes } from "shared/src/offers/offers.types";
 
-import { ScrapperBase, type ScrapperBaseProps } from "apps/backend/src/components/offers/instances/scrapper-base";
-import { PRACUJ_DATA_FILENAME } from "apps/backend/src/components/offers/helpers/offers.constants";
-import type { JobOfferPracuj } from "apps/backend/src/types/offers/pracuj.types";
-import { generateId } from "apps/backend/src/utils/generate-id";
-import { AppError } from "apps/backend/src/utils/app-error";
-import { ERROR_CODES } from "apps/backend/src/misc/error.constants";
-import {
-  isContractTypesArr,
-  isWorkModesArr,
-  isWorkPositionLevelsArr,
-  isWorkSchedulesArr,
-} from "apps/backend/src/components/offers/helpers/offers.utils";
+import { generateId } from "@/utils/generate-id";
+import { AppError } from "@/utils/app-error";
+import { ERROR_CODES } from "@/misc/error.constants";
+
+import { ScrapperBase, type ScrapperBaseProps } from "@/components/offers/instances/scrapper-base";
+import { isContractTypesArr, isWorkModesArr, isWorkPositionLevelsArr, isWorkSchedulesArr } from "@/components/offers/helpers/offers.utils";
+import { PRACUJ_DATA_FILENAME } from "@/components/offers/helpers/offers.constants";
+import type { JobOfferPracuj } from "@/types/offers/pracuj.types";
 
 const SCRAPPED_PAGE_WIDTH = 1200;
 const SCRAPPED_PAGE_HEIGHT = 980;
