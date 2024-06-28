@@ -256,6 +256,9 @@ importers:
       tailwindcss:
         specifier: ^3.4.3
         version: 3.4.4(ts-node@10.9.2(@types/node@20.14.9)(typescript@5.5.2))
+      tsconfig:
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
       typescript:
         specifier: ^5.2.2
         version: 5.5.2
@@ -289,6 +292,9 @@ importers:
       prettier:
         specifier: ^3.2.5
         version: 3.3.2
+      tsconfig:
+        specifier: workspace:*
+        version: link:../tsconfig
       typescript:
         specifier: ^5.4.5
         version: 5.5.2

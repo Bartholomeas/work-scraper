@@ -4,7 +4,6 @@
   "extends": "./base.json",
   "compilerOptions": {
     "forceConsistentCasingInFileNames": true,
-    "incremental": true,
     "module": "ESNext",
     "isolatedModules": true,
     "allowJs": true,

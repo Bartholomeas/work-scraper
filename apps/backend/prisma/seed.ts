@@ -1,7 +1,6 @@
-import type { JobOffer } from "shared/src/offers/offers.types";
-import { PrismaInstance } from "./../src/components/libs/prisma.instance";
+import { PrismaInstance } from "@/components/libs/prisma.instance";
 import { PrismaClient } from "@prisma/client";
-import { OfferHelper } from "./../src/components/offers/helpers/offer-helper";
+import type { JobOffer } from "shared/src/offers/offers.types";
 
 const prisma = PrismaInstance.getInstance();
 
@@ -73,9 +72,10 @@ export async function seedDb(prismaClient: PrismaClient) {
       data: { total: existingOffersCount },
     });
 
-    await prismaClient.jobOffer.create({
-      data: OfferHelper.parseJobOfferToPrismaModel(mockOffer),
-    });
+    // TODO: Uncomment to make seed working (wrong typing)
+    // await prismaClient.jobOffer.create({
+    //   data: OfferHelper.parseJobOfferToPrismaModel(mockOffer),
+    // });
 
     // await Promise.all([positionLevelsPromise]);
   } catch (err) {

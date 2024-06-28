@@ -1,5 +1,7 @@
 import { z } from "zod";
-import { paginationMetadataSchema, paginationSchema } from "src/general/query.schemas";
+import { paginationMetadataSchema, paginationSchema } from "../general/query.schemas";
+
+// import { paginationMetadataSchema, paginationSchema } from "../general/query.schemas";
 
 export const positionLevelsSchema = z.enum(["intern", "junior", "mid", "senior", "manager"]);
 export const contractTypeCodesSchema = z.enum(["uz", "uop", "b2b", "uod", "intern"]);

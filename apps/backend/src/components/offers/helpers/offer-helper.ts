@@ -160,6 +160,23 @@ class OfferHelper {
   }
 
   public static parseJobOfferToPrismaModel(offer: JobOffer) {
+    const offerUrls = offer?.offerUrls?.map(el => ({
+      value: el,
+    }));
+
+    const salaryRange =
+      offer?.salaryRange && offer?.salaryRange?.length > 0
+        ? {
+            create: offer?.salaryRange?.map(salary => ({
+              min: salary?.min,
+              max: salary?.max,
+              currency: salary?.currency,
+              type: salary?.type,
+              timeUnit: salary?.timeUnit,
+            })),
+          }
+        : undefined;
+
     return {
       id: offer.id,
       positionName: offer?.positionName,
@@ -173,24 +190,8 @@ class OfferHelper {
       workModes: connectOrCreateArray(offer?.workModes),
       workSchedules: connectOrCreateArray(offer?.workSchedules),
       technologies: connectOrCreateArray(offer?.technologies),
-      offerUrls: {
-        create: offer?.offerUrls?.map((el: { value: string }) => ({
-          value: el,
-        })),
-      },
-      salaryRange:
-        offer?.salaryRange && offer.salaryRange.length > 0
-          ? {
-              create: offer?.salaryRange.map((salary: JobOffer["salaryRange"]) => ({
-                min: salary?.min,
-                max: salary?.max,
-                currency: salary?.currency,
-                type: salary?.type,
-                timeUnit: salary?.timeUnit,
-              })),
-            }
-          : undefined,
-
+      offerUrls,
+      salaryRange,
       company: {
         connectOrCreate: {
           where: { name: offer?.company?.name },

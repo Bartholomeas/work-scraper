@@ -1,5 +1,30 @@
 {
-  "$schema": "https://json.schemastore.org/tsconfig"
+  "$schema": "https://json.schemastore.org/tsconfig",
   "display": "Frontend",
-  "extends": "./base.json"
+  "extends": "./base.json",
+  "compilerOptions": {
+    "target": "ES6",
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ESNext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "resolveJsonModule": true
+  },
+  "include": [
+    "src",
+    "next-env.d.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

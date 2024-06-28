@@ -9,11 +9,11 @@ import {
   offersMetadataSchema,
   offersQueryParameters,
   positionLevelsSchema,
-  salaryTypeSchema,
+  type salaryTypeSchema,
   timeUnitTypeSchema,
   workModesSchema,
   workSchedulesSchema,
-} from "@/offers/offers.schemas";
+} from "./offers.schemas";
 
 export type CurrencyCodes = z.infer<typeof currenciesSchema>;
 export type SalaryTypes = z.infer<typeof salaryTypeSchema>;

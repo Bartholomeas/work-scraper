@@ -1,9 +1,9 @@
 import request from "supertest";
-import { app } from "@/app";
-import { BASE_URL } from "@/misc/constants";
-import type { JobOffersResponse } from "@shared/offers/offers.types";
-import { paginationMetadataSchema } from "@shared/general/query.schemas";
-import { jobOfferSchema } from "@shared/offers/offers.schemas";
+import type { JobOffersResponse } from "shared/src/offers/offers.types";
+import { app } from "apps/backend/src/app";
+import { BASE_URL } from "apps/backend/src/misc/constants";
+import { paginationMetadataSchema } from "shared/src/general/query.schemas";
+import { jobOfferSchema } from "shared/src/offers/offers.schemas";
 
 describe("GET offers/metadata", () => {
   let response: JobOffersResponse | undefined;
