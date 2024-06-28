@@ -1,9 +1,9 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "tsconfig/backend.json",
-  "display": "Backend",
+  "display": "backend",
   "compilerOptions": {
-    "target": "ES2019",
+    "target": "ES2016",
     "module": "CommonJS",
     "baseUrl": ".",
     "paths": {
@@ -17,7 +17,7 @@
     "resolveJsonModule": true,
     "noImplicitAny": true,
     "lib": [
-      "ES2019",
+      "ES2020",
       "DOM"
     ],
     "outDir": "./dist",

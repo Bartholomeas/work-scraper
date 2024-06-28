@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "display": "backend",
+  "display": "backend-base",
   "extends": "./base.json",
   "compilerOptions": {
     "forceConsistentCasingInFileNames": true,

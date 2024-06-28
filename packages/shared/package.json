@@ -2,11 +2,8 @@
   "name": "shared",
   "private": true,
   "version": "0.0.1",
-  "exports": {
-    "./*": "./src/*"
-  },
   "imports": {
-    "#*": "./*"
+    "#/*": "./*"
   },
   "scripts": {
     "type-check": "tsc --noEmit"
