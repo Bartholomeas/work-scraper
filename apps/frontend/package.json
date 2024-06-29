@@ -6,6 +6,9 @@
   "imports": {
     "@/*": "./src/*"
   },
+  "exports": {
+    "@/*": "./src/*"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc && vite build",

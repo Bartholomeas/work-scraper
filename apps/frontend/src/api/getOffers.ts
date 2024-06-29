@@ -2,7 +2,7 @@ import { useQuery } from "vue-query/esm";
 
 import type { JobOffersResponse } from "shared/src/offers/offers.types";
 import { fetcher } from "@/utils/fetcher";
-import { OFFERS_LIST_KEY } from "@api/keys";
+import { OFFERS_LIST_KEY } from "@/api/keys";
 
 const getOffersList = async (): Promise<JobOffersResponse | undefined> => {
   try {

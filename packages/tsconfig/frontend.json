@@ -3,7 +3,7 @@
   "display": "Frontend",
   "extends": "./base.json",
   "compilerOptions": {
-    "target": "ES6",
+    "target": "ESNext",
     "lib": [
       "DOM",
       "DOM.Iterable",

@@ -1,6 +1,7 @@
 import { createApp } from "vue";
 import { VueQueryPlugin } from "vue-query";
 import { router } from "@/router";
+
 import "./assets/index.css";
 import App from "./App.vue";
 
