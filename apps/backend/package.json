@@ -3,12 +3,10 @@
   "version": "0.0.1",
   "description": "",
   "main": "./index.js",
-  
   "scripts": {
-    "build": "tsc",
+    "build": "NODE_ENV=development && tsup --tsconfig tsconfig.json --format cjs,esm --dts",
     "dev": "NODE_ENV=development && tsx watch src/server.ts",
-    "dev:old": "NODE_ENV=development && nodemon ./src/server.ts",
-    "start": "node ./dist/backend/src/server.js",
+    "start": "node dist/server.js",
     "lint": "eslint --fix --cache 'src/**/*.{ts,tsx}'",
     "type-check": "tsc --noEmit",
     "format": "eslint src/**/*.ts --fix",
@@ -42,7 +40,6 @@
     "express-rate-limit": "^7.2.0",
     "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
-    "nodemon": "^3.1.0",
     "puppeteer": "^22.9.0",
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
@@ -75,14 +72,16 @@
     "morgan": "^1.10.0",
     "prettier": "^3.2.5",
     "prisma": "^5.14.0",
+    "shared": "workspace:*",
     "supertest": "^7.0.0",
     "ts-jest": "^29.1.5",
     "ts-node": "^10.9.2",
+    "tsc-alias": "^1.8.10",
+    "tsconfig": "workspace:*",
     "tsconfig-paths": "^4.2.0",
+    "tsup": "^8.1.0",
     "tsx": "^4.15.7",
     "typescript": "^5.4.5",
-    "typescript-eslint": "^7.9.0",
-    "tsconfig": "workspace:*",
-    "shared": "workspace:*"
+    "typescript-eslint": "^7.9.0"
   }
 }
