@@ -9,5 +9,3 @@ import { HEADER_HEIGHT } from "@/constants";
     <RouterView></RouterView>
   </main>
 </template>
-
-<style scoped></style>

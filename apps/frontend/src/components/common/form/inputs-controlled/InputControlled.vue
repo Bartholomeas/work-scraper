@@ -9,6 +9,7 @@ const { name, label, description, labelSrOnly, ...props } = withDefaults(defineP
   labelSrOnly: false,
 });
 const { meta } = useField(name);
+console.log("XD", meta.dirty);
 </script>
 
 <template>
