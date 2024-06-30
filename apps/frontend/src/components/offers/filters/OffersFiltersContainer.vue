@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import { z } from "zod";
+import { useRouter } from "vue-router";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 
+import { useFilters } from "@/composables/useFilters";
+
 import OffersSearchbar from "@/components/offers/filters/OffersSearchbar.vue";
+// import { offersQueryParameters } from "shared/src/offers/offers.schemas";
 
 const filterOffersSchema = toTypedSchema(
   z.object({
@@ -15,19 +19,22 @@ const filterOffersSchema = toTypedSchema(
       .default([]),
   }),
 );
+
+// const filterOffersSchema = toTypedSchema(offersQueryParameters);
+
+const router = useRouter();
+const { submitFilters } = useFilters();
 const form = useForm({
   validationSchema: filterOffersSchema,
 });
 
 const onSubmit = form.handleSubmit(values => {
-  console.log("values", values);
+  submitFilters(values);
 });
 </script>
 
 <template>
-  <div class="flex">
-    <form @submit="onSubmit">
-      <OffersSearchbar />
-    </form>
-  </div>
+  <form @submit="onSubmit">
+    <OffersSearchbar />
+  </form>
 </template>

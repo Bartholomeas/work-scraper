@@ -21,7 +21,7 @@ export default [
         project: "./backend.json",
         parser: "@typescript-eslint/parser",
         extraFileExtensions: [".vue"],
-        ecmaVersion: 2021,
+        ecmaVersion: 2023,
       },
     },
     plugins: {
@@ -29,7 +29,7 @@ export default [
       "@typescript-eslint": pluginTypescript,
     },
     rules: {
-      "import/order": "off",
+      "import/order": "on",
       "spaced-comment": "off",
       "no-console": "warn",
       "consistent-return": "off",
