@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import OffersStatCard from "@/components/offers/OffersStatCard.vue";
-import { useGetOffersMetadata } from "@/api/getOffersMetadata";
+import { useGetOffersMetadata } from "@/api/offers/getOffersMetadata";
 import { BarChart } from "lucide-vue-next";
 
 // const statistics = [

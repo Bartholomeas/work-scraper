@@ -1,8 +1,8 @@
 import { useQuery } from "vue-query/esm";
 
 import type { OffersMetadataResponse } from "shared/src/offers/offers.types";
-import { fetcher } from "./../utils/fetcher";
-import { OFFERS_METADATA_KEY } from "./keys";
+import { fetcher } from "@/utils/fetcher";
+import { OFFERS_METADATA_KEY } from "@/api/keys";
 
 export const getOffersMetadata = async (): Promise<OffersMetadataResponse | undefined> => {
   try {
