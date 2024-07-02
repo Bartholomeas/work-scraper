@@ -17,7 +17,7 @@ const modelValue = useVModel(props, "modelValue", emits, {
 
 <template>
   <div class="relative">
-    <component v-if="Boolean(props.icon)" :is="props.icon" class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+    <component v-if="Boolean(props.icon)" :is="props.icon" class="absolute left-2.5 top-1/2 -translate-y-1 h-4 w-4 text-muted-foreground" />
 
     <input
       :placeholder="props.placeholder"

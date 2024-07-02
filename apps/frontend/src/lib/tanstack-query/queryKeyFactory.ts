@@ -22,19 +22,6 @@ export const createQueryKeyFactory = <TEntity extends string>(_entity: TEntity) 
   };
 };
 
-// export type QueryFunctionContextCreator<KeyFactory extends Record<string, QueryKey | ((...args: any[]) => QueryKey)>> = {
-//   [K in keyof KeyFactory]: KeyFactory[K] extends (...args: any[]) => QueryKey
-//     ? QueryFunctionContext<ReturnType<KeyFactory[K]>>
-//     : KeyFactory[K] extends QueryKey
-//       ? QueryFunctionContext<KeyFactory[K]>
-//       : never;
-// }
-// export type QueryFunctionContextCreator<TKeyFactory extends Record<string, (...args: any[]) => QueryKey>> = {
-//   [K in keyof TKeyFactory]: UseQueryOptions<unknown, unknown, unknown, unknown>["queryKey"];
-//   // [K in keyof TKeyFactory]: UseQueryOptions<unknown, unknown, unknown, QueryKey>["queryKey"];
-// };
-// [K in keyof TKeyFactory]: QueryFunctionContext<ReturnType<TKeyFactory[K]>>;
-
 type QueryFunctionContext<TQueryKey extends QueryKey = QueryKey> = {
   queryKey: TQueryKey;
   signal: AbortSignal;

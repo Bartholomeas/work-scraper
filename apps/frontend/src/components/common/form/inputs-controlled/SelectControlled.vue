@@ -14,9 +14,12 @@ interface SelectControlledProps extends ControlledProps, Omit<SelectRootProps, "
   items: SelectControlledItem[];
 }
 
-const { name, label, labelSrOnly, placeholder, description, items, ...props } = withDefaults(defineProps<SelectControlledProps>(), {
-  placeholder: "Wybierz wartość",
-});
+const { name, label, labelSrOnly, placeholder, description, items, className, ...props } = withDefaults(
+  defineProps<SelectControlledProps>(),
+  {
+    placeholder: "Wybierz wartość",
+  },
+);
 
 const { meta } = useField(name);
 </script>
@@ -27,7 +30,7 @@ const { meta } = useField(name);
       <FormLabel :class="{ 'sr-only': labelSrOnly }">{{ label }}</FormLabel>
       <Select v-bind="componentField">
         <FormControl>
-          <SelectTrigger>
+          <SelectTrigger :class="className">
             <SelectValue :placeholder="placeholder" />
           </SelectTrigger>
         </FormControl>

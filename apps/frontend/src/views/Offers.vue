@@ -35,7 +35,7 @@ const { data } = useGetOffersList(queryParams);
         <OffersFiltersTopBar />
       </template>
       <template #filters>
-        <div>FILTRY TU BEDA</div>
+        <!--        <div>FILTRY TU BEDA</div>-->
       </template>
       <OffersItemsTable :offers="data?.data" />
       <template #pagination>
