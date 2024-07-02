@@ -17,9 +17,7 @@ const queryParams = reactive({ ...route?.params });
 watch(
   () => route.query,
   newQuery => {
-    console.log("NEW QUERY", newQuery);
     Object.assign(queryParams, newQuery);
-    // params.value = newQuery;
   },
   {
     immediate: true,
@@ -29,7 +27,7 @@ const { data } = useGetOffersList(queryParams);
 </script>
 
 <template>
-  <div class="flex flex-col gap-6 bg-accent-card">
+  <div class="flex flex-col gap-6 bg-accent-card w-full">
     <h1 class="text-[40px] font-bold">Oferty pracy</h1>
     <OffersStatCards />
     <OffersListLayout>

@@ -10,7 +10,7 @@ const { offers } = defineProps<OffersItemsListProps>();
 </script>
 
 <template>
-  <div class="flex flex-col gap-2">
+  <div class="flex flex-col gap-2 w-full">
     <OffersSingleItem v-for="offer in offers" v-if="Array.isArray(offers) && offers?.length > 0" :key="offer.id" :offer="offer" />
     <div v-else>Brak ofert</div>
   </div>

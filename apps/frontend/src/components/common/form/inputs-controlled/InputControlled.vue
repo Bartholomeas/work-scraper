@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { useField } from "vee-validate";
 
+import { cn } from "@/utils/utils";
+
 import { Input, InputProps } from "@/components/ui/input";
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/common/form";
 import type { ControlledProps } from "@/components/common/form/inputs-controlled/inputs-controlled.types";
-import { cn } from "@/utils/utils";
 
 interface InputControlledProps extends InputProps, ControlledProps {
   fullWidth?: boolean;

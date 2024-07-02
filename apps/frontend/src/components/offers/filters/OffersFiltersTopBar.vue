@@ -1,52 +1,61 @@
 <script setup lang="ts">
-import { useRouter } from "vue-router";
+import { watch } from "vue";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
-
-import { useFilters } from "@/composables/useFilters";
+import { Search } from "lucide-vue-next";
 
 import { coreSearchParamsSchema } from "shared/src/offers/offers.schemas";
-import { Search } from "lucide-vue-next";
-import SelectControlled, { type SelectControlledItem } from "@/components/common/form/inputs-controlled/SelectControlled.vue";
-import InputControlled from "@/components/common/form/inputs-controlled/InputControlled.vue";
+
+import { useFilters } from "@/composables/useFilters";
 import { parseZodSchemaToInputNames } from "@/lib/zod/parseZodSchemaToInputNames";
 
-const filterOffersSchema = toTypedSchema(coreSearchParamsSchema);
+import SelectControlled, { type SelectControlledItem } from "@/components/common/form/inputs-controlled/SelectControlled.vue";
+import InputControlled from "@/components/common/form/inputs-controlled/InputControlled.vue";
+import { debounce } from "@/utils/debounce";
 
-const router = useRouter();
 const { submitFilters } = useFilters();
 const form = useForm({
-  validationSchema: filterOffersSchema,
+  validationSchema: toTypedSchema(coreSearchParamsSchema),
 });
 
 const sortItems: SelectControlledItem[] = [
-  {
-    content: "Najtrafniejsze",
-    value: "relevant",
-  },
   {
     content: "Od najnowszych",
     value: "createdAt",
   },
   {
-    content: "Kończące się najwcześniej",
+    content: "Kończące się niedługo",
     value: "expirationDate",
   },
 ];
 
-const kekw = parseZodSchemaToInputNames(coreSearchParamsSchema);
-console.log("Kekw", kekw);
+const inputNames = parseZodSchemaToInputNames(coreSearchParamsSchema);
 
-const onSubmit = form.handleSubmit(values => {
-  submitFilters(values);
+const onSubmit = debounce(
+  form.handleSubmit(values => {
+    console.log("Dibans");
+    submitFilters(values);
+  }),
+);
+
+watch([form.values], e => {
+  onSubmit();
 });
 </script>
 
 <template>
   <form @submit="onSubmit">
     <div class="flex flex-row gap-2 justify-end w-full">
-      <InputControlled name="search" label="Szukaj" label-sr-only :icon="Search" type="search" placeholder="Szukaj.." full-width />
-      <SelectControlled name="sortBy" label="Sortuj" label-sr-only :items="sortItems" />
+      <InputControlled
+        :name="inputNames.search"
+        label="Szukaj"
+        placeholder="Szukaj.."
+        type="search"
+        :icon="Search"
+        label-sr-only
+        full-width
+      />
+      <SelectControlled name="orderBy" label="Sortuj" label-sr-only :items="sortItems" />
     </div>
   </form>
 </template>

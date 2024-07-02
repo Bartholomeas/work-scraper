@@ -7,7 +7,7 @@
       <aside>
         <slot name="filters" />
       </aside>
-      <slot />
+      <slot class="w-full" />
     </div>
     <slot name="pagination" class="self-center mx-auto bg-rose-500" />
   </div>
