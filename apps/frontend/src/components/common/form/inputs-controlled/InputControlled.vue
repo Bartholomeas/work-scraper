@@ -4,17 +4,22 @@ import { useField } from "vee-validate";
 import { Input, InputProps } from "@/components/ui/input";
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/common/form";
 import type { ControlledProps } from "@/components/common/form/inputs-controlled/inputs-controlled.types";
+import { cn } from "@/utils/utils";
 
-const { name, label, description, labelSrOnly, ...props } = withDefaults(defineProps<InputProps & ControlledProps>(), {
+interface InputControlledProps extends InputProps, ControlledProps {
+  fullWidth?: boolean;
+}
+
+const { name, label, description, labelSrOnly, fullWidth, ...props } = withDefaults(defineProps<InputControlledProps>(), {
   labelSrOnly: false,
+  fullWidth: false,
 });
 const { meta } = useField(name);
-console.log("XD", meta.dirty);
 </script>
 
 <template>
   <FormField :name="name" v-slot="{ componentField }" :validate-on-blur="!meta.dirty">
-    <FormItem>
+    <FormItem :class="cn({ 'w-full': fullWidth })">
       <FormLabel :class="{ 'sr-only': labelSrOnly }">{{ label }}</FormLabel>
       <FormControl>
         <Input v-bind="{ ...componentField, ...props }" />

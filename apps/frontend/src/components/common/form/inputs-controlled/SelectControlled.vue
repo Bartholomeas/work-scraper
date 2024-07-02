@@ -15,6 +15,8 @@ interface SelectControlledProps extends ControlledProps {
 const { name, label, labelSrOnly, placeholder, description, items } = withDefaults(defineProps<SelectControlledProps>(), {
   placeholder: "Wybierz wartość",
 });
+
+console.log("Xdd", items);
 </script>
 
 <template>

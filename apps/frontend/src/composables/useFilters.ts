@@ -21,7 +21,7 @@ const useFilters = () => {
 
   const submitFilters = <T extends Record<string, unknown>>(params: T) => {
     const filteredParams = removeEmptyAttributes<T>(params);
-    console.log({ filteredParams });
+
     router.push({ path: "", query: { ...filteredParams } });
   };
   return { submitFilters };
