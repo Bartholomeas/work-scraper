@@ -9,6 +9,6 @@
       </aside>
       <slot class="w-full" />
     </div>
-    <slot name="pagination" class="self-center mx-auto bg-rose-500" />
+    <slot name="pagination" class="self-center mx-auto" />
   </div>
 </template>

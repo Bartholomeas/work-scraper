@@ -6,13 +6,13 @@ import { Search } from "lucide-vue-next";
 
 import { coreSearchParamsSchema } from "shared/src/offers/offers.schemas";
 
+import { HEADER_HEIGHT } from "@/constants";
 import { useFilters } from "@/composables/useFilters";
 import { debounce } from "@/utils/debounce";
 import { parseZodSchemaToInputNames } from "@/lib/zod/parseZodSchemaToInputNames";
 
 import SelectControlled, { type SelectControlledItem } from "@/components/common/form/inputs-controlled/SelectControlled.vue";
 import InputControlled from "@/components/common/form/inputs-controlled/InputControlled.vue";
-import { HEADER_HEIGHT } from "@/constants";
 
 const { submitFilters } = useFilters();
 const form = useForm({
