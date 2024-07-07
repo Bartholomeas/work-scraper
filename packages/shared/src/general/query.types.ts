@@ -1,4 +1,4 @@
 import { z } from "zod";
-import { paginationMetadataSchema } from "src/general/query.schemas";
+import type { paginationMetadataSchema } from "./query.schemas";
 
-export type OffersQueryParams = z.infer<typeof paginationMetadataSchema>;
+export type OffersPaginationMetadata = z.infer<typeof paginationMetadataSchema>;

@@ -23,7 +23,7 @@ console.log("Pagination", meta, meta?.totalPages);
 </script>
 
 <template>
-  <Pagination v-slot="{ page }" :total="meta?.totalPages ?? 13" :sibling-count="3" :default-page="1" show-edges>
+  <Pagination v-slot="{ page }" :total="70" :sibling-count="1" :default-page="1" show-edges>
     <PaginationList v-slot="{ items }" class="flex items-center gap-1">
       <PaginationFirst />
       <PaginationPrev />
@@ -31,7 +31,7 @@ console.log("Pagination", meta, meta?.totalPages);
       <!--      <template v-for="(_, page) in Array.from({ length: meta?.totalPages ?? 50 })" :key="`paginationListItem-${page}`">-->
       <template v-for="(item, index) in items">
         <PaginationListItem v-if="item.type === 'page'" :value="item.value" :key="`paginationListItem-${item.value}`" as-child>
-          <Button :variant="item.type === 'page' ? 'default' : 'outline'">{{ item.value }}</Button>
+          <Button :variant="item.value === page ? 'default' : 'outline'">{{ item.value }}</Button>
         </PaginationListItem>
         <PaginationEllipsis v-else :key="`paginationListItem-${item.type}-${index}`" :index="index" />
       </template>
