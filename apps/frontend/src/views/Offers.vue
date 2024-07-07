@@ -31,7 +31,6 @@ watch(
   () => data.value,
   newData => {
     paginationData.value = newData?.meta;
-    console.log("xdd data", newData?.meta);
   },
 );
 </script>

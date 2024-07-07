@@ -7,7 +7,7 @@ import { Search } from "lucide-vue-next";
 import { coreSearchParamsSchema } from "shared/src/offers/offers.schemas";
 
 import { HEADER_HEIGHT } from "@/constants";
-import { useFilters } from "@/composables/useFilters";
+import { useFilters } from "@/composables/useFilters/useFilters";
 import { debounce } from "@/utils/debounce";
 import { parseZodSchemaToInputNames } from "@/lib/zod/parseZodSchemaToInputNames";
 
