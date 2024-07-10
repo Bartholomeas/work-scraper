@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import { useForm } from "vee-validate";
-import { toTypedSchema } from "@vee-validate/zod";
+import { useRoute } from "vue-router";
 
-import { paginationMetadataSchema } from "shared/src/general/query.schemas";
 import type { OffersPaginationMetadata } from "shared/src/general/query.types";
 
 import { useFilters } from "@/composables/useFilters/useFilters";
@@ -16,26 +14,22 @@ import {
   PaginationPrev,
 } from "@/components/ui/pagination";
 import { Button } from "@/components/ui/button";
-import { ref } from "vue";
 
 interface OffersPaginationProps {
   meta: OffersPaginationMetadata | undefined;
 }
 
 const { meta } = defineProps<OffersPaginationProps>();
-
-const form = useForm({
-  validationSchema: toTypedSchema(paginationMetadataSchema),
+const { params: urlParams } = useRoute();
+const { submitFilters, currentParams } = useFilters({
+  filterKeys: ["page", "perPage"],
 });
 
-const { submitFilters } = useFilters({
-  filterKeys: ["page"],
-});
+const route = useRoute();
 
-const handlePageChange = ref((page: number) => {
-  console.log("Xdd", page);
+const handlePageChange = (page: number = 1) => {
   submitFilters({ page });
-});
+};
 </script>
 
 <template>
@@ -43,30 +37,24 @@ const handlePageChange = ref((page: number) => {
     v-slot="{ page }"
     :total="meta?.total ?? 1"
     :items-per-page="meta?.perPage ?? 24"
-    :sibling-count="0"
+    :sibling-count="1"
     :default-page="1"
     show-edges
     class="mx-auto max-w-screen overflow-hidden"
   >
     <PaginationList v-slot="{ items }" class="flex items-center gap-1">
-      <PaginationPrev />
+      <PaginationPrev :onclick="() => handlePageChange(page - 1)" />
 
       <template v-for="(item, index) in items">
         <PaginationListItem v-if="item.type === 'page'" :value="item.value" :key="`paginationListItem-${item.value}`" as-child>
-          <Button
-            :variant="item.value === page ? 'default' : 'outline'"
-            :onclick="
-              () => {
-                handlePageChange(page);
-              }
-            "
-            >{{ item.value }}
+          <Button :variant="item.value === page ? 'default' : 'outline'" :onclick="() => handlePageChange(item.value)">
+            {{ item.value }}
           </Button>
         </PaginationListItem>
         <PaginationEllipsis v-else :key="`paginationListItem-${item.type}-${index}`" :index="index" />
       </template>
 
-      <PaginationNext />
+      <PaginationNext :onclick="() => handlePageChange(page + 1)" />
     </PaginationList>
   </Pagination>
 </template>

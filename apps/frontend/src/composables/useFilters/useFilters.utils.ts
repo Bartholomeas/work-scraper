@@ -7,7 +7,7 @@ import type { FilteredRecords, FilterKeys } from "@/composables/useFilters/useFi
  * @param key - Key to check
  */
 export const checkRecordValueExist = <T extends Record<string, unknown>>(obj: T, key: keyof T): boolean =>
-  (typeof obj[key] === "string" && !!obj[key]) || (Array.isArray(obj[key]) && obj?.[key].length > 0);
+  typeof obj[key] === "number" || (typeof obj[key] === "string" && !!obj[key]) || (Array.isArray(obj[key]) && obj?.[key].length > 0);
 
 /**
  * @description - Check filterKeys are actually passed and are truthy
@@ -26,8 +26,7 @@ export const omitRedundantProperties = <T extends Record<string, unknown>>(obj: 
   const result = {} as FilteredRecords<T>;
 
   for (const key in obj) {
-    if (checkRecordValueExist(obj, key) && (!filterKeys || filterKeysExists(key, filterKeys)))
-      result[key] = obj[key] as LocationQueryValueRaw | LocationQueryValueRaw[];
+    if (checkRecordValueExist(obj, key)) result[key] = obj[key] as LocationQueryValueRaw | LocationQueryValueRaw[];
   }
   return result;
 };

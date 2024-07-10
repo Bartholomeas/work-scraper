@@ -1,4 +1,5 @@
-import { useRouter } from "vue-router";
+import { ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import type { FilterKeys } from "@/composables/useFilters/useFilters.types";
 import { omitRedundantProperties } from "@/composables/useFilters/useFilters.utils";
 
@@ -12,15 +13,30 @@ interface UseFiltersProps {
  */
 const useFilters = ({ filterKeys }: UseFiltersProps = {}) => {
   const router = useRouter();
+  const { params: urlParams } = useRoute();
+  const currentParams = ref({ ...urlParams });
 
   const submitFilters = <T extends Record<string, unknown>>(params: T) => {
-    const filteredParams = omitRedundantProperties<T>(params, filterKeys);
+    const mergedParams = { ...currentParams.value, ...params };
 
-    router.push({ path: "", query: { ...filteredParams } });
+    const filteredParams = omitRedundantProperties<T>(mergedParams, filterKeys);
+    router.push({
+      query: { ...filteredParams },
+    });
   };
 
-  const setSpecifiedKey = () => {};
-  return { submitFilters, setSpecifiedKey };
+  const clearFilters = () => {
+    let filteredParams = {};
+
+    if (Array.isArray(filterKeys) && filterKeys.length > 0) {
+      filteredParams = omitRedundantProperties(urlParams, filterKeys);
+    } else {
+      filteredParams = {};
+    }
+    router.push({ query: filteredParams });
+  };
+
+  return { submitFilters, clearFilters, currentParams };
 };
 
 export { useFilters };
