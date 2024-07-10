@@ -3,7 +3,7 @@ import { Browser, executablePath } from "puppeteer";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 
-import { offersQueryParameters } from "shared/src/offers/offers.schemas";
+import { offersQueryParamsSchema } from "shared/src/offers/offers.schemas";
 import type { JobOffer } from "shared/src/offers/offers.types";
 
 import { AppError } from "@/utils/app-error";
@@ -106,7 +106,7 @@ class OffersController {
 
   public getOffers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { data: queryParams, success } = offersQueryParameters.safeParse(req.query);
+      const { data: queryParams, success } = offersQueryParamsSchema.safeParse(req.query);
 
       const { data, meta } = await this.offersService.getJobOffers(success ? queryParams : undefined);
 

@@ -7,7 +7,7 @@ import {
   jobOfferSchema,
   jobOffersResponseSchema,
   offersMetadataSchema,
-  offersQueryParameters,
+  offersQueryParamsSchema,
   positionLevelsSchema,
   type salaryTypeSchema,
   timeUnitTypeSchema,
@@ -37,5 +37,5 @@ export interface ScrappedDataResponse<T extends JobOffer[] = JobOffer[]> {
   data: T;
 }
 
-export type OffersQueryParams = z.infer<typeof offersQueryParameters>;
+export type OffersQueryParams = z.infer<typeof offersQueryParamsSchema>;
 export type OffersMetadataResponse = z.infer<typeof offersMetadataSchema>;

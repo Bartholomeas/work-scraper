@@ -44,12 +44,12 @@
     "eslint-plugin-prettier-vue": "^5.0.0",
     "eslint-plugin-vue": "^9.26.0",
     "prettier": "^3.2.5",
+    "shared": "workspace:*",
     "tailwindcss": "^3.4.3",
+    "tsconfig": "workspace:*",
     "typescript": "^5.2.2",
     "vite": "^5.2.0",
     "vite-plugin-eslint": "^1.8.1",
-    "vue-tsc": "^2.0.6",
-    "tsconfig": "workspace:*",
-    "shared": "workspace:*"
+    "vue-tsc": "^2.0.6"
   }
 }

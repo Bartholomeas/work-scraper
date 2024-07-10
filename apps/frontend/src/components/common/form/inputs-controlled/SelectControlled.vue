@@ -1,29 +1,36 @@
 <script setup lang="ts">
+import type { SelectItemProps, SelectRootProps } from "radix-vue";
+
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/common/form";
 import type { ControlledProps } from "@/components/common/form/inputs-controlled/inputs-controlled.types";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import type { SelectItemProps } from "radix-vue";
+import { useField } from "vee-validate";
 
 export interface SelectControlledItem extends SelectItemProps {
   content: string;
 }
 
-interface SelectControlledProps extends ControlledProps {
+interface SelectControlledProps extends ControlledProps, Omit<SelectRootProps, "name"> {
   items: SelectControlledItem[];
 }
 
-const { name, label, labelSrOnly, placeholder, description, items } = withDefaults(defineProps<SelectControlledProps>(), {
-  placeholder: "Wybierz wartość",
-});
+const { name, label, labelSrOnly, placeholder, description, items, className, ...props } = withDefaults(
+  defineProps<SelectControlledProps>(),
+  {
+    placeholder: "Wybierz wartość",
+  },
+);
+
+const { meta } = useField(name);
 </script>
 
 <template>
-  <FormField v-slot="{ componentField }" :name="name">
+  <FormField v-slot="{ componentField }" :name="name" :validate-on-blur="!meta.dirty">
     <FormItem>
       <FormLabel :class="{ 'sr-only': labelSrOnly }">{{ label }}</FormLabel>
       <Select v-bind="componentField">
         <FormControl>
-          <SelectTrigger>
+          <SelectTrigger :class="className">
             <SelectValue :placeholder="placeholder" />
           </SelectTrigger>
         </FormControl>

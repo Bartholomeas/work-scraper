@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import OffersSingleItem from "@/components/offers/single/OffersSingleItem.vue";
-import { useGetOffersList } from "@/api/getOffers";
+import type { JobOffersResponse } from "shared/src/offers/offers.types";
 
-const { data } = useGetOffersList();
+interface OffersItemsListProps {
+  offers: JobOffersResponse["data"] | undefined;
+}
+
+const { offers } = defineProps<OffersItemsListProps>();
 </script>
 
 <template>
-  <div class="flex flex-col gap-2" v-if="data && data?.data.length > 0">
-    <OffersSingleItem v-for="item in data?.data.slice(0, 15)" :key="item.id" :offer="item" />
+  <div class="flex flex-col gap-2 w-full">
+    <OffersSingleItem v-for="offer in offers" v-if="Array.isArray(offers) && offers?.length > 0" :key="offer.id" :offer="offer" />
+    <div v-else>Brak ofert</div>
   </div>
 </template>

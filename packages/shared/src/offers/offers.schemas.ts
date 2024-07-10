@@ -1,8 +1,6 @@
 import { z } from "zod";
 import { paginationMetadataSchema, paginationSchema } from "../general/query.schemas";
 
-// import { paginationMetadataSchema, paginationSchema } from "../general/query.schemas";
-
 export const positionLevelsSchema = z.enum(["intern", "junior", "mid", "senior", "manager"]);
 export const contractTypeCodesSchema = z.enum(["uz", "uop", "b2b", "uod", "intern"]);
 export const workModesSchema = z.enum(["remote", "hybrid", "stationary"]);
@@ -82,11 +80,19 @@ export const offerTechCategories = z.union([
 
 const stringToArray = (val: unknown) => (typeof val === "string" ? val.split(",").map(v => v.trim()) : val);
 
-export const offersQueryParameters = z
+const orderByEnumSchema = z.enum(["createdAt", "expirationDate", "salary"]).default("createdAt");
+const sortOrderEnumSchema = z.enum(["asc", "desc"]).default("desc");
+
+export const coreSearchParamsSchema = z.object({
+  search: z.string().optional(),
+  orderBy: orderByEnumSchema,
+  sortOrder: sortOrderEnumSchema,
+});
+export const offersQueryParamsSchema = z
   .object({
-    search: z.string().optional(),
-    orderBy: z.enum(["createdAt", "expirationDate", "salary"]).default("createdAt"),
-    sortOrder: z.enum(["asc", "desc"]).default("desc"),
+    // search: z.string().optional(),
+    // orderBy: z.enum(["createdAt", "expirationDate", "salary"]).default("createdAt"),
+    // sortOrder: z.enum(["asc", "desc"]).default("desc"),
     categories: z.preprocess(stringToArray, z.array(offerTechCategories)).optional(),
     positionLevels: z.preprocess(stringToArray, z.array(positionLevelsSchema)).optional(),
     contractTypes: z.preprocess(stringToArray, z.array(contractTypeCodesSchema)).optional(),
@@ -95,6 +101,7 @@ export const offersQueryParameters = z
     dataSources: z.preprocess(stringToArray, z.array(dataSourceCodesSchema)).optional(),
   })
   .extend(paginationSchema.shape)
+  .extend(coreSearchParamsSchema.shape)
   .strip();
 
 export const jobOffersResponseSchema = z.object({
