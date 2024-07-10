@@ -15,6 +15,7 @@ class OffersRouter {
     puppeteer.use(StealthPlugin());
     router.get("/metadata", this.offersController.getOffersMetadata);
     router.get("/scrape", this.offersController.scrapeOffersData);
+    router.get("/base-categories", this.offersController.getOffersBaseCategories);
     router.get("/", this.offersController.getOffers);
     return router;
   }
