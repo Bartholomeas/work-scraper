@@ -25,8 +25,6 @@ const { submitFilters, currentParams } = useFilters({
   filterKeys: ["page", "perPage"],
 });
 
-const route = useRoute();
-
 const handlePageChange = (page: number = 1) => {
   submitFilters({ page });
 };

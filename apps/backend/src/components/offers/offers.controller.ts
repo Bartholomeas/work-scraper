@@ -9,20 +9,23 @@ import type { JobOffer } from "shared/src/offers/offers.types";
 import { AppError } from "@/utils/app-error";
 import { ERROR_CODES } from "@/misc/error.constants";
 
-import type { OffersService } from "@/components/offers/offers.service";
+import type { OffersService } from "@/components/offers/service/offers.service";
 import { ScrapperPracuj } from "@/components/offers/instances/scrapper-pracuj";
 import { JUSTJOIN_URL, PRACUJ_URL } from "@/components/offers/helpers/offers.constants";
 import { ScrapperJustjoin } from "@/components/offers/instances/scrapper-justjoin";
+import { OffersCategoriesService } from "@/components/offers/service/offers-categories.service";
 
 puppeteer.use(StealthPlugin());
 
 class OffersController {
   private offersService: OffersService;
   private browser: Browser | undefined;
+  private offersCategoriesService: OffersCategoriesService;
 
   constructor(offersService: OffersService) {
     this.offersService = offersService;
     this.getBrowserInstance();
+    this.offersCategoriesService = new OffersCategoriesService();
   }
 
   public getOffersMetadata = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -120,19 +123,15 @@ class OffersController {
     }
   };
 
-  // private filterData = ({ data = [], queryParams }: FilterDataProps): JobOffer[] => {
-  //   const { search: _search, categories } = queryParams ?? {};
-  //   if (!_search && !categories) return data;
-  //   const search = _search?.toLowerCase();
-  //   return data.filter(job => {
-  //     if (search) {
-  //       if (job.positionName && job.positionName.toLowerCase().includes(search)) return true;
-  //       else if (job.description && job.description.toLowerCase().includes(search)) return true;
-  //       else if (job.technologies?.some(cat => cat.includes(search))) return true;
-  //     }
-  //     return categories && Array.isArray(categories) && categories.some(el => job.technologies?.includes(el.toLowerCase()));
-  //   });
-  // };
+  public getOffersBaseCategories = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const data = await this.offersCategoriesService.getBaseCategories();
+      console.log("xdd", data);
+      res.status(200).json(data);
+    } catch (err) {
+      next(err);
+    }
+  };
 
   private getBrowserInstance = async (): Promise<Browser> => {
     if (!this.browser) this.browser = await puppeteer.launch({ headless: true, executablePath: executablePath() });
