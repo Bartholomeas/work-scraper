@@ -19,6 +19,9 @@ export const createQueryKeyFactory = <TEntity extends string>(_entity: TEntity) 
     single: function <TId extends string, TName extends string>(id: TId, name: TName) {
       return [{ ...this.entity[0], id, name }] as const;
     },
+    details: function <TName extends string>(name: TName) {
+      return [{ ...this.entity[0], name, key: "details" }] as const;
+    },
   };
 };
 

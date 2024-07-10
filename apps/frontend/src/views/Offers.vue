@@ -1,14 +1,17 @@
 <script setup lang="ts">
-import { reactive, ref, watch } from "vue";
+import { defineAsyncComponent, reactive, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 
 import { useGetOffersList } from "@/api/offers/getOffers";
 
 import OffersFiltersTopBar from "@/components/offers/filters/OffersFiltersTopBar.vue";
-import OffersItemsTable from "@/components/offers/OffersItemsList.vue";
-import OffersStatCards from "@/components/offers/OffersStatCards.vue";
 import OffersListLayout from "@/components/offers/OffersListLayout.vue";
-import OffersPagination from "@/components/offers/filters/OffersPagination.vue";
+import OffersItemsList from "@/components/offers/OffersItemsList.vue";
+import OfferSingleItemSkeleton from "@/components/offers/single/OfferSingleItemSkeleton.vue";
+
+const OffersStatCards = defineAsyncComponent(() => import("@/components/offers/OffersStatCards.vue"));
+const OffersSideFilters = defineAsyncComponent(() => import("@/components/offers/filters/sidebar/OffersSideFilters.vue"));
+const OffersPagination = defineAsyncComponent(() => import("@/components/offers/filters/OffersPagination.vue"));
 
 const route = useRoute();
 
@@ -23,7 +26,7 @@ watch(
     immediate: true,
   },
 );
-const { data, isFetched } = useGetOffersList(queryParams);
+const { data, isLoading } = useGetOffersList(queryParams);
 
 const paginationData = ref();
 
@@ -44,9 +47,17 @@ watch(
         <OffersFiltersTopBar />
       </template>
       <template #filters>
-        <!--        <div>FILTRY TU BEDA</div>-->
+        <OffersSideFilters />
       </template>
-      <OffersItemsTable :offers="data?.data" />
+      <div v-if="isLoading" class="flex flex-col gap-2 w-full">
+        <OfferSingleItemSkeleton
+          v-if="isLoading"
+          v-for="(item, index) in Array.from({ length: 10 })"
+          :key="`singleItemSkeleton-${index}`"
+        />
+      </div>
+      <OffersItemsList v-else :offers="data?.data" />
+
       <template #pagination>
         <OffersPagination :meta="data?.meta" />
       </template>
