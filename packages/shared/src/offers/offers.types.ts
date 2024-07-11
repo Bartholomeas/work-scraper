@@ -42,9 +42,14 @@ export type OffersMetadataResponse = z.infer<typeof offersMetadataSchema>;
 
 export type CategoryRecord<T extends string> = { id: string; value: T };
 
+export interface OffersBaseCategory<T extends string> {
+  name: string;
+  items: CategoryRecord<T>[];
+}
+
 export interface OffersBaseCategories {
-  contractTypes: CategoryRecord<ContractTypesCodes>[];
-  positionLevels: CategoryRecord<PositionLevelsCodes>[];
-  workModes: CategoryRecord<WorkModesCodes>[];
-  workSchedules: CategoryRecord<WorkSchedulesCodes>[];
+  contractTypes: OffersBaseCategory<ContractTypesCodes>;
+  positionLevels: OffersBaseCategory<PositionLevelsCodes>;
+  workModes: OffersBaseCategory<WorkModesCodes>;
+  workSchedules: OffersBaseCategory<WorkSchedulesCodes>;
 }

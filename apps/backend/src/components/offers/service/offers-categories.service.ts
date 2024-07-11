@@ -16,12 +16,24 @@ class OffersCategoriesService implements IOffersCategoriesService {
     this.prisma = PrismaInstance.getInstance();
   }
 
-  public async getBaseCategories() {
+  public async getBaseCategories(): Promise<OffersBaseCategories> {
     try {
-      const contractTypes = (await this.prisma.contractType.findMany()) as OffersBaseCategories["contractTypes"];
-      const positionLevels = (await this.prisma.positionLevel.findMany()) as OffersBaseCategories["positionLevels"];
-      const workModes = (await this.prisma.workMode.findMany()) as OffersBaseCategories["workModes"];
-      const workSchedules = (await this.prisma.workSchedule.findMany()) as OffersBaseCategories["workSchedules"];
+      const contractTypes = {
+        name: "Forma zatrudnienia",
+        items: await this.prisma.contractType.findMany(),
+      } as OffersBaseCategories["contractTypes"];
+      const positionLevels = {
+        name: "Poziom stanowiska",
+        items: await this.prisma.positionLevel.findMany(),
+      } as OffersBaseCategories["positionLevels"];
+      const workModes = {
+        name: "Tryb pracy",
+        items: await this.prisma.workMode.findMany(),
+      } as OffersBaseCategories["workModes"];
+      const workSchedules = {
+        name: "Etat",
+        items: await this.prisma.workSchedule.findMany(),
+      } as OffersBaseCategories["workSchedules"];
 
       return {
         contractTypes,

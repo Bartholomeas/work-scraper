@@ -2,7 +2,7 @@ import { useQuery } from "vue-query/esm";
 
 import type { OffersMetadataResponse } from "shared/src/offers/offers.types";
 import { fetcher } from "@/utils/fetcher";
-import { OFFERS_METADATA_KEY } from "@/api/keys";
+import { offersQueryKeys } from "@/api/offers/offersQueryKeys";
 
 export const getOffersMetadata = async (): Promise<OffersMetadataResponse | undefined> => {
   try {
@@ -15,6 +15,6 @@ export const getOffersMetadata = async (): Promise<OffersMetadataResponse | unde
 
 export const useGetOffersMetadata = () =>
   useQuery<OffersMetadataResponse | undefined>({
-    queryKey: [OFFERS_METADATA_KEY],
+    queryKey: offersQueryKeys.getOffersMetadata(),
     queryFn: getOffersMetadata,
   });

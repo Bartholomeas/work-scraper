@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useRoute } from "vue-router";
-
 import type { OffersPaginationMetadata } from "shared/src/general/query.types";
 
 import { useFilters } from "@/composables/useFilters/useFilters";
@@ -20,7 +18,6 @@ interface OffersPaginationProps {
 }
 
 const { meta } = defineProps<OffersPaginationProps>();
-const { params: urlParams } = useRoute();
 const { submitFilters, currentParams } = useFilters({
   filterKeys: ["page", "perPage"],
 });
@@ -40,7 +37,7 @@ const handlePageChange = (page: number = 1) => {
     show-edges
     class="mx-auto max-w-screen overflow-hidden"
   >
-    <PaginationList v-slot="{ items }" class="flex items-center gap-1">
+    <PaginationList v-slot="{ items }" class="flex items-center flex-wrap gap-1">
       <PaginationPrev :onclick="() => handlePageChange(page - 1)" />
 
       <template v-for="(item, index) in items">

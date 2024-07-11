@@ -5,7 +5,7 @@ import type { OffersBaseCategories } from "shared/src/offers/offers.types";
 
 export const getOffersBaseCategories = async (): Promise<OffersBaseCategories | undefined> => {
   try {
-    return await fetcher.get(import.meta.env.VITE_API_URL + "/offers" + "/base-categories");
+    return await fetcher.get<OffersBaseCategories>(`${import.meta.env.VITE_API_URL}/offers/base-categories`);
   } catch (err) {
     throw err;
   }
