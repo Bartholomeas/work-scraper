@@ -46,7 +46,7 @@ watch(
       <template #top-bar>
         <OffersFiltersTopBar />
       </template>
-      <template #filters>
+      <template #filters class="relative">
         <OffersSideFilters />
       </template>
       <div v-if="isLoading" class="flex flex-col gap-2 w-full">

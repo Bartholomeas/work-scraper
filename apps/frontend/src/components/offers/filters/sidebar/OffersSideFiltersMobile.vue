@@ -2,7 +2,7 @@
 import { HEADER_HEIGHT } from "@/constants";
 import { MixerVerticalIcon } from "@radix-icons/vue";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button/Button.variants";
 </script>
 
 <template>

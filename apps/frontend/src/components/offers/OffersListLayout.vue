@@ -2,10 +2,12 @@
 
 <template>
   <div class="flex flex-col gap-4">
-    <slot name="top-bar" />
-    <div class="flex flex-row gap-2">
+    <div class="flex flex-row gap-4">
       <slot name="filters" />
-      <slot class="w-full lg:w-3/4" />
+      <div class="flex flex-col gap-4 lg:w-3/4">
+        <slot name="top-bar" />
+        <slot class="w-full" />
+      </div>
     </div>
     <slot name="pagination" class="self-center mx-auto" />
   </div>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button/Button.variants";
 import {
   Dialog,
   DialogClose,

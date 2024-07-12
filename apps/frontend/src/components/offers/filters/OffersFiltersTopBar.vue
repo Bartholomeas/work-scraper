@@ -44,7 +44,7 @@ watch([form.values], e => {
 </script>
 
 <template>
-  <form @submit="onSubmit" class="sticky bg-background z-50 py-4" :style="{ top: `calc(${HEADER_HEIGHT - 8}px)` }">
+  <form @submit="onSubmit" class="sticky bg-background z-50 pt-4 shadow-xl lg:pt-0" :style="{ top: `calc(${HEADER_HEIGHT - 8}px)` }">
     <div class="flex flex-row gap-2 justify-end w-full">
       <InputControlled
         :name="inputNames.search"

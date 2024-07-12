@@ -5,7 +5,7 @@ import Logo from "@/components/special/Logo.vue";
 
 import { HEADER_LINKS } from "@/components/layout/header/header.constants";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button/Button.variants";
 
 import { Menu } from "lucide-vue-next";
 </script>

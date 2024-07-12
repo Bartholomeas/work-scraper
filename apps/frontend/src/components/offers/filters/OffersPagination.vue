@@ -11,7 +11,7 @@ import {
   PaginationNext,
   PaginationPrev,
 } from "@/components/ui/pagination";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button/Button.variants";
 
 interface OffersPaginationProps {
   meta: OffersPaginationMetadata | undefined;
