@@ -2,49 +2,51 @@
 import type { CheckboxRootProps } from "radix-vue";
 
 import { Checkbox } from "@/components/ui/checkbox";
-import type { ControlledProps } from "@/components/common/form/inputs-controlled/inputs-controlled.types";
+import type { CheckboxItem, ControlledProps } from "@/components/common/form/inputs-controlled/inputs-controlled.types";
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/common/form";
 
-const items = [
-  {
-    id: "recents",
-    label: "Recents",
-    value: "recents",
-  },
-  {
-    id: "home",
-    label: "Home",
-    value: "home",
-  },
-  {
-    id: "applications",
-    label: "Applications",
-    value: "applications",
-  },
-  {
-    id: "desktop",
-    label: "Desktop",
-    value: "desktop",
-  },
-  {
-    id: "downloads",
-    label: "Downloads",
-    value: "downloads",
-  },
-  {
-    id: "documents",
-    label: "Documents",
-    value: "documents",
-  },
-] as const;
+// const items = [
+//   {
+//     id: "recents",
+//     label: "Recents",
+//     value: "recents",
+//   },
+//   {
+//     id: "home",
+//     label: "Home",
+//     value: "home",
+//   },
+//   {
+//     id: "applications",
+//     label: "Applications",
+//     value: "applications",
+//   },
+//   {
+//     id: "desktop",
+//     label: "Desktop",
+//     value: "desktop",
+//   },
+//   {
+//     id: "downloads",
+//     label: "Downloads",
+//     value: "downloads",
+//   },
+//   {
+//     id: "documents",
+//     label: "Documents",
+//     value: "documents",
+//   },
+// ] as const;
 
-interface CheckboxControlledProps extends Omit<CheckboxRootProps, "name">, ControlledProps {}
+interface CheckboxControlledProps extends Omit<CheckboxRootProps, "name">, ControlledProps {
+  items: CheckboxItem[];
+}
 
-const { name, label, description } = defineProps<CheckboxControlledProps>();
+const { name, label, description, items } = defineProps<CheckboxControlledProps>();
 </script>
 
 <template>
-  <FormField :name="name">
+  <FormField v-if="name && items?.length > 0" :name="name">
     <FormItem>
       <div class="flex flex-col gap-1 mb-2">
         <FormLabel>{{ label }}</FormLabel>
@@ -54,6 +56,7 @@ const { name, label, description } = defineProps<CheckboxControlledProps>();
       <div class="flex flex-col gap-2">
         <FormField
           :name="name"
+          v-if="Array.isArray(items) && items.length > 0"
           v-for="item in items"
           v-slot="{ value, handleChange }"
           :key="item.id"

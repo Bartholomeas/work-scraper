@@ -1,48 +1,47 @@
 <script setup lang="ts">
-import { useGetOffersBaseCategories } from "@/api/offers/getOffersBaseCategories";
-import OffersSidebarButtons from "@/components/offers/filters/sidebar/OffersSidebarButtons.vue";
-import { watch } from "vue";
+import { Form, useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
-import { useForm } from "vee-validate";
+
+import { baseCategoriesSchema } from "shared/src/offers/offers.schemas";
+import type { CategoryRecord } from "shared/src/offers/offers.types";
+
+import { useGetOffersBaseCategories } from "@/api/offers/getOffersBaseCategories";
 import { parseZodSchemaToInputNames } from "@/lib/zod/parseZodSchemaToInputNames";
-import { z } from "zod";
+
+import OffersSidebarButtons from "@/components/offers/filters/sidebar/OffersSidebarButtons.vue";
 import CheckboxControlled from "@/components/common/form/inputs-controlled/CheckboxControlled.vue";
+import { isKeyOf } from "@/utils/isKeyOf";
 
-const { data } = useGetOffersBaseCategories();
-watch(
-  () => data.value,
-  categories => {
-    if (categories)
-      for (let cat of Object.values(categories)) {
-        console.log("Xdd", cat);
-      }
-  },
-);
-
-const testSchema = z.object({
-  items: z.array(z.string()),
-});
-const typedBaseCategoriesSchema = toTypedSchema(testSchema);
-const inputNames = parseZodSchemaToInputNames(testSchema);
+const { data: categories } = useGetOffersBaseCategories();
+const inputNames = parseZodSchemaToInputNames(baseCategoriesSchema);
 
 const { handleSubmit } = useForm({
-  validationSchema: testSchema,
+  validationSchema: toTypedSchema(baseCategoriesSchema),
+  initialValues: {
+    positionLevels: [],
+    contractTypes: [],
+    workModes: [],
+    workSchedules: [],
+  },
 });
+
+// type OffersCategoriesEntriesTuple = [keyof OffersBaseCategories, unknown];
 
 const onSubmit = handleSubmit(values => {
   console.log("Submit filtrow: ", values);
 });
 </script>
 <template>
-  <aside class="w-full h-full p-3">
-    <form @submit="onSubmit" class="flex flex-col gap-4">
-      <CheckboxControlled label="Poziom" :name="inputNames.items" />
-      <div v-if="data" v-for="category in Object.values(data)" :key="`categoryBox-${category.name}`">
-        {{ category.name }}
-        <div v-for="catValue in category.items" :key="`categoryValue-${catValue.id}`">
-          {{ catValue.value }}
-        </div>
-      </div>
+  <aside class="w-full h-full overflow-y-auto lg:p-3">
+    <form @submit="onSubmit" class="flex flex-col gap-4 max-lg:pb-6">
+      <CheckboxControlled
+        v-if="categories"
+        v-for="[key, category] in Object.entries(categories) as [any, any]"
+        :label="category?.name"
+        :name="isKeyOf(inputNames, key) ? inputNames?.[key] : null"
+        :items="category.items?.map((cat: CategoryRecord) => ({ ...cat, label: cat.value }))"
+      />
+
       <OffersSidebarButtons />
     </form>
   </aside>

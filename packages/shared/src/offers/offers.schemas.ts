@@ -88,21 +88,19 @@ export const coreSearchParamsSchema = z.object({
   orderBy: orderByEnumSchema,
   sortOrder: sortOrderEnumSchema,
 });
-export const offersQueryParamsSchema = z
-  .object({
-    // search: z.string().optional(),
-    // orderBy: z.enum(["createdAt", "expirationDate", "salary"]).default("createdAt"),
-    // sortOrder: z.enum(["asc", "desc"]).default("desc"),
-    categories: z.preprocess(stringToArray, z.array(offerTechCategories)).optional(),
-    positionLevels: z.preprocess(stringToArray, z.array(positionLevelsSchema)).optional(),
-    contractTypes: z.preprocess(stringToArray, z.array(contractTypeCodesSchema)).optional(),
-    workModes: z.preprocess(stringToArray, z.array(workModesSchema)).optional(),
-    workSchedules: z.preprocess(stringToArray, z.array(workSchedulesSchema)).optional(),
-    dataSources: z.preprocess(stringToArray, z.array(dataSourceCodesSchema)).optional(),
-  })
-  .extend(paginationSchema.shape)
-  .extend(coreSearchParamsSchema.shape)
-  .strip();
+
+export const baseCategoriesSchema = z.object({
+  // search: z.string().optional(),
+  // orderBy: z.enum(["createdAt", "expirationDate", "salary"]).default("createdAt"),
+  // sortOrder: z.enum(["asc", "desc"]).default("desc"),
+  categories: z.preprocess(stringToArray, z.array(offerTechCategories)).optional(),
+  dataSources: z.preprocess(stringToArray, z.array(dataSourceCodesSchema)).optional(),
+  positionLevels: z.preprocess(stringToArray, z.array(positionLevelsSchema)).optional(),
+  contractTypes: z.preprocess(stringToArray, z.array(contractTypeCodesSchema)).optional(),
+  workModes: z.preprocess(stringToArray, z.array(workModesSchema)).optional(),
+  workSchedules: z.preprocess(stringToArray, z.array(workSchedulesSchema)).optional(),
+});
+export const offersQueryParamsSchema = baseCategoriesSchema.extend(paginationSchema.shape).extend(coreSearchParamsSchema.shape).strip();
 
 export const jobOffersResponseSchema = z.object({
   meta: paginationMetadataSchema,

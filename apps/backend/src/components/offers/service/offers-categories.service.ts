@@ -34,12 +34,17 @@ class OffersCategoriesService implements IOffersCategoriesService {
         name: "Etat",
         items: await this.prisma.workSchedule.findMany(),
       } as OffersBaseCategories["workSchedules"];
+      const categories = {
+        name: "Kategorie",
+        items: [],
+      };
 
       return {
         contractTypes,
         positionLevels,
         workModes,
         workSchedules,
+        categories,
       };
     } catch (err) {
       throw new AppError({
