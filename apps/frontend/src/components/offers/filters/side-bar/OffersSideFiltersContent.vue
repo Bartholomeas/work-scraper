@@ -26,13 +26,14 @@ const inputNames = parseZodSchemaToInputNames(baseCategoriesSchema);
         workSchedules: [],
       }"
     >
-      <CheckboxControlled
-        v-if="categories"
-        v-for="[key, category] in Object.entries(categories)"
-        :label="category?.name"
-        :name="isKeyOf(inputNames, key) ? inputNames?.[key] : null"
-        :items="category.items?.map((cat: CategoryRecord) => ({ ...cat, label: cat.value }))"
-      />
+      <template v-if="categories" v-for="[key, category] in Object.entries(categories)">
+        <CheckboxControlled
+          v-if="isKeyOf(inputNames, key)"
+          :label="category?.name"
+          :name="inputNames?.[key]"
+          :items="category.items?.map((cat: CategoryRecord) => ({ ...cat, label: cat.value }))"
+        />
+      </template>
 
       <OffersSidebarButtons :clear-filters="clearFilters" />
     </FiltersWrapper>

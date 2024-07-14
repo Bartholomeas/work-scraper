@@ -1,7 +1,7 @@
 import type { HTMLAttributes, VNode } from "vue";
 
 export interface ControlledProps {
-  name: string | null;
+  name: string;
   label: string;
   description?: string;
   placeholder?: string;
