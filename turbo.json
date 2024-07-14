@@ -13,6 +13,7 @@
         "dist/**"
       ],
       "dependsOn": [
+        "^build",
         "clean",
         "^build"
       ]
