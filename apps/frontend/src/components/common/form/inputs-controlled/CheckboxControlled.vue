@@ -5,39 +5,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import type { CheckboxItem, ControlledProps } from "@/components/common/form/inputs-controlled/inputs-controlled.types";
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/common/form";
 
-// const items = [
-//   {
-//     id: "recents",
-//     label: "Recents",
-//     value: "recents",
-//   },
-//   {
-//     id: "home",
-//     label: "Home",
-//     value: "home",
-//   },
-//   {
-//     id: "applications",
-//     label: "Applications",
-//     value: "applications",
-//   },
-//   {
-//     id: "desktop",
-//     label: "Desktop",
-//     value: "desktop",
-//   },
-//   {
-//     id: "downloads",
-//     label: "Downloads",
-//     value: "downloads",
-//   },
-//   {
-//     id: "documents",
-//     label: "Documents",
-//     value: "documents",
-//   },
-// ] as const;
-
 interface CheckboxControlledProps extends Omit<CheckboxRootProps, "name">, ControlledProps {
   items: CheckboxItem[];
 }

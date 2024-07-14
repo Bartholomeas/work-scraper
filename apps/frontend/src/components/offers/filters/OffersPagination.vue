@@ -18,7 +18,7 @@ interface OffersPaginationProps {
 }
 
 const { meta } = defineProps<OffersPaginationProps>();
-const { submitFilters, currentParams } = useFilters({
+const { submitFilters } = useFilters({
   filterKeys: ["page", "perPage"],
 });
 

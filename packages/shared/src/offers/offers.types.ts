@@ -54,5 +54,3 @@ export interface OffersBaseCategories {
   workSchedules: OffersBaseCategory<WorkSchedulesCodes>;
   categories: OffersBaseCategory<string>;
 }
-
-export type OffersBaseCategoriesCodes = keyof OffersBaseCategories;

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineAsyncComponent, reactive, ref, watch } from "vue";
+import { computed, defineAsyncComponent } from "vue";
 import { useRoute } from "vue-router";
 
 import { useGetOffersList } from "@/api/offers/getOffers";
@@ -14,28 +14,9 @@ const OffersSideFilters = defineAsyncComponent(() => import("@/components/offers
 const OffersPagination = defineAsyncComponent(() => import("@/components/offers/filters/OffersPagination.vue"));
 
 const route = useRoute();
+const params = computed(() => route.query);
 
-const queryParams = reactive(route?.params);
-
-watch(
-  () => route.query,
-  newQuery => {
-    Object.assign(queryParams, newQuery);
-  },
-  {
-    immediate: true,
-  },
-);
-const { data, isLoading } = useGetOffersList(queryParams);
-
-const paginationData = ref();
-
-watch(
-  () => data.value,
-  newData => {
-    paginationData.value = newData?.meta;
-  },
-);
+const { data, isLoading } = useGetOffersList(params);
 </script>
 
 <template>

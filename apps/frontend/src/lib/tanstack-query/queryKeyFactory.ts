@@ -1,3 +1,5 @@
+import type { ReactiveQuerySearchParams } from "@/types/query.types";
+
 type QueryKey = readonly unknown[];
 
 /**
@@ -13,7 +15,10 @@ export const createQueryKeyFactory = <TEntity extends string>(_entity: TEntity) 
     lists: [{ entity: _entity, scope: "list" }] as const,
     //    ---
 
-    list: function <TName extends string, TParams extends Record<string, unknown>>(name: TName, params?: TParams) {
+    list: function <TName extends string, TParams extends ReactiveQuerySearchParams<Record<string, unknown>>>(
+      name: TName,
+      params?: TParams,
+    ) {
       return [{ ...this.lists[0], name, params }] as const;
     },
     single: function <TId extends string, TName extends string>(id: TId, name: TName) {
