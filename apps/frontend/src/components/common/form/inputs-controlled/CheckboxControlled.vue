@@ -16,11 +16,11 @@ const { name, label, description, items } = defineProps<CheckboxControlledProps>
   <FormField v-if="name && items?.length > 0" :name="name">
     <FormItem>
       <div class="flex flex-col gap-1 mb-2">
-        <FormLabel>{{ label }}</FormLabel>
+        <FormLabel class="font-bold text-md">{{ label }}</FormLabel>
         <FormDescription v-if="description">{{ description }}</FormDescription>
       </div>
 
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-2 pl-3 mb-2">
         <FormField
           :name="name"
           v-if="Array.isArray(items) && items.length > 0"
