@@ -4,7 +4,7 @@ import { PaginationFirst, type PaginationFirstProps } from "radix-vue";
 import { DoubleArrowLeftIcon } from "@radix-icons/vue";
 
 import { cn } from "@/utils/utils";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button/Button.variants";
 
 const props = withDefaults(defineProps<PaginationFirstProps & { class?: HTMLAttributes["class"] }>(), {
   asChild: true,

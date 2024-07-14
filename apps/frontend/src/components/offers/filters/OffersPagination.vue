@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import { computed } from "vue";
 import { useRoute } from "vue-router";
 
 import type { OffersPaginationMetadata } from "shared/src/general/query.types";
-
 import { useFilters } from "@/composables/useFilters/useFilters";
 
 import {
@@ -13,15 +13,17 @@ import {
   PaginationNext,
   PaginationPrev,
 } from "@/components/ui/pagination";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button/Button.variants";
 
 interface OffersPaginationProps {
   meta: OffersPaginationMetadata | undefined;
 }
 
+const route = useRoute();
+const currentPage = computed(() => (route?.query?.page ? +route?.query?.page : 1));
+
 const { meta } = defineProps<OffersPaginationProps>();
-const { params: urlParams } = useRoute();
-const { submitFilters, currentParams } = useFilters({
+const { submitFilters } = useFilters({
   filterKeys: ["page", "perPage"],
 });
 
@@ -38,9 +40,10 @@ const handlePageChange = (page: number = 1) => {
     :sibling-count="1"
     :default-page="1"
     show-edges
+    :page="currentPage"
     class="mx-auto max-w-screen overflow-hidden"
   >
-    <PaginationList v-slot="{ items }" class="flex items-center gap-1">
+    <PaginationList v-slot="{ items }" class="flex items-center flex-wrap gap-1">
       <PaginationPrev :onclick="() => handlePageChange(page - 1)" />
 
       <template v-for="(item, index) in items">

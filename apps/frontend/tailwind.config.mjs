@@ -22,6 +22,11 @@ module.exports = {
       },
     },
     extend: {
+      screens: {
+        sm: "576px",
+        md: "768px",
+        lg: "992px",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -30,6 +35,7 @@ module.exports = {
         foreground: "hsl(var(--foreground))",
         primary: {
           DEFAULT: "var(--primary)",
+          light: "var(--primary-light)",
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {

@@ -19,14 +19,17 @@ const filterKeysExists = (key: string, filterKeys?: FilterKeys) =>
 
 /**
  * @description - Omit key/values that are redundant or do not match filterKeys props
- * @param obj - Object with parameters and its values
+ * @param params - Object with parameters and its values
  * @param filterKeys - Optional keys to look for, and they will be only kept when this parameter is passed
  */
-export const omitRedundantProperties = <T extends Record<string, unknown>>(obj: T, filterKeys?: FilterKeys): FilteredRecords<T> => {
+export const parseParamsRecords = <T extends Record<string, unknown>>(params: T, filterKeys?: FilterKeys): FilteredRecords<T> => {
   const result = {} as FilteredRecords<T>;
 
-  for (const key in obj) {
-    if (checkRecordValueExist(obj, key)) result[key] = obj[key] as LocationQueryValueRaw | LocationQueryValueRaw[];
+  for (const key in params) {
+    if (checkRecordValueExist(params, key)) {
+      const resultValue = Array.isArray(params[key]) ? params[key].join(",") : params[key];
+      result[key] = resultValue as LocationQueryValueRaw | LocationQueryValueRaw[];
+    }
   }
   return result;
 };

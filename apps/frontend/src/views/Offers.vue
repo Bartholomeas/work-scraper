@@ -1,38 +1,22 @@
 <script setup lang="ts">
-import { reactive, ref, watch } from "vue";
+import { computed, defineAsyncComponent } from "vue";
 import { useRoute } from "vue-router";
 
 import { useGetOffersList } from "@/api/offers/getOffers";
 
-import OffersFiltersTopBar from "@/components/offers/filters/OffersFiltersTopBar.vue";
-import OffersItemsTable from "@/components/offers/OffersItemsList.vue";
-import OffersStatCards from "@/components/offers/OffersStatCards.vue";
+import OffersFiltersTopBar from "@/components/offers/filters/top-bar/OffersFiltersTopWrapper.vue";
 import OffersListLayout from "@/components/offers/OffersListLayout.vue";
-import OffersPagination from "@/components/offers/filters/OffersPagination.vue";
+import OffersItemsList from "@/components/offers/OffersItemsList.vue";
+import OfferSingleItemSkeleton from "@/components/offers/single/OfferSingleItemSkeleton.vue";
+
+const OffersStatCards = defineAsyncComponent(() => import("@/components/offers/OffersStatCards.vue"));
+const OffersSideFilters = defineAsyncComponent(() => import("@/components/offers/filters/side-bar/OffersSideFilters.vue"));
+const OffersPagination = defineAsyncComponent(() => import("@/components/offers/filters/OffersPagination.vue"));
 
 const route = useRoute();
+const params = computed(() => route.query);
 
-const queryParams = reactive(route?.params);
-
-watch(
-  () => route.query,
-  newQuery => {
-    Object.assign(queryParams, newQuery);
-  },
-  {
-    immediate: true,
-  },
-);
-const { data, isFetched } = useGetOffersList(queryParams);
-
-const paginationData = ref();
-
-watch(
-  () => data.value,
-  newData => {
-    paginationData.value = newData?.meta;
-  },
-);
+const { data, isLoading } = useGetOffersList(params);
 </script>
 
 <template>
@@ -43,10 +27,14 @@ watch(
       <template #top-bar>
         <OffersFiltersTopBar />
       </template>
-      <template #filters>
-        <!--        <div>FILTRY TU BEDA</div>-->
+      <template #filters class="relative">
+        <OffersSideFilters />
       </template>
-      <OffersItemsTable :offers="data?.data" />
+      <div v-if="isLoading" class="flex flex-col gap-2 w-full">
+        <OfferSingleItemSkeleton v-if="isLoading" v-for="(_, index) in Array.from({ length: 10 })" :key="`singleItemSkeleton-${index}`" />
+      </div>
+      <OffersItemsList v-else :offers="data?.data" />
+
       <template #pagination>
         <OffersPagination :meta="data?.meta" />
       </template>

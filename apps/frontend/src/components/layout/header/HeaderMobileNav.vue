@@ -5,7 +5,7 @@ import Logo from "@/components/special/Logo.vue";
 
 import { HEADER_LINKS } from "@/components/layout/header/header.constants";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button/Button.variants";
 
 import { Menu } from "lucide-vue-next";
 </script>
@@ -20,7 +20,7 @@ import { Menu } from "lucide-vue-next";
           <span class="sr-only">Otwórz lub zamknij nawigację</span>
         </Button>
       </SheetTrigger>
-      <SheetContent>
+      <SheetContent side="left" class="w-[85vw]">
         <nav>
           <ul class="grid gap-6 text-lg font-medium">
             <li>

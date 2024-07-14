@@ -1,7 +1,7 @@
-import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
+
 import type { FilterKeys } from "@/composables/useFilters/useFilters.types";
-import { omitRedundantProperties } from "@/composables/useFilters/useFilters.utils";
+import { parseParamsRecords } from "@/composables/useFilters/useFilters.utils";
 
 interface UseFiltersProps {
   filterKeys?: FilterKeys;
@@ -13,30 +13,32 @@ interface UseFiltersProps {
  */
 const useFilters = ({ filterKeys }: UseFiltersProps = {}) => {
   const router = useRouter();
-  const { params: urlParams } = useRoute();
-  const currentParams = ref({ ...urlParams });
+  const route = useRoute();
 
-  const submitFilters = <T extends Record<string, unknown>>(params: T) => {
-    const mergedParams = { ...currentParams.value, ...params };
-
-    const filteredParams = omitRedundantProperties<T>(mergedParams, filterKeys);
+  const submitFilters = <T extends Record<string, unknown> = Record<string, unknown>>(params: T = {} as T) => {
+    const mergedParams = { ...route.query, page: "1", ...params };
+    const filteredParams = parseParamsRecords<T>(mergedParams, filterKeys);
     router.push({
-      query: { ...filteredParams },
+      path: "",
+      query: filteredParams,
     });
   };
 
-  const clearFilters = () => {
-    let filteredParams = {};
+  const clearFiltersParams = <T extends (...args: unknown[]) => void>(cb?: T) => {
+    let filteredParams;
+
+    if (cb && typeof cb === "function") cb();
 
     if (Array.isArray(filterKeys) && filterKeys.length > 0) {
-      filteredParams = omitRedundantProperties(urlParams, filterKeys);
+      filteredParams = parseParamsRecords(route.params, filterKeys);
     } else {
       filteredParams = {};
     }
-    router.push({ query: filteredParams });
+
+    submitFilters(filteredParams);
+    // router.push({ query: filteredParams });
   };
 
-  return { submitFilters, clearFilters, currentParams };
+  return { submitFilters, clearFiltersParams, currentParams: route.params };
 };
-
 export { useFilters };

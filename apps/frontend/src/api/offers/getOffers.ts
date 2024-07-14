@@ -5,8 +5,11 @@ import type { JobOffersResponse, OffersQueryParams } from "shared/src/offers/off
 import { fetcher } from "@/utils/fetcher";
 import { getSearchParamsAsString } from "@/utils/getSearchParamsAsString";
 import { type OffersQueryFunctionContext, offersQueryKeys } from "@/api/offers/offersQueryKeys";
+import type { ReactiveQuerySearchParams } from "@/types/query.types";
 
-const getOffersList = async ({ queryKey: [props] }: OffersQueryFunctionContext["getOffers"]): Promise<JobOffersResponse | undefined> => {
+const getOffersList = async ({
+  queryKey: [props],
+}: OffersQueryFunctionContext["getOffersList"]): Promise<JobOffersResponse | undefined> => {
   try {
     const paramsUrl = getSearchParamsAsString(props?.params);
     const url = `${import.meta.env.VITE_API_URL}/offers${paramsUrl}`;
@@ -16,8 +19,10 @@ const getOffersList = async ({ queryKey: [props] }: OffersQueryFunctionContext["
   }
 };
 
-export const useGetOffersList = (queryParams?: Partial<OffersQueryParams>) =>
+export type GetOffersListParams = ReactiveQuerySearchParams<OffersQueryParams>;
+
+export const useGetOffersList = (queryParams?: GetOffersListParams) =>
   useQuery<JobOffersResponse | undefined>({
-    queryKey: offersQueryKeys.getOffers(queryParams),
+    queryKey: offersQueryKeys.getOffersList(queryParams),
     queryFn: getOffersList,
   });

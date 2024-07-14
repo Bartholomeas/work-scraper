@@ -5,7 +5,7 @@ import { formatDate } from "@/utils/formatDate";
 import type { JobOffer } from "shared/src/offers/offers.types";
 import { formatPrice } from "@/utils/formatPrice";
 
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button/Button.variants";
 import { Card } from "@/components/ui/card";
 
 import OffersDetailsDialog from "@/components/offers/single/OffersDetailsDialog.vue";
