@@ -19,7 +19,7 @@ const filterKeysExists = (key: string, filterKeys?: FilterKeys) =>
 
 /**
  * @description - Omit key/values that are redundant or do not match filterKeys props
- * @param obj - Object with parameters and its values
+ * @param params - Object with parameters and its values
  * @param filterKeys - Optional keys to look for, and they will be only kept when this parameter is passed
  */
 export const parseParamsRecords = <T extends Record<string, unknown>>(params: T, filterKeys?: FilterKeys): FilteredRecords<T> => {

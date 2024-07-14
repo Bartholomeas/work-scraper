@@ -16,10 +16,10 @@ const useFilters = ({ filterKeys }: UseFiltersProps = {}) => {
   const route = useRoute();
 
   const submitFilters = <T extends Record<string, unknown> = Record<string, unknown>>(params: T = {} as T) => {
-    const mergedParams = { ...route.params, ...params };
-
+    const mergedParams = { ...route.query, page: "1", ...params };
     const filteredParams = parseParamsRecords<T>(mergedParams, filterKeys);
     router.push({
+      path: "",
       query: filteredParams,
     });
   };

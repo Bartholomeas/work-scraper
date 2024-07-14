@@ -34,13 +34,12 @@ const onSubmit = handleSubmit(values => {
   submitFilters(values);
 });
 
+provide("formValues", values);
+provide("onSubmit", onSubmit);
 defineExpose({
   clearFilters,
   onSubmit,
 });
-
-provide("formValues", values);
-provide("onSubmit", onSubmit);
 </script>
 
 <template>

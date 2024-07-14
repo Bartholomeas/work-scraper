@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import type { OffersPaginationMetadata } from "shared/src/general/query.types";
+import { computed } from "vue";
+import { useRoute } from "vue-router";
 
+import type { OffersPaginationMetadata } from "shared/src/general/query.types";
 import { useFilters } from "@/composables/useFilters/useFilters";
 
 import {
@@ -16,6 +18,9 @@ import { Button } from "@/components/ui/button/Button.variants";
 interface OffersPaginationProps {
   meta: OffersPaginationMetadata | undefined;
 }
+
+const route = useRoute();
+const currentPage = computed(() => (route?.query?.page ? +route?.query?.page : 1));
 
 const { meta } = defineProps<OffersPaginationProps>();
 const { submitFilters } = useFilters({
@@ -35,6 +40,7 @@ const handlePageChange = (page: number = 1) => {
     :sibling-count="1"
     :default-page="1"
     show-edges
+    :page="currentPage"
     class="mx-auto max-w-screen overflow-hidden"
   >
     <PaginationList v-slot="{ items }" class="flex items-center flex-wrap gap-1">
