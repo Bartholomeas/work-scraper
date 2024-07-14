@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import OffersSideFiltersContent from "@/components/offers/filters/sidebar/OffersSideFiltersContent.vue";
-import OffersSideFiltersDesktop from "@/components/offers/filters/sidebar/OffersSideFiltersDesktop.vue";
-import OffersSideFiltersMobile from "@/components/offers/filters/sidebar/OffersSideFiltersMobile.vue";
+import OffersSideFiltersContent from "@/components/offers/filters/side-bar/OffersSideFiltersContent.vue";
+import OffersSideFiltersDesktop from "@/components/offers/filters/side-bar/OffersSideFiltersDesktop.vue";
+import OffersSideFiltersMobile from "@/components/offers/filters/side-bar/OffersSideFiltersMobile.vue";
 
 // const { data } = useGetOffersBaseCategories();
 // console.log("Xdd", data);

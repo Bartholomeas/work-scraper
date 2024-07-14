@@ -6,7 +6,7 @@ import { useGetOffersBaseCategories } from "@/api/offers/getOffersBaseCategories
 import { parseZodSchemaToInputNames } from "@/lib/zod/parseZodSchemaToInputNames";
 import { isKeyOf } from "@/utils/isKeyOf";
 
-import OffersSidebarButtons from "@/components/offers/filters/sidebar/OffersSidebarButtons.vue";
+import OffersSidebarButtons from "@/components/offers/filters/side-bar/OffersSidebarButtons.vue";
 import CheckboxControlled from "@/components/common/form/inputs-controlled/CheckboxControlled.vue";
 import FiltersWrapper from "@/components/special/FiltersWrapper.vue";
 

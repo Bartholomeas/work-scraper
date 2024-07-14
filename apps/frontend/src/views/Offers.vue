@@ -4,13 +4,13 @@ import { useRoute } from "vue-router";
 
 import { useGetOffersList } from "@/api/offers/getOffers";
 
-import OffersFiltersTopBar from "@/components/offers/filters/OffersFiltersTopBar.vue";
+import OffersFiltersTopBar from "@/components/offers/filters/top-bar/OffersFiltersTopWrapper.vue";
 import OffersListLayout from "@/components/offers/OffersListLayout.vue";
 import OffersItemsList from "@/components/offers/OffersItemsList.vue";
 import OfferSingleItemSkeleton from "@/components/offers/single/OfferSingleItemSkeleton.vue";
 
 const OffersStatCards = defineAsyncComponent(() => import("@/components/offers/OffersStatCards.vue"));
-const OffersSideFilters = defineAsyncComponent(() => import("@/components/offers/filters/sidebar/OffersSideFilters.vue"));
+const OffersSideFilters = defineAsyncComponent(() => import("@/components/offers/filters/side-bar/OffersSideFilters.vue"));
 const OffersPagination = defineAsyncComponent(() => import("@/components/offers/filters/OffersPagination.vue"));
 
 const route = useRoute();

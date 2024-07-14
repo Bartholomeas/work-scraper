@@ -11,9 +11,10 @@ interface FiltersWrapperProps<TSchema extends ZodSchema> {
   initialValues?: z.infer<TSchema>;
   withAutoSubmit?: boolean;
   className?: HTMLAttributes["class"];
+  style?: HTMLAttributes["style"];
 }
 
-const { filterKeys, withAutoSubmit, filtersSchema, initialValues, className } = withDefaults(defineProps<FiltersWrapperProps<T>>(), {
+const { filterKeys, withAutoSubmit, filtersSchema, initialValues, className, style } = withDefaults(defineProps<FiltersWrapperProps<T>>(), {
   withAutoSubmit: false,
 });
 
@@ -35,12 +36,15 @@ const onSubmit = handleSubmit(values => {
 
 defineExpose({
   clearFilters,
+  onSubmit,
 });
+
 provide("formValues", values);
+provide("onSubmit", onSubmit);
 </script>
 
 <template>
-  <form @submit="onSubmit" :class="className">
-    <slot :clear-filters="clearFilters" />
+  <form @submit="onSubmit" :class="className" :style="style">
+    <slot :clear-filters="clearFilters" :on-submit="onSubmit" />
   </form>
 </template>

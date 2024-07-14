@@ -1,0 +1,21 @@
+<script setup lang="ts">
+import { coreSearchParamsSchema } from "shared/src/offers/offers.schemas";
+
+import { HEADER_HEIGHT } from "@/constants";
+
+import { type SelectControlledItem } from "@/components/common/form/inputs-controlled/SelectControlled.vue";
+import FiltersWrapper from "@/components/special/FiltersWrapper.vue";
+import OffersFiltersTopBar from "@/components/offers/filters/top-bar/OffersFiltersTopBar.vue";
+</script>
+
+<template>
+  <FiltersWrapper
+    v-slot="{ onSubmit }"
+    :filters-schema="coreSearchParamsSchema"
+    :debounce-time="300"
+    class-name="sticky bg-background z-50 pt-4 shadow-xl lg:pt-0"
+    :style="{ top: `calc(${HEADER_HEIGHT - 8}px)` }"
+  >
+    <OffersFiltersTopBar />
+  </FiltersWrapper>
+</template>
