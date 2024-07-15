@@ -24,10 +24,6 @@ class OffersService {
   public async deleteOutdatedRecords() {
     try {
       const today = dayjs().startOf("day").toISOString();
-      const monthAgo = dayjs().subtract(1, "month").toISOString();
-
-      console.log("Deleting, ", "dates", today, monthAgo);
-      // console.log("Deleting, ", today, monthAgo);
 
       const res = await this.prisma.jobOffer.deleteMany({
         where: {
