@@ -14,8 +14,9 @@ class OffersRouter {
     const router = express.Router();
     puppeteer.use(StealthPlugin());
     router.get("/metadata", this.offersController.getOffersMetadata);
-    router.get("/scrape", this.offersController.scrapeOffersData);
     router.get("/base-categories", this.offersController.getOffersBaseCategories);
+    router.get("/scrape", this.offersController.scrapeOffersData);
+    router.delete("/delete-outdated", this.offersController.deleteOutdatedOffers);
     router.get("/", this.offersController.getOffers);
     return router;
   }

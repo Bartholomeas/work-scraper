@@ -6,9 +6,10 @@ import { generateId } from "@/utils/generate-id";
 import { AppError } from "@/utils/app-error";
 import { ERROR_CODES } from "@/misc/error.constants";
 
-import { ScrapperBase, type ScrapperBaseProps } from "@/components/offers/instances/scrapper-base";
+import { ScrapperBase, type ScrapperBaseProps } from "@/components/offers/scrapper/scrapper-base";
 import { isContractTypesArr, isWorkModesArr, isWorkPositionLevelsArr, isWorkSchedulesArr } from "@/components/offers/helpers/offers.utils";
 import { PRACUJ_DATA_FILENAME } from "@/components/offers/helpers/offers.constants";
+
 import type { JobOfferPracuj } from "@/types/offers/pracuj.types";
 
 const SCRAPPED_PAGE_WIDTH = 1200;

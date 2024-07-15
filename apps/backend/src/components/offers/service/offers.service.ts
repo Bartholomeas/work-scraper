@@ -21,6 +21,28 @@ class OffersService {
     this.prisma = PrismaInstance.getInstance();
   }
 
+  public async deleteOutdatedRecords() {
+    try {
+      const today = dayjs().startOf("day").toISOString();
+
+      const res = await this.prisma.jobOffer.deleteMany({
+        where: {
+          expirationDate: {
+            lt: today,
+          },
+        },
+      });
+
+      return res.count;
+    } catch (err) {
+      throw new AppError({
+        statusCode: 400,
+        code: ERROR_CODES.invalid_type,
+        message: JSON.stringify(err),
+      });
+    }
+  }
+
   public async getOffersMetadata() {
     try {
       return await this.prisma.offersMetadata.findUnique({ where: { id: OFFERS_METADATA_ID } });
@@ -132,11 +154,12 @@ class OffersService {
           return this.prisma.jobOffer.upsert({
             where: { id: offer?.id },
             create: parsedOffer as never,
-            update: parsedOffer as never,
+            update: { ...parsedOffer, updatedAt: new Date() } as never,
           });
         });
 
       await this.prisma.$transaction(upsertOfferPromises);
+
       const totalCount = await this.prisma.jobOffer.count({});
       await this.setOffersMetadata({ total: totalCount ?? 0 });
       return;
