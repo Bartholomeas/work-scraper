@@ -1,6 +1,8 @@
+// url          = env("DATABASE_URL")
+
 datasource db {
   provider     = "sqlite"
-  url          = env("DATABASE_URL")
+  url          = "file:./dev.db?mode=memory&cache=shared"
   relationMode = "prisma"
 }
 
@@ -54,7 +56,7 @@ model OfferUrl {
   id         String   @id @default(uuid())
   value      String
   jobOfferId String
-  jobOffer   JobOffer @relation("OfferUrls", fields: [jobOfferId], references: [id])
+  jobOffer   JobOffer @relation("OfferUrls", fields: [jobOfferId], references: [id], onDelete: Cascade)
 
   @@index([jobOfferId])
 }
@@ -75,7 +77,7 @@ model SalaryRange {
   type       String   @default("brutto")
   timeUnit   String   @default("month")
   jobOfferId String
-  jobOffer   JobOffer @relation(fields: [jobOfferId], references: [id])
+  jobOffer   JobOffer @relation(fields: [jobOfferId], references: [id], onDelete: Cascade)
 
   @@index([jobOfferId])
 }
@@ -88,7 +90,7 @@ model JobOffer {
   description    String?
   createdAt      DateTime?       @default(now())
   updatedAt      DateTime?       @default(now()) @updatedAt
-  expirationDate DateTime?
+  expirationDate DateTime?       @default(now())
   companyName    String?
   company        Company?        @relation(fields: [companyName], references: [name])
   salaryRange    SalaryRange[]

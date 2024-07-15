@@ -1,4 +1,4 @@
-import { ScrapperBase, type ScrapperBaseProps } from "@/components/offers/instances/scrapper-base";
+import { ScrapperBase, type ScrapperBaseProps } from "@/components/offers/scrapper/scrapper-base";
 import type { Browser, Page } from "puppeteer";
 
 import { generateId } from "@/utils/generate-id";
@@ -8,6 +8,7 @@ import { JUSTJOIN_DATA_FILENAME } from "@/components/offers/helpers/offers.const
 
 import type { JobOffer, ScrappedDataResponse } from "shared/src/offers/offers.types";
 import type { JobOfferJustjoin } from "@/types/offers/justjoin.types";
+import dayjs from "dayjs";
 
 const VIEWPORT_WIDTH = 800;
 const VIEWPORT_HEIGHT = 980;
@@ -91,7 +92,7 @@ class ScrapperJustjoin extends ScrapperBase {
   private async scrollToEndOfPage(page: Page) {
     if (!page) return null;
 
-    const footerExist = false;
+    // const footerExist = false;
     let prevScrollHeight = (await page.evaluate(() => document.body.scrollHeight)) as number;
     let currentScrollHeight: number = prevScrollHeight;
 
@@ -131,10 +132,13 @@ class ScrapperJustjoin extends ScrapperBase {
     }
 
     console.log("Footer found or end of page reached.");
+    return;
   }
 
   protected standardizeData = (offers: JobOfferJustjoin[]): JobOffer[] => {
     if (!offers || !offers.length) return [];
+    const expirationDate = dayjs(new Date()).add(1, "month").toISOString();
+
     return offers.map((offer): JobOffer => {
       const positionLevels = this.standardizePositionLevels(offer?.experienceLevel);
       const contractTypes = this.standardizeContractTypes(offer?.employmentTypes);
@@ -160,7 +164,7 @@ class ScrapperJustjoin extends ScrapperBase {
         technologies: offer?.requiredSkills,
         description: undefined,
         createdAt: offer?.publishedAt,
-        expirationDate: undefined,
+        expirationDate,
         offerUrls: offer?.multilocation?.map(loc => `https://justjoin.it/offers/${loc?.slug}`),
         workplaces: offer?.multilocation?.map(place => {
           let workplaceString = "";

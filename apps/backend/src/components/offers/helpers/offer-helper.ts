@@ -190,7 +190,7 @@ class OfferHelper {
       workModes: connectOrCreateArray(offer?.workModes),
       workSchedules: connectOrCreateArray(offer?.workSchedules),
       technologies: connectOrCreateArray(offer?.technologies),
-      offerUrls,
+      offerUrls: offerUrls ? { create: offerUrls } : undefined,
       salaryRange,
       company: {
         connectOrCreate: {

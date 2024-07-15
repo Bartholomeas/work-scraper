@@ -6,9 +6,10 @@ import { generateId } from "@/utils/generate-id";
 import { AppError } from "@/utils/app-error";
 import { ERROR_CODES } from "@/misc/error.constants";
 
-import { ScrapperBase, type ScrapperBaseProps } from "@/components/offers/instances/scrapper-base";
+import { ScrapperBase, type ScrapperBaseProps } from "@/components/offers/scrapper/scrapper-base";
 import { isContractTypesArr, isWorkModesArr, isWorkPositionLevelsArr, isWorkSchedulesArr } from "@/components/offers/helpers/offers.utils";
 import { PRACUJ_DATA_FILENAME } from "@/components/offers/helpers/offers.constants";
+
 import type { JobOfferPracuj } from "@/types/offers/pracuj.types";
 
 const SCRAPPED_PAGE_WIDTH = 1200;
@@ -126,14 +127,14 @@ class ScrapperPracuj extends ScrapperBase {
   protected async getMaxPages() {
     if (!this.page) return 1;
     // // TODO: Uncomment that, added low pages to prevent overload
-    const maxPagesElement = await this.page.$('span[data-test="top-pagination-max-page-number"]');
-    let maxPagesValue = "1";
-    if (maxPagesElement) {
-      const textContent = await this.page.evaluate(el => el?.textContent, maxPagesElement);
-      if (textContent) maxPagesValue = textContent ?? "1";
-    }
-    return parseInt(maxPagesValue);
-    // return 5;
+    // const maxPagesElement = await this.page.$('span[data-test="top-pagination-max-page-number"]');
+    // let maxPagesValue = "1";
+    // if (maxPagesElement) {
+    //   const textContent = await this.page.evaluate(el => el?.textContent, maxPagesElement);
+    //   if (textContent) maxPagesValue = textContent ?? "1";
+    // }
+    // return parseInt(maxPagesValue);
+    return 5;
   }
 
   private transformSalaryTimeUnit = (val: string): TimeUnitTypes => {
