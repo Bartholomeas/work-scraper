@@ -1,6 +1,6 @@
 import request from "supertest";
-import { app } from "@/app";
-import { BASE_URL } from "@/misc/constants";
+import { BASE_URL } from "apps/backend/src/misc/constants";
+import { app } from "apps/backend/src/app";
 
 describe("app instance tests", () => {
   it("should respond 404 for unknown route", async () => {
