@@ -45,7 +45,12 @@ export const jobOfferSchema = z.object({
   updatedAt: z.string().optional(),
   expirationDate: z.string().optional(),
   offerUrls: z.array(z.string().url()),
-  workplaces: z.array(z.string()),
+  workplaces: z.array(
+    z.object({
+      city: z.string(),
+      address: z.string().nullable(),
+    }),
+  ),
 });
 
 export const companySchema = z.object({
@@ -99,6 +104,7 @@ export const baseCategoriesSchema = z.object({
   contractTypes: z.preprocess(stringToArray, z.array(contractTypeCodesSchema)).optional(),
   workModes: z.preprocess(stringToArray, z.array(workModesSchema)).optional(),
   workSchedules: z.preprocess(stringToArray, z.array(workSchedulesSchema)).optional(),
+  workplaces: z.preprocess(stringToArray, z.array(z.string())).optional(),
 });
 export const offersQueryParamsSchema = baseCategoriesSchema.extend(paginationSchema.shape).extend(coreSearchParamsSchema.shape).strip();
 
