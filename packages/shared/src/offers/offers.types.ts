@@ -40,9 +40,11 @@ export interface ScrappedDataResponse<T extends JobOffer[] = JobOffer[]> {
 export type OffersQueryParams = z.infer<typeof offersQueryParamsSchema>;
 export type OffersMetadataResponse = z.infer<typeof offersMetadataSchema>;
 
-export type CategoryRecord<T extends string = string> = { id: string; value: T };
+export type AllCategoryCodes = ContractTypesCodes | WorkModesCodes | WorkSchedulesCodes | PositionLevelsCodes;
 
-export interface OffersBaseCategory<T extends string = string> {
+export type CategoryRecord<T extends string = AllCategoryCodes> = { id: string; value: T };
+
+export interface OffersBaseCategory<T extends string = AllCategoryCodes> {
   name: string;
   items: CategoryRecord<T>[];
 }

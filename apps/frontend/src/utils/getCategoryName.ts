@@ -1,7 +1,6 @@
-import type { ContractTypesCodes, PositionLevelsCodes, WorkModesCodes, WorkSchedulesCodes } from "shared/src/offers/offers.types";
+import type { AllCategoryCodes } from "shared/src/offers/offers.types";
 
-export type CategoryCodes = ContractTypesCodes | WorkModesCodes | WorkSchedulesCodes | PositionLevelsCodes;
-export const getCategoryName = <T extends CategoryCodes>(categoryCode: T | undefined) => {
+export const getCategoryName = <T extends AllCategoryCodes>(categoryCode: T | undefined) => {
   switch (categoryCode) {
     // Contract types
     case "uop":
