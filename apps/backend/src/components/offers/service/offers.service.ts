@@ -65,6 +65,8 @@ class OffersService {
           workplaces: {
             select: {
               value: true,
+              city: true,
+              address: true,
             },
           },
           workModes: {
@@ -133,7 +135,6 @@ class OffersService {
         ?.filter(offer => offer?.positionName)
         ?.map(offer => {
           const parsedOffer = OfferHelper.parseJobOfferToPrismaModel(offer);
-
           return this.prisma.jobOffer.upsert({
             where: { id: offer?.id },
             create: parsedOffer as never,

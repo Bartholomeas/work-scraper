@@ -167,10 +167,12 @@ class ScrapperJustjoin extends ScrapperBase {
         expirationDate,
         offerUrls: offer?.multilocation?.map(loc => `https://justjoin.it/offers/${loc?.slug}`),
         workplaces: offer?.multilocation?.map(place => {
-          let workplaceString = "";
-          if (place?.city) workplaceString += place.city;
-          if (place?.street) workplaceString += ` ${place.street}`;
-          return workplaceString;
+          const workPlace = { city: "", address: null } as JobOffer["workplaces"][0];
+
+          if (place?.city) workPlace.city = place.city;
+          if (place?.street) workPlace.address = "TOSTONT";
+          // if (place?.street) workPlace.address = place.street;
+          return workPlace;
         }),
       } satisfies JobOffer;
       // return { ...parsedOffer, slug: generateJobOfferSlug(parsedOffer) } as JobOffer;
