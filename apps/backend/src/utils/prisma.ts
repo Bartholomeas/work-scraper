@@ -1,4 +1,4 @@
-export const connectOrCreateArray = (values: string[] | undefined) => {
+export const connectOrCreateArray = (values: string[]) => {
   if (!Array.isArray(values)) return {};
 
   return {

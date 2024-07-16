@@ -8,7 +8,6 @@ import dotenv from "dotenv";
 const envFile = `.env.${process.env.NODE_ENV ?? "development"}`;
 dotenv.config({ path: envFile });
 console.log({ envFile, DBenv: process.env.DATABASE_URL });
-console.log(process.env.SECRET_PHRASE);
 
 import { PORT } from "@/misc/constants";
 import { app } from "@/app";

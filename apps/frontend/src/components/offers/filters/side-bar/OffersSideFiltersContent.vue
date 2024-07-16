@@ -4,7 +4,9 @@ import type { CategoryRecord } from "shared/src/offers/offers.types";
 
 import { useGetOffersBaseCategories } from "@/api/offers/getOffersBaseCategories";
 import { parseZodSchemaToInputNames } from "@/lib/zod/parseZodSchemaToInputNames";
+
 import { isKeyOf } from "@/utils/isKeyOf";
+import { getCategoryName } from "@/utils/getCategoryName";
 
 import OffersSidebarButtons from "@/components/offers/filters/side-bar/OffersSidebarButtons.vue";
 import CheckboxControlled from "@/components/common/form/inputs-controlled/CheckboxControlled.vue";
@@ -31,7 +33,7 @@ const inputNames = parseZodSchemaToInputNames(baseCategoriesSchema);
           v-if="isKeyOf(inputNames, key)"
           :label="category?.name"
           :name="inputNames?.[key]"
-          :items="category.items?.map((cat: CategoryRecord) => ({ ...cat, label: cat.value }))"
+          :items="category.items?.map((cat: CategoryRecord) => ({ ...cat, label: getCategoryName(cat.value) }))"
         />
       </template>
 
