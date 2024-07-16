@@ -27,6 +27,7 @@ class OfferHelper {
           ...this.getContractTypesConditions(params?.contractTypes),
           ...this.getWorkModesConditions(params?.workModes),
           ...this.getWorkSchedulesConditions(params?.workSchedules),
+          ...this.getWorkplacesConditions(params?.workplaces),
         ],
         // ...OfferHelper.getDataSourcesConditions(params?.dataSources),
       };
@@ -133,6 +134,18 @@ class OfferHelper {
     return Array.isArray(dataSources) && dataSources.length > 0
       ? dataSources.map(value => ({
           dataSource: {
+            some: {
+              value,
+            },
+          },
+        }))
+      : [];
+  }
+
+  public static getWorkplacesConditions(workplaces?: OffersQueryParams["workplaces"]) {
+    return Array.isArray(workplaces) && workplaces?.length > 0
+      ? workplaces?.map(value => ({
+          workplaces: {
             some: {
               value,
             },

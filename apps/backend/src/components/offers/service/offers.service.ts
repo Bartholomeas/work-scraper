@@ -42,6 +42,7 @@ class OffersService {
       perPage: params?.perPage ?? 24,
       page: params?.page && params?.page < 1 ? 1 : params?.page ?? 1,
     };
+
     try {
       const data = await this.prisma.jobOffer.findMany({
         ...OfferHelper.getDefaultParams({ ...params, ...defaultParams } as OffersQueryParams),

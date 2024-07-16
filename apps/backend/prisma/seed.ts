@@ -34,7 +34,7 @@ export const mockOffer: JobOffer = {
   workSchedules: ["freelance"],
   technologies: ["Javascript", "Nodejs", "Typescript"],
   offerUrls: ["www.google.pl"],
-  workplaces: ["Zielona Góra"],
+  workplaces: [],
 };
 
 const cleanupDb = async (prismaClient: PrismaClient) => {
