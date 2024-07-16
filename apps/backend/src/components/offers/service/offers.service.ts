@@ -32,7 +32,7 @@ class OffersService {
           },
         },
       });
-
+      console.log(`Deleted ${res.count} outdated records`);
       return res.count;
     } catch (err) {
       throw new AppError({

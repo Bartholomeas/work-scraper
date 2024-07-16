@@ -8,15 +8,48 @@ import { BrowserManager } from "@/components/libs/browser-manager";
 import { ScrapperPracuj } from "@/components/offers/scrapper/scrapper-pracuj";
 import { JUSTJOIN_URL, PRACUJ_URL } from "@/components/offers/helpers/offers.constants";
 import { ScrapperJustjoin } from "@/components/offers/scrapper/scrapper-justjoin";
+import { ScrapperCron } from "@/components/offers/scrapper/scrapper-cron";
+
 import type { OffersService } from "@/components/offers/service/offers.service";
 
-class ScrapperController {
+interface IScrapperController {
+  updateStatistics(): Promise<void>;
+
+  updateMetadata(): Promise<void>;
+
+  deleteOutdatedRecords(): Promise<void>;
+
+  scrapeOffersData(): Promise<JobOffer[]>;
+}
+
+class ScrapperController implements IScrapperController {
   private offersService: OffersService;
   private browserManager: BrowserManager;
 
   constructor(offersService: OffersService) {
     this.offersService = offersService;
     this.browserManager = BrowserManager.getInstance();
+    new ScrapperCron(this);
+  }
+
+  public async updateStatistics() {
+    await new Promise(resolve => {
+      setTimeout(() => {
+        resolve("MOCK updateStatistics");
+      }, 3000);
+    });
+  }
+
+  public async updateMetadata() {
+    await new Promise(resolve => {
+      setTimeout(() => {
+        resolve("MOCK updateMetadata");
+      }, 3000);
+    });
+  }
+
+  public async deleteOutdatedRecords() {
+    await this.offersService.deleteOutdatedRecords();
   }
 
   public scrapeOffersData = async () => {
@@ -57,4 +90,4 @@ class ScrapperController {
   };
 }
 
-export { ScrapperController };
+export { ScrapperController, type IScrapperController };
