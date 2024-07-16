@@ -8,20 +8,21 @@ import { AppError } from "@/utils/app-error";
 import { ERROR_CODES } from "@/misc/error.constants";
 
 import { OffersCategoriesService } from "@/components/offers/service/offers-categories.service";
+import { ScrapperController } from "@/components/offers/scrapper/scrapper.controller";
 
 import type { OffersService } from "@/components/offers/service/offers.service";
-import { ScrapperController } from "@/components/offers/scrapper/scrapper.controller";
 
 puppeteer.use(StealthPlugin());
 
 class OffersController {
   private offersService: OffersService;
   private offersCategoriesService: OffersCategoriesService;
+  private scrapperController: ScrapperController;
 
   constructor(offersService: OffersService) {
     this.offersService = offersService;
-
     this.offersCategoriesService = new OffersCategoriesService();
+    this.scrapperController = new ScrapperController(offersService);
   }
 
   public deleteOutdatedOffers = async (req: Request, res: Response, next: NextFunction) => {
@@ -47,8 +48,7 @@ class OffersController {
 
   public scrapeOffersData = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const scrapper = new ScrapperController(this.offersService);
-      const data = await scrapper.scrapeOffersData();
+      const data = await this.scrapperController.scrapeOffersData();
       res.status(200).json({
         createdAt: new Date(Date.now()),
         data,
