@@ -1,5 +1,6 @@
 node_modules
 backend/node_modules
+backend/prisma/backups
 backend/prisma/migrations
 backend/prisma/*.db
 backend/**/*.db

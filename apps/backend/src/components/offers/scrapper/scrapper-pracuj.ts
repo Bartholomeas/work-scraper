@@ -67,7 +67,13 @@ class ScrapperPracuj extends ScrapperBase {
         createdAt: offer?.lastPublicated,
         expirationDate: offer?.expirationDate,
         offerUrls: offer?.offers?.map(url => url?.offerAbsoluteUri),
-        workplaces: offer?.offers?.map(place => place?.displayWorkplace),
+        workplaces: offer?.offers?.map(place => {
+          const [placeCity, placeAddress] = place?.displayWorkplace.split(",") ?? ["", null];
+          return {
+            city: placeCity?.trim(),
+            address: placeAddress?.trim() ?? null,
+          };
+        }),
       } satisfies JobOffer;
 
       return parsedOffer;
@@ -127,14 +133,14 @@ class ScrapperPracuj extends ScrapperBase {
   protected async getMaxPages() {
     if (!this.page) return 1;
     // // TODO: Uncomment that, added low pages to prevent overload
-    // const maxPagesElement = await this.page.$('span[data-test="top-pagination-max-page-number"]');
-    // let maxPagesValue = "1";
-    // if (maxPagesElement) {
-    //   const textContent = await this.page.evaluate(el => el?.textContent, maxPagesElement);
-    //   if (textContent) maxPagesValue = textContent ?? "1";
-    // }
-    // return parseInt(maxPagesValue);
-    return 5;
+    const maxPagesElement = await this.page.$('span[data-test="top-pagination-max-page-number"]');
+    let maxPagesValue = "1";
+    if (maxPagesElement) {
+      const textContent = await this.page.evaluate(el => el?.textContent, maxPagesElement);
+      if (textContent) maxPagesValue = textContent ?? "1";
+    }
+    return parseInt(maxPagesValue);
+    // return 2;
   }
 
   private transformSalaryTimeUnit = (val: string): TimeUnitTypes => {
@@ -175,7 +181,7 @@ class ScrapperPracuj extends ScrapperBase {
     ];
   };
 
-  standardizeContractTypes = (types: JobOfferPracuj["typesOfContract"] | undefined): JobOffer["contractTypes"] => {
+  public standardizeContractTypes = (types: JobOfferPracuj["typesOfContract"] | undefined): JobOffer["contractTypes"] => {
     if (!types || !types.length) return [];
     const standardizedTypes = types.reduce(
       (acc, _type) => {
@@ -193,7 +199,7 @@ class ScrapperPracuj extends ScrapperBase {
     else return [];
   };
 
-  standardizeWorkModes = (modes: JobOfferPracuj["workModes"] | undefined): JobOffer["workModes"] => {
+  public standardizeWorkModes = (modes: JobOfferPracuj["workModes"] | undefined): JobOffer["workModes"] => {
     if (!modes || !modes.length) return [];
 
     const standardizedModes = modes.reduce(
@@ -210,7 +216,7 @@ class ScrapperPracuj extends ScrapperBase {
     if (isWorkModesArr(standardizedModes)) return standardizedModes;
     else return [];
   };
-  standardizeWorkSchedules = (schedules: JobOfferPracuj["workSchedules"] | undefined): JobOffer["workSchedules"] => {
+  public standardizeWorkSchedules = (schedules: JobOfferPracuj["workSchedules"] | undefined): JobOffer["workSchedules"] => {
     if (!schedules || !schedules.length) return [];
 
     const standardizedSchedules = schedules.reduce(

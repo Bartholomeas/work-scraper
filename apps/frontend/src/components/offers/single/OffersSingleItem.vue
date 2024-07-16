@@ -32,6 +32,9 @@ const salaryRangeString = computed(() =>
     : `${minPrice.value} - ${maxPrice.value}, ${offer?.salaryRange[0]?.type ?? ""}` +
       (offer?.salaryRange[0]?.timeUnit ? ` / ${transformTimeUnitType(offer?.salaryRange[0]?.timeUnit)}` : ""),
 );
+
+const workCities = computed(() => createStringFromArr(offer?.workplaces?.map(place => place.city)));
+const formattedExpirationDate = computed(() => formatDate(offer?.expirationDate));
 </script>
 
 <template>
@@ -47,13 +50,13 @@ const salaryRangeString = computed(() =>
           loading="lazy"
           height="96"
           width="96"
-          class="aspect-square rounded-md object-contain bg-white p-2"
+          class="aspect-square rounded-md object-contain max-h-[96px] bg-white p-2"
         />
         <div class="flex flex-col">
           <h3 class="text-lg font-bold text-foreground">{{ offer?.positionName }}</h3>
           <OffersIconValueBox :icon="Building2" :value="offer?.company?.name" />
-          <OffersIconValueBox :icon="MapPin" :value="createStringFromArr(offer?.workplaces)" />
-          <OffersIconValueBox :icon="Calendar" :value="formatDate(offer?.expirationDate)" />
+          <OffersIconValueBox :icon="MapPin" :value="workCities" />
+          <OffersIconValueBox :icon="Calendar" :value="formattedExpirationDate" />
         </div>
       </div>
       <div class="flex flex-col gap-2 justify-between md:items-end max-md:mt-2">

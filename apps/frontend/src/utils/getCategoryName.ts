@@ -17,11 +17,11 @@ export const getCategoryName = <T extends AllCategoryCodes>(categoryCode: T | un
     case "intern":
       return "Stażysta";
     case "junior":
-      return "Młodszy specjalista";
+      return "Junior";
     case "mid":
-      return "Regularny specjalista";
+      return "Regular";
     case "senior":
-      return "Senior specjalista";
+      return "Senior";
     case "manager":
       return "Menedżer";
     //   Work mode

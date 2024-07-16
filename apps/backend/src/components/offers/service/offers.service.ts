@@ -21,26 +21,8 @@ class OffersService {
     this.prisma = PrismaInstance.getInstance();
   }
 
-  public async deleteOutdatedRecords() {
-    try {
-      const today = dayjs().startOf("day").toISOString();
-
-      const res = await this.prisma.jobOffer.deleteMany({
-        where: {
-          expirationDate: {
-            lt: today,
-          },
-        },
-      });
-      console.log(`Deleted ${res.count} outdated records`);
-      return res.count;
-    } catch (err) {
-      throw new AppError({
-        statusCode: 400,
-        code: ERROR_CODES.invalid_type,
-        message: JSON.stringify(err),
-      });
-    }
+  public async getAllWorkplaces() {
+    return this.prisma.workplace.findMany();
   }
 
   public async getOffersMetadata() {
@@ -60,6 +42,7 @@ class OffersService {
       perPage: params?.perPage ?? 24,
       page: params?.page && params?.page < 1 ? 1 : params?.page ?? 1,
     };
+
     try {
       const data = await this.prisma.jobOffer.findMany({
         ...OfferHelper.getDefaultParams({ ...params, ...defaultParams } as OffersQueryParams),
@@ -79,9 +62,12 @@ class OffersService {
           company: true,
           salaryRange: true,
           offerUrls: true,
+
           workplaces: {
             select: {
               value: true,
+              city: true,
+              address: true,
             },
           },
           workModes: {
@@ -150,7 +136,6 @@ class OffersService {
         ?.filter(offer => offer?.positionName)
         ?.map(offer => {
           const parsedOffer = OfferHelper.parseJobOfferToPrismaModel(offer);
-
           return this.prisma.jobOffer.upsert({
             where: { id: offer?.id },
             create: parsedOffer as never,
@@ -208,6 +193,28 @@ class OffersService {
       throw new AppError({
         statusCode: 400,
         code: ERROR_CODES.invalid_data,
+        message: JSON.stringify(err),
+      });
+    }
+  }
+
+  public async deleteOutdatedRecords() {
+    try {
+      const today = dayjs().startOf("day").toISOString();
+
+      const res = await this.prisma.jobOffer.deleteMany({
+        where: {
+          expirationDate: {
+            lt: today,
+          },
+        },
+      });
+      console.log(`Deleted ${res.count} outdated records`);
+      return res.count;
+    } catch (err) {
+      throw new AppError({
+        statusCode: 400,
+        code: ERROR_CODES.invalid_type,
         message: JSON.stringify(err),
       });
     }

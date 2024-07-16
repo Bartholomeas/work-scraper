@@ -22,6 +22,7 @@ class OffersRouter {
     // router.get("/scrape", guardSecret(process.env.SECRET_PHRASE), this.offersController.scrapeOffersData);
     // router.delete("/delete-outdated", guardSecret(process.env.SECRET_PHRASE), this.offersController.deleteOutdatedOffers);
     router.get("/", this.offersController.getOffers);
+    router.get("/workplaces", this.offersController.getAllWorkplaces);
     return router;
   }
 }

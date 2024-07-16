@@ -7,7 +7,10 @@ class PrismaInstance {
 
   public static getInstance(): PrismaClient {
     if (!PrismaInstance.instance) {
-      PrismaInstance.instance = new PrismaClient();
+      PrismaInstance.instance = new PrismaClient({
+        log: ["warn", "error"],
+        // log: ["query", "info", "warn", "error"],
+      });
     }
 
     return PrismaInstance.instance;

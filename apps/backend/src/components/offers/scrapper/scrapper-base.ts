@@ -70,6 +70,11 @@ abstract class ScrapperBase {
         if (scrappedPage) results.push(scrappedPage);
       }
       const aggregatedData = results.flat() as T[];
+      await this.filesManager.writeToFile({
+        data: aggregatedData,
+        fileName,
+        ext: "json",
+      });
       return this.standardizeData(aggregatedData);
     } catch (err) {
       throw new AppError({

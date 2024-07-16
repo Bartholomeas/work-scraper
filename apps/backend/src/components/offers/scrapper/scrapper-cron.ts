@@ -33,7 +33,7 @@ class ScrapperCron {
   private setScrapeOffersCron() {
     cron.schedule("0 7,18 * * *", async () => {
       try {
-        console.log("Deleting outdated records: ", dayjs(Date.now()).format(`${DATE_FORMAT} HH:mm:ss`));
+        console.log("Scrapping offers records: ", dayjs(Date.now()).format(`${DATE_FORMAT} HH:mm:ss`));
         await this.scrapperController.scrapeOffersData();
       } catch (err) {
         console.log("Error in setDeleteOutdatedCron: ", err);

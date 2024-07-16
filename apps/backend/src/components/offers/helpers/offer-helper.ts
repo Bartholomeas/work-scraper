@@ -2,7 +2,7 @@ import { connectOrCreateArray } from "@/utils/prisma";
 import type { JobOffer, OffersQueryParams } from "shared/src/offers/offers.types";
 
 type PrismaJobOffer = JobOffer & {
-  workplaces: { value: string }[];
+  workplaces: { city: string; address?: string }[];
   workModes: { value: string }[];
   contractTypes: { value: string }[];
   technologies: { value: string }[];
@@ -27,6 +27,7 @@ class OfferHelper {
           ...this.getContractTypesConditions(params?.contractTypes),
           ...this.getWorkModesConditions(params?.workModes),
           ...this.getWorkSchedulesConditions(params?.workSchedules),
+          ...this.getWorkplacesConditions(params?.workplaces),
         ],
         // ...OfferHelper.getDataSourcesConditions(params?.dataSources),
       };
@@ -141,11 +142,23 @@ class OfferHelper {
       : [];
   }
 
+  public static getWorkplacesConditions(workplaces?: OffersQueryParams["workplaces"]) {
+    return Array.isArray(workplaces) && workplaces?.length > 0
+      ? workplaces?.map(value => ({
+          workplaces: {
+            some: {
+              value,
+            },
+          },
+        }))
+      : [];
+  }
+
   public static parsePrismaToJobOffer<T extends PrismaJobOffer>(prismaOffers: T[]): JobOffer[] {
     return prismaOffers?.map(offer => {
       const newJobOffer: JobOffer = {
         ...offer,
-        workplaces: offer.workplaces.map((w: { value: string }) => w.value),
+        workplaces: offer.workplaces as JobOffer["workplaces"],
         workModes: offer.workModes.map((w: { value: string }) => w.value) as JobOffer["workModes"],
         contractTypes: offer.contractTypes.map((c: { value: string }) => c.value) as JobOffer["contractTypes"],
         technologies: offer.technologies.map((t: { value: string }) => t.value) as JobOffer["technologies"],
@@ -176,7 +189,6 @@ class OfferHelper {
             })),
           }
         : undefined;
-
     return {
       id: offer.id,
       positionName: offer?.positionName,
@@ -185,7 +197,28 @@ class OfferHelper {
       description: offer?.description,
       expirationDate: offer?.expirationDate,
       positionLevels: connectOrCreateArray(offer.positionLevels),
-      workplaces: connectOrCreateArray(offer?.workplaces),
+      workplaces: {
+        connectOrCreate: offer?.workplaces?.map(place => ({
+          where: {
+            value: place?.city?.toLowerCase() ?? "polska",
+          },
+          create: {
+            value: place?.city.toLowerCase() ?? "polska",
+            city: place?.city,
+            address: place?.address ?? null,
+          },
+        })),
+        // connectOrCreate: [
+        //   {
+        //     where: { value: offer?.workplaces?.[0]?.city.toLowerCase() },
+        //     create: {
+        //       value: offer?.workplaces?.[0]?.city.toLowerCase(),
+        //       city: offer?.workplaces?.[0]?.city,
+        //       address: offer?.workplaces?.[0]?.address ?? null,
+        //     },
+        //   },
+        // ],
+      },
       contractTypes: connectOrCreateArray(offer?.contractTypes),
       workModes: connectOrCreateArray(offer?.workModes),
       workSchedules: connectOrCreateArray(offer?.workSchedules),

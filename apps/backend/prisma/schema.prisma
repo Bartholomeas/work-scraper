@@ -64,9 +64,11 @@ model OfferUrl {
 model Workplace {
   id        String     @id @default(uuid())
   value     String     @unique
+  city      String
+  address   String?
   jobOffers JobOffer[] @relation("Workplaces")
 
-  @@index([value])
+  @@index([value, city])
 }
 
 model SalaryRange {
