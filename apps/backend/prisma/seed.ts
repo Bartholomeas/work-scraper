@@ -1,5 +1,5 @@
-import { PrismaInstance } from "@/components/libs/prisma.instance";
 import { PrismaClient } from "@prisma/client";
+import { PrismaInstance } from "@/components/libs/prisma.instance";
 import type { JobOffer } from "shared/src/offers/offers.types";
 
 const prisma = PrismaInstance.getInstance();
