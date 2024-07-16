@@ -1,6 +1,7 @@
 import express, { type Router } from "express";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
+import { guardSecret } from "@/middleware/guard-secret";
 import { OffersController } from "./offers.controller";
 
 class OffersRouter {
@@ -15,8 +16,8 @@ class OffersRouter {
     puppeteer.use(StealthPlugin());
     router.get("/metadata", this.offersController.getOffersMetadata);
     router.get("/base-categories", this.offersController.getOffersBaseCategories);
-    router.get("/scrape", this.offersController.scrapeOffersData);
-    router.delete("/delete-outdated", this.offersController.deleteOutdatedOffers);
+    router.get("/scrape", guardSecret(process.env.SECRET_PHRASE), this.offersController.scrapeOffersData);
+    router.delete("/delete-outdated", guardSecret(process.env.SECRET_PHRASE), this.offersController.deleteOutdatedOffers);
     router.get("/", this.offersController.getOffers);
     return router;
   }

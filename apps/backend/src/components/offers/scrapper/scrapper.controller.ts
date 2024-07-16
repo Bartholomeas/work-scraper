@@ -5,8 +5,9 @@ import { ERROR_CODES } from "@/misc/error.constants";
 
 import { BrowserManager } from "@/components/libs/browser-manager";
 
-import { ScrapperPracuj } from "@/components/offers/scrapper/scrapper-pracuj";
 import { JUSTJOIN_URL, PRACUJ_URL } from "@/components/offers/helpers/offers.constants";
+
+import { ScrapperPracuj } from "@/components/offers/scrapper/scrapper-pracuj";
 import { ScrapperJustjoin } from "@/components/offers/scrapper/scrapper-justjoin";
 import { ScrapperCron } from "@/components/offers/scrapper/scrapper-cron";
 
