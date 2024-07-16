@@ -29,7 +29,7 @@ const onSubmit = inject<(e: any) => void>("onSubmit");
 watch(
   [values],
   debounce(() => {
-    if (onSubmit) onSubmit(values?.value);
+    if (onSubmit) onSubmit(values);
   }),
 );
 </script>
