@@ -82,7 +82,6 @@ class OffersController {
   public getOffers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { data: queryParams, success } = offersQueryParamsSchema.safeParse(req.query);
-
       const { data, meta } = await this.offersService.getJobOffers(success ? queryParams : undefined);
 
       res.status(200).json({
@@ -92,6 +91,21 @@ class OffersController {
       });
     } catch (err) {
       next(err);
+    }
+  };
+
+  public getAllWorkplaces = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const data = await this.offersService.getAllWorkplaces();
+      res.status(200).json(data);
+    } catch (err) {
+      next(
+        new AppError({
+          statusCode: 400,
+          code: ERROR_CODES.invalid_type,
+          message: JSON.stringify(err),
+        }),
+      );
     }
   };
 

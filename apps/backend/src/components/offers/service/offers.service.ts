@@ -21,26 +21,8 @@ class OffersService {
     this.prisma = PrismaInstance.getInstance();
   }
 
-  public async deleteOutdatedRecords() {
-    try {
-      const today = dayjs().startOf("day").toISOString();
-
-      const res = await this.prisma.jobOffer.deleteMany({
-        where: {
-          expirationDate: {
-            lt: today,
-          },
-        },
-      });
-      console.log(`Deleted ${res.count} outdated records`);
-      return res.count;
-    } catch (err) {
-      throw new AppError({
-        statusCode: 400,
-        code: ERROR_CODES.invalid_type,
-        message: JSON.stringify(err),
-      });
-    }
+  public async getAllWorkplaces() {
+    return this.prisma.workplace.findMany();
   }
 
   public async getOffersMetadata() {
@@ -79,6 +61,7 @@ class OffersService {
           company: true,
           salaryRange: true,
           offerUrls: true,
+
           workplaces: {
             select: {
               value: true,
@@ -208,6 +191,28 @@ class OffersService {
       throw new AppError({
         statusCode: 400,
         code: ERROR_CODES.invalid_data,
+        message: JSON.stringify(err),
+      });
+    }
+  }
+
+  public async deleteOutdatedRecords() {
+    try {
+      const today = dayjs().startOf("day").toISOString();
+
+      const res = await this.prisma.jobOffer.deleteMany({
+        where: {
+          expirationDate: {
+            lt: today,
+          },
+        },
+      });
+      console.log(`Deleted ${res.count} outdated records`);
+      return res.count;
+    } catch (err) {
+      throw new AppError({
+        statusCode: 400,
+        code: ERROR_CODES.invalid_type,
         message: JSON.stringify(err),
       });
     }

@@ -175,7 +175,7 @@ class ScrapperPracuj extends ScrapperBase {
     ];
   };
 
-  standardizeContractTypes = (types: JobOfferPracuj["typesOfContract"] | undefined): JobOffer["contractTypes"] => {
+  public standardizeContractTypes = (types: JobOfferPracuj["typesOfContract"] | undefined): JobOffer["contractTypes"] => {
     if (!types || !types.length) return [];
     const standardizedTypes = types.reduce(
       (acc, _type) => {
@@ -193,7 +193,7 @@ class ScrapperPracuj extends ScrapperBase {
     else return [];
   };
 
-  standardizeWorkModes = (modes: JobOfferPracuj["workModes"] | undefined): JobOffer["workModes"] => {
+  public standardizeWorkModes = (modes: JobOfferPracuj["workModes"] | undefined): JobOffer["workModes"] => {
     if (!modes || !modes.length) return [];
 
     const standardizedModes = modes.reduce(
@@ -210,7 +210,7 @@ class ScrapperPracuj extends ScrapperBase {
     if (isWorkModesArr(standardizedModes)) return standardizedModes;
     else return [];
   };
-  standardizeWorkSchedules = (schedules: JobOfferPracuj["workSchedules"] | undefined): JobOffer["workSchedules"] => {
+  public standardizeWorkSchedules = (schedules: JobOfferPracuj["workSchedules"] | undefined): JobOffer["workSchedules"] => {
     if (!schedules || !schedules.length) return [];
 
     const standardizedSchedules = schedules.reduce(
