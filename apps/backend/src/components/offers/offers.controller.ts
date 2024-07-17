@@ -97,7 +97,13 @@ class OffersController {
   public getAllWorkplaces = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data = await this.offersService.getAllWorkplaces();
-      res.status(200).json(data);
+      const placesDTO = data?.map(place => ({
+        id: place.id,
+        value: place.value,
+        count: place._count.jobOffers ?? 0,
+      }));
+
+      res.status(200).json({ data: placesDTO });
     } catch (err) {
       next(
         new AppError({

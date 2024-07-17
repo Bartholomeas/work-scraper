@@ -56,3 +56,13 @@ export interface OffersBaseCategories {
   workSchedules: OffersBaseCategory<WorkSchedulesCodes>;
   categories: OffersBaseCategory<string>;
 }
+
+export interface OffersWorkplaceDTO {
+  id: string;
+  value: string;
+  count: number;
+}
+
+export interface OffersWorkplacesResponse {
+  data: OffersWorkplaceDTO[];
+}
