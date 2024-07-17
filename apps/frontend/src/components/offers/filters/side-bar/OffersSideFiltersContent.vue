@@ -39,6 +39,5 @@ const inputNames = parseZodSchemaToInputNames(baseCategoriesSchema);
 
       <OffersSidebarButtons :clear-filters="clearFilters" />
     </FiltersWrapper>
-    <!--    </form>-->
   </aside>
 </template>
