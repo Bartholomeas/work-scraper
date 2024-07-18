@@ -1,4 +1,4 @@
-import "tsconfig-paths/register";
+import "tsconfig-paths";
 //URGENT: dotenv.config() MUST !!! be before other imports. Auto rearrange may change order and then app cannot get .env properties.
 // dotenv.config({
 //   path: `.env.${process.env.NODE_ENV}`,
