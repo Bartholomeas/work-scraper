@@ -94,29 +94,9 @@ class OffersController {
     }
   };
 
-  public updateWorkplacesCounts = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const data = await this.offersService.updateWorkplacesCounts();
-
-      res.status(200).json(data);
-    } catch (err) {
-      next(
-        new AppError({
-          statusCode: 404,
-          code: ERROR_CODES.invalid_data,
-          message: JSON.stringify(err),
-        }),
-      );
-    }
-  };
   public getAllWorkplaces = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const placesDTO = await this.offersService.getAllWorkplaces();
-      // const placesDTO = data?.map(place => ({
-      //   id: place.id,
-      //   value: place.value,
-      //   count: place._count.jobOffers ?? 0,
-      // }));
 
       res.status(200).json(placesDTO);
     } catch (err) {
