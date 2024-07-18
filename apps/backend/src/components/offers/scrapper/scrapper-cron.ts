@@ -20,7 +20,7 @@ class ScrapperCron {
   }
 
   private setDeleteOutdatedCron() {
-    cron.schedule("0 0 * * *", async () => {
+    cron.schedule("0 7,18 * * *", async () => {
       try {
         console.log("Deleting outdated records: ", dayjs(Date.now()).format(`${DATE_FORMAT} HH:mm:ss`));
         await this.scrapperController.deleteOutdatedRecords();

@@ -2,6 +2,8 @@
 import OffersSingleItem from "@/components/offers/single/OffersSingleItem.vue";
 import type { JobOffersResponse } from "shared/src/offers/offers.types";
 import OfferSingleItemSkeleton from "@/components/offers/single/OfferSingleItemSkeleton.vue";
+import { computed } from "vue";
+import NoResultsCard from "@/components/common/NoResultsCard.vue";
 
 interface OffersItemsListProps {
   offers: JobOffersResponse["data"] | undefined;
@@ -11,12 +13,13 @@ interface OffersItemsListProps {
 const props = withDefaults(defineProps<OffersItemsListProps>(), {
   isLoading: false,
 });
+
+const skeletonArray = computed(() => Array.from({ length: 24 }));
 </script>
 
 <template>
   <TransitionGroup appear name="list" tag="div" class="flex w-full flex-col gap-2">
-    <OfferSingleItemSkeleton key="offerSingleItemSkeleton2" />
-    <OfferSingleItemSkeleton key="offerSingleItem-skeleton" v-if="isLoading" />
+    <OfferSingleItemSkeleton v-if="isLoading" v-for="(_, index) in skeletonArray" :key="`offerSingleItem-skeleton-${index}`" />
     <OffersSingleItem
       v-for="(offer, index) in props.offers"
       v-else-if="Array.isArray(props.offers) && props.offers?.length > 0"
@@ -25,7 +28,7 @@ const props = withDefaults(defineProps<OffersItemsListProps>(), {
       :data-index="index"
       :style="{ '--index': index }"
     />
-    <div key="offerSingleItem-loader" v-else>Brak ofert</div>
+    <NoResultsCard v-else key="offerSingleItem-empty" />
   </TransitionGroup>
 </template>
 
