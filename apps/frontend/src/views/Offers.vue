@@ -29,11 +29,7 @@ const { data, isLoading } = useGetOffersList(params);
       <template #filters class="relative">
         <OffersSideFilters />
       </template>
-      <!--      <div v-if="isLoading" class="flex flex-col gap-2 w-full">-->
-      <!--        <OfferSingleItemSkeleton v-if="isLoading" v-for="(_, index) in Array.from({ length: 10 })" :key="`singleItemSkeleton-${index}`" />-->
-      <!--      </div>-->
       <OffersItemsList :offers="data?.data" :is-loading="isLoading" />
-
       <template #pagination>
         <OffersPagination :meta="data?.meta" />
       </template>

@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 </script>
 
 <template>
-  <Card class="flex flex-col gap-2 p-3 transition-shadow transition-transform hover:z-30 hover:translate-y-[-2px] hover:shadow-xl">
+  <Card class="flex flex-col gap-2 p-3">
     <div class="flex flex-col justify-between self-stretch md:flex-row">
       <div class="flex gap-2 self-stretch">
         <Skeleton class="h-[96px] w-[96px] rounded-md" />
@@ -19,14 +19,14 @@ import { Card } from "@/components/ui/card";
         <div class="flex flex-row-reverse flex-nowrap items-end justify-between gap-2 md:flex-col">
           <Skeleton class="h-6 w-[120px]" />
           <div class="flex flex-col gap-1 md:flex-row">
-            <Skeleton class="h-[22px] w-[120px] rounded-md md:w-[96px]" />
-            <Skeleton class="h-[22px] w-[120px] rounded-md" />
+            <Skeleton class="h-[22px] w-[120px] rounded-md md:w-[64px]" />
+            <Skeleton class="h-[22px] w-[120px] rounded-md md:w-[70px]" />
             <Skeleton class="h-[22px] w-[120px] rounded-md md:w-[80px]" />
           </div>
         </div>
         <div class="flex grow items-center gap-2 self-end max-md:w-full">
-          <Skeleton class="h-[40px] w-[40%] rounded-md" />
-          <Skeleton class="h-[40px] w-[60%] rounded-md" />
+          <Skeleton class="h-[40px] w-[40%] rounded-md md:h-[36px] md:w-[120px]" />
+          <Skeleton class="h-[40px] w-[60%] rounded-md md:h-[36px] md:w-[170px]" />
         </div>
       </div>
     </div>
