@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, ref } from "vue";
+import { computed, inject, ref, watch } from "vue";
 
 import { cn } from "@/utils/utils";
 
@@ -31,6 +31,7 @@ if (!setFieldValue)
 if (!values)
   throw new Error("ComboboxControlled should be used within provided formValues (values) from useForm (like in <FiltersWrapper/>)");
 
+const isPopoverOpen = ref(false);
 const searchQuery = ref("");
 
 const filteredItems = computed<CommandItem[]>(() => {
@@ -45,6 +46,10 @@ const onCommandInput = (e: InputEvent) => {
 const props = withDefaults(defineProps<ComboboxControlledProps>(), {
   commandPlaceholder: "Wyszukaj..",
 });
+
+watch(isPopoverOpen, isOpen => {
+  if (!isOpen) searchQuery.value = "";
+});
 </script>
 
 <template>
@@ -54,7 +59,7 @@ const props = withDefaults(defineProps<ComboboxControlledProps>(), {
         {{ props.label }}
       </FormLabel>
 
-      <Popover>
+      <Popover v-model:open="isPopoverOpen">
         <PopoverTrigger as-child>
           <FormControl>
             <Button variant="outline" role="combobox" class="justify-start">
