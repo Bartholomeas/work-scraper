@@ -57,7 +57,7 @@ export interface OffersBaseCategories {
   categories: OffersBaseCategory<string>;
 }
 
-export interface OffersWorkplaceDTO {
+export interface OffersWorkplaceListItem {
   id: string;
   value: string;
   count: number;
