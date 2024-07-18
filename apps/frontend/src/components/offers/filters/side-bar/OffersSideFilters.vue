@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { ref } from "vue";
+
+import { useGetWorkplaces } from "@/api/offers/getWorkplaces";
+
 import OffersSideFiltersContent from "@/components/offers/filters/side-bar/OffersSideFiltersContent.vue";
 import OffersSideFiltersDesktop from "@/components/offers/filters/side-bar/OffersSideFiltersDesktop.vue";
 import OffersSideFiltersMobile from "@/components/offers/filters/side-bar/OffersSideFiltersMobile.vue";
 
-// const { data } = useGetOffersBaseCategories();
-// console.log("Xdd", data);
+const { data } = useGetWorkplaces();
 
 const isMobileScreen = ref(window.innerWidth < 992);
 
@@ -20,5 +22,4 @@ window.addEventListener("resize", () => {
   <OffersSideFiltersDesktop v-else>
     <OffersSideFiltersContent />
   </OffersSideFiltersDesktop>
-  <!--  <Card as="aside" class="h-full p-2 w-0 lg:w-1/4">xdd filtry tego</Card>-->
 </template>

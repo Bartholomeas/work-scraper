@@ -18,10 +18,11 @@ const { filterKeys, withAutoSubmit, filtersSchema, initialValues, className, sty
   withAutoSubmit: false,
 });
 
-const { handleSubmit, values, resetForm } = useForm({
+const { handleSubmit, values, setFieldValue, resetForm } = useForm({
   validationSchema: toTypedSchema(filtersSchema),
   initialValues,
 });
+
 const { submitFilters, clearFiltersParams } = useFilters();
 
 const clearFilters = () => {
@@ -35,7 +36,9 @@ const onSubmit = handleSubmit(values => {
 });
 
 provide("formValues", values);
+provide("setFieldValue", setFieldValue);
 provide("onSubmit", onSubmit);
+
 defineExpose({
   clearFilters,
   onSubmit,

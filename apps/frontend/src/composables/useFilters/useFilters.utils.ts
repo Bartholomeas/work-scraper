@@ -6,8 +6,21 @@ import type { FilteredRecords, FilterKeys } from "@/composables/useFilters/useFi
  * @param obj - Record to check
  * @param key - Key to check
  */
-export const checkRecordValueExist = <T extends Record<string, unknown>>(obj: T, key: keyof T): boolean =>
-  typeof obj[key] === "number" || (typeof obj[key] === "string" && !!obj[key]) || (Array.isArray(obj[key]) && obj?.[key].length > 0);
+export const checkRecordValueExist = <T extends Record<string, unknown>>(obj: T, key: keyof T): boolean => {
+  const value = obj[key];
+  const valueType = typeof value;
+
+  if (valueType === "undefined") return false;
+  if (valueType === "number") return true;
+  if (valueType === "string" && !!(value as string).trim()) return true;
+  return Array.isArray(value) && value.every(Boolean) && value.length > 0;
+
+  // return (
+  //   typeof obj[key] === "number" ||
+  //   (typeof obj[key] === "string" && !!obj[key].trim()) ||
+  //   (Array.isArray(obj[key]) && obj?.[key].length > 0)
+  // );
+};
 
 /**
  * @description - Check filterKeys are actually passed and are truthy

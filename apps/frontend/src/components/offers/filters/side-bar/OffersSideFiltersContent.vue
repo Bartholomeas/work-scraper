@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { defineAsyncComponent, inject, watch } from "vue";
+
 import { baseCategoriesSchema } from "shared/src/offers/offers.schemas";
 import type { CategoryRecord } from "shared/src/offers/offers.types";
 
@@ -12,8 +14,20 @@ import OffersSidebarButtons from "@/components/offers/filters/side-bar/OffersSid
 import CheckboxControlled from "@/components/common/form/inputs-controlled/CheckboxControlled.vue";
 import FiltersWrapper from "@/components/special/FiltersWrapper.vue";
 
+const OffersSideWorkplaceSelect = defineAsyncComponent(() => import("@/components/offers/filters/side-bar/OffersSideWorkplaceSelect.vue"));
+
 const { data: categories } = useGetOffersBaseCategories();
 const inputNames = parseZodSchemaToInputNames(baseCategoriesSchema);
+
+const values = inject<Record<string, unknown>>("formValues");
+
+watch(
+  () => values,
+  newVal => {
+    console.log("Xdd", newVal);
+  },
+);
+// console.log("Hyhyhy", values);
 </script>
 <template>
   <aside class="w-full h-full overflow-y-auto lg:p-3">
@@ -28,6 +42,8 @@ const inputNames = parseZodSchemaToInputNames(baseCategoriesSchema);
         workSchedules: [],
       }"
     >
+      <OffersSideWorkplaceSelect :name="inputNames.workplaces" />
+
       <template v-if="categories" v-for="[key, category] in Object.entries(categories)">
         <CheckboxControlled
           v-if="isKeyOf(inputNames, key)"
@@ -39,6 +55,5 @@ const inputNames = parseZodSchemaToInputNames(baseCategoriesSchema);
 
       <OffersSidebarButtons :clear-filters="clearFilters" />
     </FiltersWrapper>
-    <!--    </form>-->
   </aside>
 </template>

@@ -86,7 +86,7 @@ export const offerTechCategories = z.union([
 const stringToArray = (val: unknown) => (typeof val === "string" ? val.split(",").map(v => v.trim()) : val);
 
 const orderByEnumSchema = z.enum(["createdAt", "expirationDate", "salary"]).default("createdAt");
-const sortOrderEnumSchema = z.enum(["asc", "desc"]).default("desc");
+const sortOrderEnumSchema = z.enum(["asc", "desc"]).default("asc");
 
 export const coreSearchParamsSchema = z.object({
   search: z.string().optional(),

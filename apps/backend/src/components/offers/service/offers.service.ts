@@ -1,20 +1,26 @@
 import dayjs from "dayjs";
 import { PrismaClient } from "@prisma/client";
 
+import type { JobOffer, JobOffersResponse, OffersQueryParams } from "shared/src/offers/offers.types";
+
 import { AppError } from "@/utils/app-error";
 
-import { PrismaInstance } from "@/components/libs/prisma.instance";
+import { OFFERS_METADATA_ID } from "@/misc/constants";
 import { ERROR_CODES } from "@/misc/error.constants";
 
-import type { JobOffer, JobOffersResponse, OffersQueryParams } from "shared/src/offers/offers.types";
-import { OFFERS_METADATA_ID } from "@/misc/constants";
+import { PrismaInstance } from "@/components/libs/prisma.instance";
 import { OfferHelper } from "@/components/offers/helpers/offer-helper";
+import type { DbWorkplace } from "@/components/offers/service/offers.service.types";
 
 interface SetOffersMetadataProps {
   total: number;
 }
 
-class OffersService {
+interface IOffersService {
+  getAllWorkplaces(): Promise<DbWorkplace[] | undefined>;
+}
+
+class OffersService implements IOffersService {
   private prisma: PrismaClient;
 
   constructor() {
@@ -22,7 +28,17 @@ class OffersService {
   }
 
   public async getAllWorkplaces() {
-    return this.prisma.workplace.findMany();
+    return this.prisma.workplace.findMany({
+      select: {
+        id: true,
+        value: true,
+        _count: {
+          select: {
+            jobOffers: true,
+          },
+        },
+      },
+    });
   }
 
   public async getOffersMetadata() {
