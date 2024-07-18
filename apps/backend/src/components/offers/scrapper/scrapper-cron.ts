@@ -20,13 +20,16 @@ class ScrapperCron {
 
   private async handleScrapingSequence() {
     try {
-      console.log("Scrapping offers records: ", dayjs(Date.now()).format(`${DATE_FORMAT} HH:mm:ss`));
+      this.logTimestampWithMessage("Scrapping offers records");
       await this.scrapperController.scrapeOffersData();
 
-      console.log("Deleting outdated records: ", dayjs(Date.now()).format(`${DATE_FORMAT} HH:mm:ss`));
+      this.logTimestampWithMessage("Deleting outdated records");
       await this.scrapperController.deleteOutdatedRecords();
 
-      console.log("Updating metadata: ", dayjs(Date.now()).format(`${DATE_FORMAT} HH:mm:ss`));
+      this.logTimestampWithMessage("Updating workplaces counts");
+      await this.scrapperController.updateWorkplacesCounts();
+
+      this.logTimestampWithMessage("Updating metadata");
       await this.scrapperController.updateMetadata();
 
       console.log("Updating statistics: ", dayjs(Date.now()).format(`${DATE_FORMAT} HH:mm:ss`));
@@ -34,6 +37,10 @@ class ScrapperCron {
     } catch (err) {
       console.log("Error in handleScrapingSequence: ", err);
     }
+  }
+
+  private logTimestampWithMessage(message: string) {
+    console.log(`${message}: `, dayjs(Date.now()).format(`${DATE_FORMAT} HH:mm:ss`));
   }
 }
 

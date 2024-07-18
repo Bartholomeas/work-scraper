@@ -66,6 +66,7 @@ model Workplace {
   value     String     @unique
   city      String
   address   String?
+  count     Int        @default(0)
   jobOffers JobOffer[] @relation("Workplaces")
 
   @@index([value, city])

@@ -21,8 +21,13 @@ class OffersRouter {
     router.delete("/delete-outdated", guardSecret("89ed2c94-0af9-4ffa-b96c-5f4f795946d8"), this.offersController.deleteOutdatedOffers);
     // router.get("/scrape", guardSecret(process.env.SECRET_PHRASE), this.offersController.scrapeOffersData);
     // router.delete("/delete-outdated", guardSecret(process.env.SECRET_PHRASE), this.offersController.deleteOutdatedOffers);
-    router.get("/", this.offersController.getOffers);
+    router.post(
+      "/update-workplaces-count",
+      guardSecret("89ed2c94-0af9-4ffa-b96c-5f4f795946d8"),
+      this.offersController.updateWorkplacesCounts,
+    );
     router.get("/workplaces", this.offersController.getAllWorkplaces);
+    router.get("/", this.offersController.getOffers);
     return router;
   }
 }

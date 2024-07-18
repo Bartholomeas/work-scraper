@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import { PrismaClient } from "@prisma/client";
 
-import type { JobOffer, JobOffersResponse, OffersQueryParams } from "shared/src/offers/offers.types";
+import type { JobOffer, JobOffersResponse, OffersQueryParams, OffersWorkplaceListItem } from "shared/src/offers/offers.types";
 
 import { AppError } from "@/utils/app-error";
 
@@ -10,14 +10,13 @@ import { ERROR_CODES } from "@/misc/error.constants";
 
 import { PrismaInstance } from "@/components/libs/prisma.instance";
 import { OfferHelper } from "@/components/offers/helpers/offer-helper";
-import type { DbWorkplace } from "@/components/offers/service/offers.service.types";
 
 interface SetOffersMetadataProps {
   total: number;
 }
 
 interface IOffersService {
-  getAllWorkplaces(): Promise<DbWorkplace[] | undefined>;
+  getAllWorkplaces(): Promise<OffersWorkplaceListItem[] | undefined>;
 }
 
 class OffersService implements IOffersService {
@@ -27,35 +26,57 @@ class OffersService implements IOffersService {
     this.prisma = PrismaInstance.getInstance();
   }
 
-  public async getAllWorkplaces() {
-    // return this.prisma.workplace.groupBy({
-    //   by: ["value"],
-    //   having: {
-    //     value: {
-    //       _count: {
-    //         gte: 10,
-    //       },
-    //     },
-    //   },
-    // });
+  public async updateWorkplacesCounts() {
+    try {
+      const workplaces = await this.getWorkplaceCounts();
 
+      const transaction = workplaces.map(workplace =>
+        this.prisma.workplace.update({
+          where: {
+            id: workplace.id,
+          },
+          data: {
+            count: workplace._count.jobOffers,
+          },
+        }),
+      );
+
+      return this.prisma.$transaction(transaction);
+    } catch (err) {
+      throw new AppError({
+        statusCode: 500,
+        code: ERROR_CODES.internal_error,
+        message: JSON.stringify(err),
+      });
+    }
+  }
+
+  public async getWorkplaceCounts() {
     return this.prisma.workplace.findMany({
       select: {
         id: true,
         value: true,
-        _count: {
-          select: {
-            jobOffers: true,
-          },
-        },
-      },
-
-      orderBy: {
-        jobOffers: {
-          _count: "desc",
-        },
+        _count: true,
       },
     });
+  }
+
+  public async getAllWorkplaces() {
+    return this.prisma.workplace.findMany({
+      where: {
+        count: {
+          gte: 10,
+        },
+      },
+      select: {
+        id: true,
+        value: true,
+        count: true,
+      },
+      orderBy: {
+        count: "desc",
+      },
+    }) satisfies Promise<OffersWorkplaceListItem[]>;
   }
 
   public async getOffersMetadata() {

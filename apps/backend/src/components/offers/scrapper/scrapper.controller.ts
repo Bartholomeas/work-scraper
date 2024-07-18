@@ -1,4 +1,4 @@
-import type { JobOffer } from "shared/src/offers/offers.types";
+import type { JobOffer, OffersWorkplaceListItem } from "shared/src/offers/offers.types";
 
 import { AppError } from "@/utils/app-error";
 import { ERROR_CODES } from "@/misc/error.constants";
@@ -14,6 +14,8 @@ import { ScrapperCron } from "@/components/offers/scrapper/scrapper-cron";
 import type { OffersService } from "@/components/offers/service/offers.service";
 
 interface IScrapperController {
+  updateWorkplacesCounts(): Promise<OffersWorkplaceListItem[] | undefined>;
+
   updateStatistics(): Promise<void>;
 
   updateMetadata(): Promise<void>;
@@ -31,6 +33,18 @@ class ScrapperController implements IScrapperController {
     this.offersService = offersService;
     this.browserManager = BrowserManager.getInstance();
     new ScrapperCron(this);
+  }
+
+  public async updateWorkplacesCounts() {
+    try {
+      return await this.offersService.updateWorkplacesCounts();
+    } catch (err) {
+      throw new AppError({
+        statusCode: 404,
+        code: ERROR_CODES.invalid_data,
+        message: JSON.stringify(err),
+      });
+    }
   }
 
   public async updateStatistics() {
