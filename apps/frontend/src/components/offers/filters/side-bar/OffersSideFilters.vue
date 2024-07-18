@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref } from "vue";
 
 import { useGetWorkplaces } from "@/api/offers/getWorkplaces";
 
@@ -8,15 +8,6 @@ import OffersSideFiltersDesktop from "@/components/offers/filters/side-bar/Offer
 import OffersSideFiltersMobile from "@/components/offers/filters/side-bar/OffersSideFiltersMobile.vue";
 
 const { data } = useGetWorkplaces();
-console.log("Xdd", data?.value);
-
-watch(
-  () => data,
-  newValue => {
-    console.log("Valju", newValue.value);
-  },
-  { immediate: true },
-);
 
 const isMobileScreen = ref(window.innerWidth < 992);
 

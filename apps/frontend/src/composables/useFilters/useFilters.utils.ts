@@ -40,7 +40,6 @@ export const parseParamsRecords = <T extends Record<string, unknown>>(params: T,
 
   for (const key in params) {
     if (checkRecordValueExist(params, key)) {
-      console.log("Istnieje ? ? ? ", params, key);
       const resultValue = Array.isArray(params[key]) ? params[key].join(",") : params[key];
       result[key] = resultValue as LocationQueryValueRaw | LocationQueryValueRaw[];
     }

@@ -7,6 +7,10 @@ interface OffersSideWorkplaceSelectProps {
   name: string;
 }
 
+const props = defineProps<OffersSideWorkplaceSelectProps>();
+const onSubmit = inject<(values: Record<string, unknown>) => void>("onSubmit");
+const setFieldValue = inject("setFieldValue") as (name: string, value: string) => void;
+
 const { data } = useGetWorkplaces();
 
 const comboboxData = computed(() =>
@@ -26,12 +30,22 @@ const comboboxData = computed(() =>
     : [],
 );
 
-const props = defineProps<OffersSideWorkplaceSelectProps>();
+const onChooseItem = (value: unknown) => {
+  onSubmit?.({
+    [props.name]: value,
+  });
+};
 
-const setFieldValue = inject("setFieldValue") as (name: string, value: string) => void;
 setFieldValue(props.name, "");
 </script>
 
 <template>
-  <ComboboxControlled :items="comboboxData" :name="props.name" label="Wybierz lokalizację" command-placeholder="Wyszukaj lokalizację.." />
+  <ComboboxControlled
+    @choose-item="onChooseItem"
+    :items="comboboxData"
+    :name="props.name"
+    label="Wybierz lokalizację"
+    command-placeholder="Wyszukaj lokalizację.."
+    label-class="font-bold text-md"
+  />
 </template>

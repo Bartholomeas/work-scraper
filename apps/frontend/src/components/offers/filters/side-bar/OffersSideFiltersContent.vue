@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineAsyncComponent } from "vue";
+import { defineAsyncComponent, inject, watch } from "vue";
 
 import { baseCategoriesSchema } from "shared/src/offers/offers.schemas";
 import type { CategoryRecord } from "shared/src/offers/offers.types";
@@ -18,6 +18,16 @@ const OffersSideWorkplaceSelect = defineAsyncComponent(() => import("@/component
 
 const { data: categories } = useGetOffersBaseCategories();
 const inputNames = parseZodSchemaToInputNames(baseCategoriesSchema);
+
+const values = inject<Record<string, unknown>>("formValues");
+
+watch(
+  () => values,
+  newVal => {
+    console.log("Xdd", newVal);
+  },
+);
+// console.log("Hyhyhy", values);
 </script>
 <template>
   <aside class="w-full h-full overflow-y-auto lg:p-3">

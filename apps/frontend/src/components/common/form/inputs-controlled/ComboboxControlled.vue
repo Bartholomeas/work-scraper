@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, ref, watch } from "vue";
+import { computed, type HTMLAttributes, inject, ref, watch } from "vue";
 
 import { cn } from "@/utils/utils";
 
@@ -19,10 +19,16 @@ interface CommandItem {
 }
 
 interface ComboboxControlledProps extends ControlledProps {
-  commandPlaceholder?: string;
   items: CommandItem[];
+  commandPlaceholder?: string;
+  labelClass?: HTMLAttributes["class"];
 }
 
+interface ComboboxControlledEmits {}
+
+const props = withDefaults(defineProps<ComboboxControlledProps>(), {
+  commandPlaceholder: "Wyszukaj..",
+});
 const setFieldValue = inject<(name: string, value: unknown) => void>("setFieldValue");
 const values = inject<Record<string, unknown>>("formValues");
 
@@ -43,9 +49,13 @@ const onCommandInput = (e: InputEvent) => {
   searchQuery.value = (e.target as HTMLInputElement)?.value;
 };
 
-const props = withDefaults(defineProps<ComboboxControlledProps>(), {
-  commandPlaceholder: "Wyszukaj..",
-});
+const emits = defineEmits<{
+  (e: "chooseItem", value: string | number): void;
+}>();
+const onSelect = (value: string | number) => {
+  setFieldValue(props.name, value);
+  emits("chooseItem", value);
+};
 
 watch(isPopoverOpen, isOpen => {
   if (!isOpen) searchQuery.value = "";
@@ -55,14 +65,14 @@ watch(isPopoverOpen, isOpen => {
 <template>
   <FormField :name="props.name">
     <FormItem class="flex flex-col">
-      <FormLabel :class="cn({ 'sr-only': props.labelSrOnly })">
+      <FormLabel :class="cn({ 'sr-only': props.labelSrOnly }, props.labelClass)">
         {{ props.label }}
       </FormLabel>
 
       <Popover v-model:open="isPopoverOpen">
         <PopoverTrigger as-child>
           <FormControl>
-            <Button variant="outline" role="combobox" class="justify-start">
+            <Button size="xl" variant="outline" role="combobox" class="justify-start">
               {{
                 props.items
                   ? props.items?.find(item => {
@@ -85,7 +95,7 @@ watch(isPopoverOpen, isOpen => {
                   :value="item.label"
                   @select="
                     () => {
-                      setFieldValue(props.name, item.value);
+                      onSelect(item.value);
                     }
                   "
                 >
