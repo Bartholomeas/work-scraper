@@ -30,7 +30,7 @@ watch(
 // console.log("Hyhyhy", values);
 </script>
 <template>
-  <aside class="w-full h-full overflow-y-auto lg:p-3">
+  <aside class="h-full w-full overflow-y-auto lg:p-3">
     <FiltersWrapper
       class-name="flex flex-col gap-4 max-lg:pb-6"
       v-slot="{ clearFilters }"

@@ -28,7 +28,7 @@ const { data: stats } = useGetOffersMetadata();
 </script>
 
 <template>
-  <section class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+  <section class="grid grid-cols-1 gap-2 sm:grid-cols-3">
     <OffersStatCard
       :key="`offerStatCard-${stats?.id}`"
       title="Wszystkich ofert"

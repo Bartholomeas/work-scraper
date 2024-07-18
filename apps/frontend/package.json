@@ -14,7 +14,8 @@
     "build": "vue-tsc && vite build",
     "start": "vite preview",
     "type-check": "tsc --noEmit",
-    "lint": "eslint --fix"
+    "lint": "eslint --fix",
+    "format": "prettier --write \"src/**/*.{js,ts,vue,json,css,scss,html}\""
   },
   "dependencies": {
     "@radix-icons/vue": "^1.0.0",
@@ -44,6 +45,7 @@
     "eslint-plugin-prettier-vue": "^5.0.0",
     "eslint-plugin-vue": "^9.26.0",
     "prettier": "^3.2.5",
+    "prettier-plugin-tailwindcss": "^0.6.5",
     "shared": "workspace:*",
     "tailwindcss": "^3.4.3",
     "tsconfig": "workspace:*",

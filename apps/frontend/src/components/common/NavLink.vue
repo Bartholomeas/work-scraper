@@ -18,7 +18,7 @@ const PSEUDOELEMENT_CLASS =
 <template>
   <RouterLink
     :to="to"
-    :class="cn('text-muted-foreground transition-colors hover:text-foreground relative', PSEUDOELEMENT_CLASS, _class)"
+    :class="cn('text-muted-foreground hover:text-foreground relative transition-colors', PSEUDOELEMENT_CLASS, _class)"
     active-class="!text-foreground after:absolute after:scale-x-100"
   >
     <slot />

@@ -17,14 +17,14 @@ const modelValue = useVModel(props, "modelValue", emits, {
 
 <template>
   <div class="relative">
-    <component v-if="Boolean(props.icon)" :is="props.icon" class="absolute left-2.5 top-1/2 -translate-y-1 h-4 w-4 text-muted-foreground" />
+    <component v-if="Boolean(props.icon)" :is="props.icon" class="text-muted-foreground absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1" />
 
     <input
       :placeholder="props.placeholder"
       v-model="modelValue"
       :class="
         cn(
-          'flex h-12 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50',
+          'border-input placeholder:text-muted-foreground focus-visible:ring-ring flex h-12 w-full rounded-md border bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-1 disabled:cursor-not-allowed disabled:opacity-50',
           { 'pl-8': Boolean(icon) },
           props.class,
         )

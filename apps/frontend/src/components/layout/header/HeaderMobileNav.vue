@@ -11,7 +11,7 @@ import { Menu } from "lucide-vue-next";
 </script>
 
 <template>
-  <div class="flex items-center w-full justify-between shrink-0 md:hidden">
+  <div class="flex w-full shrink-0 items-center justify-between md:hidden">
     <Logo />
     <Sheet>
       <SheetTrigger as-child>

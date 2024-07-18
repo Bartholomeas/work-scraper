@@ -41,9 +41,9 @@ const handlePageChange = (page: number = 1) => {
     :default-page="1"
     show-edges
     :page="currentPage"
-    class="mx-auto max-w-screen overflow-hidden"
+    class="max-w-screen mx-auto overflow-hidden"
   >
-    <PaginationList v-slot="{ items }" class="flex items-center flex-wrap gap-1">
+    <PaginationList v-slot="{ items }" class="flex flex-wrap items-center gap-1">
       <PaginationPrev :onclick="() => handlePageChange(page - 1)" />
 
       <template v-for="(item, index) in items">

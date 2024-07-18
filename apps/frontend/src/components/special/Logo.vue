@@ -4,7 +4,7 @@ import { Package } from "lucide-vue-next";
 </script>
 
 <template>
-  <RouterLink :to="routeUrls.index" class="flex items-center gap-2 font-bold text-foreground">
+  <RouterLink :to="routeUrls.index" class="text-foreground flex items-center gap-2 font-bold">
     <Package class="h-6 w-6" />
     <span> Scrappie </span>
   </RouterLink>

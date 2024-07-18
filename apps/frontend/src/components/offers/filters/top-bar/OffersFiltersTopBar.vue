@@ -34,7 +34,7 @@ watch(
 );
 </script>
 <template>
-  <div class="flex flex-row gap-2 justify-end w-full">
+  <div class="flex w-full flex-row justify-end gap-2">
     <InputControlled
       :name="inputNames.search"
       label="Szukaj"

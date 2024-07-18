@@ -21,7 +21,7 @@ const contractTypesString = computed(() => createStringFromArr(contractTypes.map
 </script>
 
 <template>
-  <div class="flex flex-col md:flex-row gap-2">
+  <div class="flex flex-col gap-2 md:flex-row">
     <Badge class="whitespace-nowrap" v-if="positionLevelsString">{{ positionLevelsString }}</Badge>
     <Badge class="whitespace-nowrap" variant="outline" v-if="workModesString">{{ workModesString }}</Badge>
     <Badge class="whitespace-nowrap" variant="secondary" v-if="contractTypesString">{{ contractTypesString }}</Badge>

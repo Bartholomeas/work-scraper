@@ -1,4 +1,9 @@
 <script setup lang="ts">
+import { computed } from "vue";
+
+import { createStringFromArr } from "@/utils/createStringFromArr";
+import { formatDate } from "@/utils/formatDate";
+
 import { Button, buttonVariants } from "@/components/ui/button/Button.variants";
 import {
   Dialog,
@@ -11,13 +16,11 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import type { JobOffer } from "shared/src/offers/offers.types";
-import { ArrowRight, Building2, Calendar, MapPin } from "lucide-vue-next";
-import { createStringFromArr } from "@/utils/createStringFromArr";
-import { formatDate } from "@/utils/formatDate";
 import { Separator } from "@/components/ui/separator";
 import OfferBadges from "@/components/offers/single/OfferBadges.vue";
-import { computed } from "vue";
 import OffersIconValueBox from "@/components/offers/single/OffersIconValueBox.vue";
+
+import { ArrowRight, Building2, Calendar, MapPin } from "lucide-vue-next";
 
 interface OffersDetailsDialogProps {
   offer: JobOffer;
@@ -35,7 +38,7 @@ const formattedExpirationDate = computed(() => formatDate(offer?.expirationDate)
     <DialogTrigger as-child>
       <slot />
     </DialogTrigger>
-    <DialogContent class="flex flex-col gap-4 max-h-[90dvh] z-[500] overflow-y-auto">
+    <DialogContent class="z-[500] flex max-h-[90dvh] flex-col gap-4 overflow-y-auto">
       <DialogHeader class="flex flex-col">
         <div class="flex gap-4">
           <img
@@ -44,15 +47,15 @@ const formattedExpirationDate = computed(() => formatDate(offer?.expirationDate)
             loading="lazy"
             height="120"
             width="120"
-            class="aspect-square rounded-md object-contain max-h-[120px] bg-white p-2"
+            class="aspect-square max-h-[120px] rounded-md bg-white object-contain p-2"
           />
-          <div class="flex gap-1 flex-col justify-center">
-            <DialogTitle class="text-[24px] text-left">{{ offer?.positionName }}</DialogTitle>
-            <p class="font-bold text-lg text-left text-primary md:mb-2">{{ salaryText }}</p>
+          <div class="flex flex-col justify-center gap-1">
+            <DialogTitle class="text-left text-[24px]">{{ offer?.positionName }}</DialogTitle>
+            <p class="text-primary text-left text-lg font-bold md:mb-2">{{ salaryText }}</p>
           </div>
         </div>
         <Separator class="my-2" />
-        <div class="flex flex-col gap-2 mb-2">
+        <div class="mb-2 flex flex-col gap-2">
           <OffersIconValueBox :icon="Building2" :value="offer?.company?.name" />
           <OffersIconValueBox :icon="MapPin" :value="workCities" />
           <OffersIconValueBox :icon="Calendar" :value="formattedExpirationDate" />
@@ -65,7 +68,7 @@ const formattedExpirationDate = computed(() => formatDate(offer?.expirationDate)
       <DialogDescription>{{ offer?.description }}</DialogDescription>
 
       <Separator />
-      <DialogFooter class="flex gap-2 flex-nowrap">
+      <DialogFooter class="flex flex-nowrap gap-2">
         <DialogClose as-child>
           <Button type="button" variant="secondary">Zamknij</Button>
         </DialogClose>
@@ -76,7 +79,7 @@ const formattedExpirationDate = computed(() => formatDate(offer?.expirationDate)
           :class="buttonVariants({ className: 'max-md:w-full' })"
         >
           Przejdź do oferty
-          <ArrowRight class="h-4 w-4 ml-2" />
+          <ArrowRight class="ml-2 h-4 w-4" />
         </a>
       </DialogFooter>
     </DialogContent>

@@ -83,7 +83,7 @@ watch(isPopoverOpen, isOpen => {
             </Button>
           </FormControl>
         </PopoverTrigger>
-        <PopoverContent class="p-0 max-w-[220px]">
+        <PopoverContent class="max-w-[220px] p-0">
           <Command>
             <CommandInput @input="onCommandInput" :placeholder="props.commandPlaceholder" />
             <CommandEmpty>Nie znaleziono.</CommandEmpty>

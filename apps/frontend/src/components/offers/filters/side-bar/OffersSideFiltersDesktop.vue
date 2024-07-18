@@ -3,8 +3,8 @@ import { Card } from "@/components/ui/card";
 </script>
 
 <template>
-  <Card class="lg:w-1/4 lg:mt-2 sticky top-20 h-fit p-4 flex flex-col gap-2">
-    <p class="font-bold text-lg">Filtry</p>
+  <Card class="sticky top-20 flex h-fit flex-col gap-2 p-4 lg:mt-2 lg:w-1/4">
+    <p class="text-lg font-bold">Filtry</p>
     <slot />
   </Card>
 </template>

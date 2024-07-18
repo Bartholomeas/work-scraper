@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button/Button.variants";
 <template>
   <Sheet>
     <SheetTrigger as-child>
-      <Button size="icon" aria-label="Pokaż panel z głównymi filtrami" class="fixed left-4 bottom-4 z-50">
+      <Button size="icon" aria-label="Pokaż panel z głównymi filtrami" class="fixed bottom-4 left-4 z-50">
         <MixerVerticalIcon class="h-6 w-6" />
       </Button>
     </SheetTrigger>

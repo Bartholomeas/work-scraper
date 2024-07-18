@@ -18,7 +18,7 @@ const dataSourceIcon = getServiceIconUrlByCode(sourceCode);
       :alt="dataSourceIcon?.alt"
       loading="lazy"
       width="64"
-      class="aspect-square rounded-md object-contain h-min"
+      class="aspect-square h-min rounded-md object-contain"
     />
   </div>
 </template>
