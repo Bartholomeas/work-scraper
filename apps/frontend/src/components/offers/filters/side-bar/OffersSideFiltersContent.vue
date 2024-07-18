@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { defineAsyncComponent } from "vue";
+
 import { baseCategoriesSchema } from "shared/src/offers/offers.schemas";
 import type { CategoryRecord } from "shared/src/offers/offers.types";
 
@@ -11,6 +13,8 @@ import { getCategoryName } from "@/utils/getCategoryName";
 import OffersSidebarButtons from "@/components/offers/filters/side-bar/OffersSidebarButtons.vue";
 import CheckboxControlled from "@/components/common/form/inputs-controlled/CheckboxControlled.vue";
 import FiltersWrapper from "@/components/special/FiltersWrapper.vue";
+
+const OffersSideWorkplaceSelect = defineAsyncComponent(() => import("@/components/offers/filters/side-bar/OffersSideWorkplaceSelect.vue"));
 
 const { data: categories } = useGetOffersBaseCategories();
 const inputNames = parseZodSchemaToInputNames(baseCategoriesSchema);
@@ -28,6 +32,8 @@ const inputNames = parseZodSchemaToInputNames(baseCategoriesSchema);
         workSchedules: [],
       }"
     >
+      <OffersSideWorkplaceSelect :name="inputNames.workplaces" />
+
       <template v-if="categories" v-for="[key, category] in Object.entries(categories)">
         <CheckboxControlled
           v-if="isKeyOf(inputNames, key)"
