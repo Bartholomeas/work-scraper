@@ -62,7 +62,3 @@ export interface OffersWorkplaceDTO {
   value: string;
   count: number;
 }
-
-export interface OffersWorkplacesResponse {
-  data: OffersWorkplaceDTO[];
-}

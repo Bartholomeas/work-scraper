@@ -28,6 +28,17 @@ class OffersService implements IOffersService {
   }
 
   public async getAllWorkplaces() {
+    // return this.prisma.workplace.groupBy({
+    //   by: ["value"],
+    //   having: {
+    //     value: {
+    //       _count: {
+    //         gte: 10,
+    //       },
+    //     },
+    //   },
+    // });
+
     return this.prisma.workplace.findMany({
       select: {
         id: true,
@@ -36,6 +47,12 @@ class OffersService implements IOffersService {
           select: {
             jobOffers: true,
           },
+        },
+      },
+
+      orderBy: {
+        jobOffers: {
+          _count: "desc",
         },
       },
     });

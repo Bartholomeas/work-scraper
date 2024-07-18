@@ -103,7 +103,7 @@ class OffersController {
         count: place._count.jobOffers ?? 0,
       }));
 
-      res.status(200).json({ data: placesDTO });
+      res.status(200).json(placesDTO);
     } catch (err) {
       next(
         new AppError({
