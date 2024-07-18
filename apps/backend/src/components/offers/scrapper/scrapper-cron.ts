@@ -35,51 +35,6 @@ class ScrapperCron {
       console.log("Error in handleScrapingSequence: ", err);
     }
   }
-
-  //
-  // private setDeleteOutdatedCron() {
-  //   cron.schedule("0 8,19 * * *", async () => {
-  //     try {
-  //       console.log("Deleting outdated records: ", dayjs(Date.now()).format(`${DATE_FORMAT} HH:mm:ss`));
-  //       await this.scrapperController.deleteOutdatedRecords();
-  //     } catch (err) {
-  //       console.log("Error in setDeleteOutdatedCron: ", err);
-  //     }
-  //   });
-  // }
-  //
-  // private setScrapeOffersCron() {
-  //   cron.schedule("0 7,18 * * *", async () => {
-  //     try {
-  //       console.log("Scrapping offers records: ", dayjs(Date.now()).format(`${DATE_FORMAT} HH:mm:ss`));
-  //       await this.scrapperController.scrapeOffersData();
-  //     } catch (err) {
-  //       console.log("Error in setDeleteOutdatedCron: ", err);
-  //     }
-  //   });
-  // }
-  //
-  // private setUpdateStatisticsCron() {
-  //   cron.schedule("0 8,19 * * *", async () => {
-  //     try {
-  //       console.log("Updating statistics: ", dayjs(Date.now()).format(`${DATE_FORMAT} HH:mm:ss`));
-  //       await this.scrapperController.updateStatistics();
-  //     } catch (err) {
-  //       console.log("Error in setUpdateStatisticsCron: ", err);
-  //     }
-  //   });
-  // }
-  //
-  // private setUpdateMetadataCron() {
-  //   cron.schedule("0 7,18 * * *", async () => {
-  //     try {
-  //       console.log("Updating metadata: ", dayjs(Date.now()).format(`${DATE_FORMAT} HH:mm:ss`));
-  //       await this.scrapperController.updateMetadata();
-  //     } catch (err) {
-  //       console.log("Error in setUpdateMetadataCron: ", err);
-  //     }
-  //   });
-  // }
 }
 
 export { ScrapperCron };
