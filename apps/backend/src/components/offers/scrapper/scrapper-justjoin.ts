@@ -170,8 +170,7 @@ class ScrapperJustjoin extends ScrapperBase {
           const workPlace = { city: "", address: null } as JobOffer["workplaces"][0];
 
           if (place?.city) workPlace.city = place.city;
-          if (place?.street) workPlace.address = "TOSTONT";
-          // if (place?.street) workPlace.address = place.street;
+          if (place?.street) workPlace.address = place.street;
           return workPlace;
         }),
       } satisfies JobOffer;
