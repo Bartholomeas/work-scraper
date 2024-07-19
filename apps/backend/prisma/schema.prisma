@@ -113,3 +113,20 @@ model OffersMetadata {
   updatedAt DateTime @updatedAt
   total     Int      @default(0)
 }
+
+model TopWorkplace {
+  id           String            @id @default(uuid())
+  city         String
+  count        Int               @default(0)
+  statisticsId String            @default("general-statistics")
+  statistics   GeneralStatistics @relation(fields: [statisticsId], references: [id])
+
+  @@index([statisticsId])
+}
+
+model GeneralStatistics {
+  id            String         @id @default("general-statistics")
+  updatedAt     DateTime       @updatedAt
+  totalOffers   Int            @default(0)
+  topWorkplaces TopWorkplace[]
+}
