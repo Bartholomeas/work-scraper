@@ -8,6 +8,7 @@ import { AppError } from "@/utils/app-error";
 import { ERROR_CODES } from "@/misc/error.constants";
 
 import { OffersCategoriesService } from "@/components/offers/service/offers-categories.service";
+import { OffersStatisticsService } from "@/components/offers/service/offers-statistics.service";
 import { ScrapperController } from "@/components/offers/scrapper/scrapper.controller";
 
 import type { OffersService } from "@/components/offers/service/offers.service";
@@ -17,13 +18,30 @@ puppeteer.use(StealthPlugin());
 class OffersController {
   private offersService: OffersService;
   private offersCategoriesService: OffersCategoriesService;
+  private offersStatisticsService: OffersStatisticsService;
   private scrapperController: ScrapperController;
 
   constructor(offersService: OffersService) {
     this.offersService = offersService;
     this.offersCategoriesService = new OffersCategoriesService();
+    this.offersStatisticsService = new OffersStatisticsService();
     this.scrapperController = new ScrapperController(offersService);
   }
+
+  public updateWorkplacesCounts = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const data = await this.offersService.updateWorkplacesCounts();
+      res.status(200).json(data);
+    } catch (err) {
+      next(
+        new AppError({
+          statusCode: 404,
+          code: ERROR_CODES.invalid_data,
+          message: JSON.stringify(err),
+        }),
+      );
+    }
+  };
 
   public deleteOutdatedOffers = async (req: Request, res: Response, next: NextFunction) => {
     try {

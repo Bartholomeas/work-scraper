@@ -19,6 +19,10 @@ interface IOffersService {
   getAllWorkplaces(): Promise<OffersWorkplaceListItem[] | undefined>;
 }
 
+/**
+ * @description -  Service class for managing offers and workplaces.
+ * Implements operations related to job offers and their metadata within a database.
+ */
 class OffersService implements IOffersService {
   private prisma: PrismaClient;
 
@@ -26,6 +30,10 @@ class OffersService implements IOffersService {
     this.prisma = PrismaInstance.getInstance();
   }
 
+  /**
+   * @description - Updates count of job offers at each workplace
+   * @returns Promise<OffersWorkplaceListItem[] | undefined>
+   */
   public async updateWorkplacesCounts() {
     try {
       const workplaces = await this.getWorkplaceCounts();
@@ -51,6 +59,16 @@ class OffersService implements IOffersService {
     }
   }
 
+  /**
+   * @description - Get count of all workplaces assigned to job offers
+   * @returns {Promise<{
+   * id:string,
+   * value:string
+   * _count:{
+   *   jobsOffer: number
+   * }
+   * }[]>}
+   */
   public async getWorkplaceCounts() {
     return this.prisma.workplace.findMany({
       select: {
@@ -61,6 +79,10 @@ class OffersService implements IOffersService {
     });
   }
 
+  /**
+   * @description - Get all workplaces that have more than 10 offers assigned
+   * @returns  Promise<{id: string, value: string, count: number}[]>
+   */
   public async getAllWorkplaces() {
     return this.prisma.workplace.findMany({
       where: {
@@ -91,6 +113,12 @@ class OffersService implements IOffersService {
     }
   }
 
+  /**
+   * Fetches job offers based on specified query parameters.
+   * @param {OffersQueryParams | undefined} params - Query parameters for job offer search.
+   * @returns {Promise<JobOffersResponse>} A promise that resolves to job offers with pagination metadata.
+   * @throws {AppError} Throws an error if the operation fails.
+   */
   public async getJobOffers(params: OffersQueryParams | undefined) {
     const defaultParams: { perPage: OffersQueryParams["perPage"]; page: OffersQueryParams["page"] } = {
       perPage: params?.perPage ?? 24,
@@ -182,6 +210,10 @@ class OffersService implements IOffersService {
     }
   }
 
+  /**
+   * @description - Saves passed JobOffer array to database
+   * @param {JobOffer[]} offers
+   */
   public async saveJobOffers(offers: JobOffer[]) {
     try {
       if (!offers.length) return;
