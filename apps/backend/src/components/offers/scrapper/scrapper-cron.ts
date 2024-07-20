@@ -26,8 +26,11 @@ class ScrapperCron {
       this.logTimestampWithMessage("Deleting outdated records");
       await this.scrapperController.deleteOutdatedRecords();
 
-      this.logTimestampWithMessage("Updating workplaces counts");
-      await this.scrapperController.updateWorkplacesCounts();
+      // this.logTimestampWithMessage("Updating workplaces counts");
+      // await this.scrapperController.updateWorkplacesCounts();
+
+      // this.logTimestampWithMessage("Updating categories counts");
+      // await this.scrapperController.updateCategoriesCounts();
 
       this.logTimestampWithMessage("Updating metadata");
       await this.scrapperController.updateMetadata();

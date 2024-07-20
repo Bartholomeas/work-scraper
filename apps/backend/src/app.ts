@@ -15,6 +15,7 @@ import { authModule } from "@/components/auth/auth.module";
 import { offersModule } from "@/components/offers/offers.module";
 import { ErrorController } from "@/components/error/error.controller";
 import { ERROR_CODES } from "@/misc/error.constants";
+import { statisticsModule } from "@/components/statistics/statistics.module";
 
 // For some reason imported in tsconfig doesnt work :(
 declare global {
@@ -56,6 +57,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
 app.use(BASE_URL + "/auth", authModule.router);
 app.use(BASE_URL + "/offers", offersModule.router);
+app.use(BASE_URL + "/statistics", statisticsModule.router);
 
 app.all("*", (req, res, next) => {
   next(

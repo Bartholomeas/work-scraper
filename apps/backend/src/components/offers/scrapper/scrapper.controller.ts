@@ -14,6 +14,8 @@ import { ScrapperCron } from "@/components/offers/scrapper/scrapper-cron";
 import type { OffersService } from "@/components/offers/service/offers.service";
 
 interface IScrapperController {
+  updateCategoriesCounts(): Promise<OffersWorkplaceListItem[] | undefined>;
+
   updateWorkplacesCounts(): Promise<OffersWorkplaceListItem[] | undefined>;
 
   updateStatistics(): Promise<void>;
@@ -33,6 +35,18 @@ class ScrapperController implements IScrapperController {
     this.offersService = offersService;
     this.browserManager = BrowserManager.getInstance();
     new ScrapperCron(this);
+  }
+
+  public async updateCategoriesCounts() {
+    try {
+      return await this.offersService.updateCategoriesCounts();
+    } catch (err) {
+      throw new AppError({
+        statusCode: 404,
+        code: ERROR_CODES.invalid_data,
+        message: JSON.stringify(err),
+      });
+    }
   }
 
   public async updateWorkplacesCounts() {
@@ -83,7 +97,7 @@ class ScrapperController implements IScrapperController {
       let data: JobOffer[] = [];
 
       if (isOutdated) {
-        data = await Promise.all([pracujScrapper.getScrappedData(), justjoinScrapper.getScrappedData()]).then(res =>
+        data = await Promise.all([justjoinScrapper.getScrappedData(), pracujScrapper.getScrappedData()]).then(res =>
           res.flatMap(el => el.data),
         );
         await this.offersService.saveJobOffers(data);

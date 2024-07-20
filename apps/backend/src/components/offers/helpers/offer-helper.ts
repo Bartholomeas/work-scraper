@@ -208,16 +208,6 @@ class OfferHelper {
             address: place?.address ?? null,
           },
         })),
-        // connectOrCreate: [
-        //   {
-        //     where: { value: offer?.workplaces?.[0]?.city.toLowerCase() },
-        //     create: {
-        //       value: offer?.workplaces?.[0]?.city.toLowerCase(),
-        //       city: offer?.workplaces?.[0]?.city,
-        //       address: offer?.workplaces?.[0]?.address ?? null,
-        //     },
-        //   },
-        // ],
       },
       contractTypes: connectOrCreateArray(offer?.contractTypes),
       workModes: connectOrCreateArray(offer?.workModes),

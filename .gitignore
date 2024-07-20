@@ -1,10 +1,13 @@
 node_modules
-backend/node_modules
-backend/prisma/backups/**
-backend/prisma/migrations
-backend/prisma/*.db
-backend/**/*.db
-backend/**/**.db
+apps/backend/node_modules
+apps/backend/prisma/backups/**
+apps/backend/prisma/backups/*.txt
+apps/backend/prisma/backups/*.db
+apps/backend/prisma/backups/*.sql
+apps/backend/prisma/migrations
+apps/backend/prisma/*.db
+apps/backend/**/*.db
+apps/backend/**/**.db
 **.db
 
 .env**

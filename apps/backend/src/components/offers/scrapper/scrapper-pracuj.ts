@@ -84,7 +84,7 @@ class ScrapperPracuj extends ScrapperBase {
   private async acceptCookieConsent(page: Page | undefined): Promise<void> {
     if (!page) return;
     try {
-      await page.waitForSelector('[data-test="button-submitCookie"]', { timeout: 5000 });
+      await page.waitForSelector('[data-test="button-submitCookie"]', { timeout: 1000 });
       await page.click('[data-test="button-submitCookie"]');
     } catch (err) {
       console.log("Cannot press cookie consent.");

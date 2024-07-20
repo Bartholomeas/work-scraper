@@ -9,6 +9,7 @@ import { ERROR_CODES } from "@/misc/error.constants";
 
 import { OffersCategoriesService } from "@/components/offers/service/offers-categories.service";
 import { ScrapperController } from "@/components/offers/scrapper/scrapper.controller";
+import { statisticsModule } from "@/components/statistics/statistics.module";
 
 import type { OffersService } from "@/components/offers/service/offers.service";
 
@@ -24,6 +25,35 @@ class OffersController {
     this.offersCategoriesService = new OffersCategoriesService();
     this.scrapperController = new ScrapperController(offersService);
   }
+
+  public updateCategoriesCounts = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const data = await this.offersService.updateCategoriesCounts();
+      res.status(200).json(data);
+    } catch (err) {
+      next(
+        new AppError({
+          statusCode: 404,
+          code: ERROR_CODES.invalid_data,
+          message: JSON.stringify(err),
+        }),
+      );
+    }
+  };
+  public updateWorkplacesCounts = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const data = await this.offersService.updateWorkplacesCounts();
+      res.status(200).json(data);
+    } catch (err) {
+      next(
+        new AppError({
+          statusCode: 404,
+          code: ERROR_CODES.invalid_data,
+          message: JSON.stringify(err),
+        }),
+      );
+    }
+  };
 
   public deleteOutdatedOffers = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -49,6 +79,11 @@ class OffersController {
   public scrapeOffersData = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data = await this.scrapperController.scrapeOffersData();
+      // Update workplaces counts
+      await this.offersService.updateWorkplacesCounts();
+      // Generate general stats from stats controller // Not 100% sure its best way to invoke another controller here because of SOLID principles
+      await statisticsModule.controller.generateGeneralStatistics(req, res, next);
+
       res.status(200).json({
         createdAt: new Date(Date.now()),
         data,
