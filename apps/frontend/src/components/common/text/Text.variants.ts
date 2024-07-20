@@ -1,8 +1,14 @@
 import { cva, type VariantProps } from "class-variance-authority";
 
-export const titleVariants = cva("", {
+export const textVariants = cva("", {
   variants: {
     size: {
+      xs: "text-xs",
+      sm: "text-sm",
+      md: "text-md",
+      lg: "text-lg",
+      xl: "text-xl",
+      "2xl": "text-2xl",
       h1: "h1",
       h2: "h2",
       h3: "h3",
@@ -12,6 +18,7 @@ export const titleVariants = cva("", {
     },
     color: {
       default: "text-foreground",
+      muted: "text-muted-foreground",
     },
     weight: {
       normal: "font-normal",
@@ -28,10 +35,11 @@ export const titleVariants = cva("", {
   },
 
   defaultVariants: {
-    weight: "semibold",
+    size: "md",
+    weight: "normal",
     color: "default",
     align: "left",
   },
 });
 
-export type TitleVariants = VariantProps<typeof titleVariants>;
+export type TextVariants = VariantProps<typeof textVariants>;

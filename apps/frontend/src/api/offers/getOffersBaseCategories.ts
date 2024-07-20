@@ -1,11 +1,14 @@
 import { useQuery } from "vue-query/esm";
-import { fetcher } from "@/utils/fetcher";
-import { offersQueryKeys } from "@/api/offers/offersQueryKeys";
 import type { OffersBaseCategories } from "shared/src/offers/offers.types";
+
+import { OFFERS_URL } from "@/constants";
+import { fetcher } from "@/utils/fetcher";
+
+import { offersQueryKeys } from "@/api/offers/offersQueryKeys";
 
 export const getOffersBaseCategories = async (): Promise<OffersBaseCategories | undefined> => {
   try {
-    return await fetcher.get<OffersBaseCategories>(`${import.meta.env.VITE_API_URL}/offers/base-categories`);
+    return await fetcher.get<OffersBaseCategories>(OFFERS_URL + "/base-categories");
   } catch (err) {
     throw err;
   }

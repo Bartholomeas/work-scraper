@@ -1,8 +1,9 @@
 import { PrismaClient } from "@prisma/client";
+import type { GeneralStatisticsResponse } from "shared/src/statistics/statistics.types";
 import { PrismaInstance } from "@/components/libs/prisma.instance";
 
 interface IStatisticsService {
-  getGeneralStatistics(): Promise<unknown>;
+  getGeneralStatistics(): Promise<GeneralStatisticsResponse>;
 
   generateGeneralStatistics(): Promise<unknown>;
 }
@@ -14,7 +15,7 @@ class StatisticsService implements IStatisticsService {
     this.prisma = PrismaInstance.getInstance();
   }
 
-  public async getGeneralStatistics() {
+  public async getGeneralStatistics(): Promise<GeneralStatisticsResponse> {
     return this.prisma.generalStatistics.findFirst({
       include: {
         topWorkplaces: {

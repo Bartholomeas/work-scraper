@@ -1,30 +1,11 @@
 <script setup lang="ts">
+import { useGetGeneralStatistics } from "@/api/statistics/getGeneralStatistics";
+
 import OffersStatCard from "@/components/offers/OffersStatCard.vue";
-import { useGetOffersMetadata } from "@/api/offers/getOffersMetadata";
-import { BarChart } from "lucide-vue-next";
+import { BarChart, Building2, Cpu } from "lucide-vue-next";
 
-// const statistics = [
-//   {
-//     title: "Nowych ofert pracy",
-//     value: "+214",
-//     description: "Od wczoraj godziny 12:00",
-//     icon: BarChart,
-//   },
-//   {
-//     title: "Nowych ofert pracy",
-//     value: "+214",
-//     description: "Od wczoraj godziny 12:00",
-//     icon: BarChart,
-//   },
-//   {
-//     title: "Nowych ofert pracy",
-//     value: "+214",
-//     description: "Od wczoraj godziny 12:00",
-//     icon: BarChart,
-//   },
-// ];
-
-const { data: stats } = useGetOffersMetadata();
+const { data: stats } = useGetGeneralStatistics();
+// const { data: stats } = useGetOffersMetadata();
 </script>
 
 <template>
@@ -32,9 +13,23 @@ const { data: stats } = useGetOffersMetadata();
     <OffersStatCard
       :key="`offerStatCard-${stats?.id}`"
       title="Wszystkich ofert"
-      :value="stats?.total ?? 0"
-      :description="stats?.updatedAt"
+      :value="stats?.totalOffers.toString() ?? '0'"
+      description="Ofert łącznie"
       :icon="BarChart"
+    />
+    <OffersStatCard
+      :key="`offerStatCard-${stats?.id}`"
+      title="Najwięcej ofert"
+      value="tt"
+      description="W tych miastach nie trudno o oferty!"
+      :icon="Building2"
+    />
+    <OffersStatCard
+      :key="`offerStatCard-${stats?.id}`"
+      title="Najczęstsze technologie"
+      :value="'sss'"
+      description="Te technologie są najbardziej pożądane"
+      :icon="Cpu"
     />
   </section>
 </template>

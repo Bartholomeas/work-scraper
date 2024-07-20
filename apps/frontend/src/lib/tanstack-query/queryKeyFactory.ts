@@ -13,6 +13,7 @@ export const createQueryKeyFactory = <TEntity extends string>(_entity: TEntity) 
     // With these you can get existing instance of query
     entity: [{ entity: _entity }] as const,
     lists: [{ entity: _entity, scope: "list" }] as const,
+    details: [{ entity: _entity, scope: "details" }] as const,
     //    ---
 
     list: function <TName extends string, TParams extends ReactiveQuerySearchParams<Record<string, unknown>>>(
@@ -24,8 +25,8 @@ export const createQueryKeyFactory = <TEntity extends string>(_entity: TEntity) 
     single: function <TId extends string, TName extends string>(id: TId, name: TName) {
       return [{ ...this.entity[0], id, name }] as const;
     },
-    details: function <TName extends string>(name: TName) {
-      return [{ ...this.entity[0], name, key: "details" }] as const;
+    detail: function <TName extends string>(name: TName) {
+      return [{ ...this.details[0], name }] as const;
     },
   };
 };

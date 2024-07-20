@@ -6,7 +6,7 @@ import { ERROR_CODES } from "@/misc/error.constants";
 import type { StatisticsService } from "@/components/statistics/statistics.service";
 
 interface IStatisticsController {
-  getGeneralStatistics(req: Request, res: Response, next: NextFunction): Promise<unknown>;
+  getGeneralStatistics(req: Request, res: Response, next: NextFunction): void;
 
   generateGeneralStatistics(req: Request, res: Response, next: NextFunction): Promise<unknown>;
 }
