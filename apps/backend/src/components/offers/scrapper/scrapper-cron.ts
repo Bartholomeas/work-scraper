@@ -29,6 +29,9 @@ class ScrapperCron {
       // this.logTimestampWithMessage("Updating workplaces counts");
       // await this.scrapperController.updateWorkplacesCounts();
 
+      // this.logTimestampWithMessage("Updating categories counts");
+      // await this.scrapperController.updateCategoriesCounts();
+
       this.logTimestampWithMessage("Updating metadata");
       await this.scrapperController.updateMetadata();
 

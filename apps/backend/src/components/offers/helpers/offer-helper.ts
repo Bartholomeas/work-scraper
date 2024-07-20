@@ -206,9 +206,6 @@ class OfferHelper {
             value: place?.city.toLowerCase() ?? "polska",
             city: place?.city,
             address: place?.address ?? null,
-            count: {
-              increment: 1,
-            },
           },
         })),
       },

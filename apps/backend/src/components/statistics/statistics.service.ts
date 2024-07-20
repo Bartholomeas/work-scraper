@@ -24,6 +24,13 @@ class StatisticsService implements IStatisticsService {
             city: true,
           },
         },
+        topCategories: {
+          select: {
+            id: true,
+            count: true,
+            value: true,
+          },
+        },
       },
     });
   }
@@ -44,20 +51,25 @@ class StatisticsService implements IStatisticsService {
 
   private async getTopCategories() {
     return this.prisma.technology.findMany({
-      take: 5,
-
-      orderBy: {},
+      take: 8,
+      orderBy: {
+        count: "desc",
+      },
     });
   }
 
   public async generateGeneralStatistics() {
     const topWorkplaces = await this.getTopWorkplaces();
     const topCategories = await this.getTopCategories();
-
     const totalOffers = await this.prisma.jobOffer.count();
+
     console.time("Delete workplaces");
     await this.prisma.topWorkplace.deleteMany({});
     console.timeEnd("Delete workplaces");
+
+    console.time("Delete categories");
+    await this.prisma.topCategory.deleteMany({});
+    console.time("Delete categories");
 
     const topWorkplacesData = {
       connectOrCreate: topWorkplaces.map(place => ({
@@ -65,6 +77,19 @@ class StatisticsService implements IStatisticsService {
         create: {
           city: place.value,
           count: place.count,
+        },
+      })),
+    };
+
+    const topCategoriesData = {
+      connectOrCreate: topCategories?.map(cat => ({
+        where: {
+          id: cat.id,
+        },
+        create: {
+          id: cat.id,
+          count: cat.count,
+          value: cat.value,
         },
       })),
     };
@@ -84,9 +109,24 @@ class StatisticsService implements IStatisticsService {
             count: true,
           },
         },
+        topCategories: {
+          select: {
+            id: true,
+            value: true,
+            count: true,
+          },
+        },
       },
-      create: { topWorkplaces: topWorkplacesData, totalOffers },
-      update: { topWorkplaces: topWorkplacesData, totalOffers },
+      create: {
+        topWorkplaces: topWorkplacesData,
+        topCategories: topCategoriesData,
+        totalOffers,
+      },
+      update: {
+        topWorkplaces: topWorkplacesData,
+        topCategories: topCategoriesData,
+        totalOffers,
+      },
     });
   }
 }

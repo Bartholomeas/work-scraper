@@ -17,6 +17,10 @@ interface SetOffersMetadataProps {
 
 interface IOffersService {
   getAllWorkplaces(): Promise<OffersWorkplaceListItem[] | undefined>;
+
+  updateWorkplacesCounts(): Promise<unknown>;
+
+  updateCategoriesCounts(): Promise<unknown>;
 }
 
 /**
@@ -41,13 +45,46 @@ class OffersService implements IOffersService {
   }
 
   /**
+   * @description - Update count of each category (how much offers already have it)
+   */
+  public async updateCategoriesCounts() {
+    const categories = await this.getCategoriesCounts();
+    const transaction = categories?.map(cat =>
+      this.prisma.technology.update({
+        where: {
+          id: cat.id,
+        },
+        data: {
+          count: {
+            set: cat._count.jobOffers,
+          },
+        },
+      }),
+    );
+
+    return this.prisma.$transaction(transaction);
+  }
+
+  /**
+   * @description - Get count of all workplaces assigned to job offers
+   */
+  private async getWorkplaceCounts() {
+    return this.prisma.workplace.findMany({
+      select: {
+        id: true,
+        value: true,
+        _count: true,
+      },
+    });
+  }
+
+  /**
    * @description - Updates count of job offers at each workplace
    * @returns Promise<OffersWorkplaceListItem[] | undefined>
    */
   public async updateWorkplacesCounts() {
     try {
       const workplaces = await this.getWorkplaceCounts();
-
       const transaction = workplaces.map(workplace =>
         this.prisma.workplace.update({
           where: {
@@ -67,26 +104,6 @@ class OffersService implements IOffersService {
         message: JSON.stringify(err),
       });
     }
-  }
-
-  /**
-   * @description - Get count of all workplaces assigned to job offers
-   * @returns {Promise<{
-   * id:string,
-   * value:string
-   * _count:{
-   *   jobsOffer: number
-   * }
-   * }[]>}
-   */
-  public async getWorkplaceCounts() {
-    return this.prisma.workplace.findMany({
-      select: {
-        id: true,
-        value: true,
-        _count: true,
-      },
-    });
   }
 
   /**

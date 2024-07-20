@@ -8,8 +8,8 @@ import { AppError } from "@/utils/app-error";
 import { ERROR_CODES } from "@/misc/error.constants";
 
 import { OffersCategoriesService } from "@/components/offers/service/offers-categories.service";
-import { OffersStatisticsService } from "@/components/offers/service/offers-statistics.service";
 import { ScrapperController } from "@/components/offers/scrapper/scrapper.controller";
+import { statisticsModule } from "@/components/statistics/statistics.module";
 
 import type { OffersService } from "@/components/offers/service/offers.service";
 
@@ -18,16 +18,28 @@ puppeteer.use(StealthPlugin());
 class OffersController {
   private offersService: OffersService;
   private offersCategoriesService: OffersCategoriesService;
-  private offersStatisticsService: OffersStatisticsService;
   private scrapperController: ScrapperController;
 
   constructor(offersService: OffersService) {
     this.offersService = offersService;
     this.offersCategoriesService = new OffersCategoriesService();
-    this.offersStatisticsService = new OffersStatisticsService();
     this.scrapperController = new ScrapperController(offersService);
   }
 
+  public updateCategoriesCounts = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const data = await this.offersService.updateCategoriesCounts();
+      res.status(200).json(data);
+    } catch (err) {
+      next(
+        new AppError({
+          statusCode: 404,
+          code: ERROR_CODES.invalid_data,
+          message: JSON.stringify(err),
+        }),
+      );
+    }
+  };
   public updateWorkplacesCounts = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data = await this.offersService.updateWorkplacesCounts();
@@ -67,6 +79,11 @@ class OffersController {
   public scrapeOffersData = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data = await this.scrapperController.scrapeOffersData();
+      // Update workplaces counts
+      await this.offersService.updateWorkplacesCounts();
+      // Generate general stats from stats controller // Not 100% sure its best way to invoke another controller here because of SOLID principles
+      await statisticsModule.controller.generateGeneralStatistics(req, res, next);
+
       res.status(200).json({
         createdAt: new Date(Date.now()),
         data,
