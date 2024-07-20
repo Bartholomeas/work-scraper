@@ -30,6 +30,16 @@ class OffersService implements IOffersService {
     this.prisma = PrismaInstance.getInstance();
   }
 
+  public async getCategoriesCounts() {
+    return this.prisma.technology.findMany({
+      select: {
+        id: true,
+        _count: true,
+        value: true,
+      },
+    });
+  }
+
   /**
    * @description - Updates count of job offers at each workplace
    * @returns Promise<OffersWorkplaceListItem[] | undefined>

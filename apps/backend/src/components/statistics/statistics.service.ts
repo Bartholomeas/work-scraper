@@ -28,8 +28,8 @@ class StatisticsService implements IStatisticsService {
     });
   }
 
-  public async generateGeneralStatistics() {
-    const topWorkplaces = await this.prisma.workplace.findMany({
+  private async getTopWorkplaces() {
+    return this.prisma.workplace.findMany({
       take: 5,
       orderBy: {
         count: "desc",
@@ -40,6 +40,20 @@ class StatisticsService implements IStatisticsService {
         count: true,
       },
     });
+  }
+
+  private async getTopCategories() {
+    return this.prisma.technology.findMany({
+      take: 5,
+
+      orderBy: {},
+    });
+  }
+
+  public async generateGeneralStatistics() {
+    const topWorkplaces = await this.getTopWorkplaces();
+    const topCategories = await this.getTopCategories();
+
     const totalOffers = await this.prisma.jobOffer.count();
     console.time("Delete workplaces");
     await this.prisma.topWorkplace.deleteMany({});
@@ -55,7 +69,7 @@ class StatisticsService implements IStatisticsService {
       })),
     };
 
-    const generalStats = await this.prisma.generalStatistics.upsert({
+    return this.prisma.generalStatistics.upsert({
       where: {
         id: "general-statistics",
       },
@@ -74,8 +88,6 @@ class StatisticsService implements IStatisticsService {
       create: { topWorkplaces: topWorkplacesData, totalOffers },
       update: { topWorkplaces: topWorkplacesData, totalOffers },
     });
-
-    return generalStats;
   }
 }
 
