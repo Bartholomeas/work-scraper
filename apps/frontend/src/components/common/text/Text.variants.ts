@@ -19,6 +19,10 @@ export const textVariants = cva("", {
     color: {
       default: "text-foreground",
       muted: "text-muted-foreground",
+      primary: "text-primary",
+      "primary-light": "text-primary-light",
+      success: "text-success",
+      error: "text-error",
     },
     weight: {
       normal: "font-normal",
@@ -32,6 +36,10 @@ export const textVariants = cva("", {
       center: "text-center",
       justify: "text-justify",
     },
+    transform: {
+      default: "",
+      uppercase: "uppercase",
+    },
   },
 
   defaultVariants: {
@@ -39,6 +47,7 @@ export const textVariants = cva("", {
     weight: "normal",
     color: "default",
     align: "left",
+    transform: "default",
   },
 });
 

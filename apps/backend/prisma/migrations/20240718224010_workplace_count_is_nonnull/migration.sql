@@ -3,7 +3,7 @@ PRAGMA defer_foreign_keys=ON;
 PRAGMA foreign_keys=OFF;
 CREATE TABLE "new_Workplace" (
     "id" TEXT NOT NULL PRIMARY KEY,
-    "value" TEXT NOT NULL,
+    "cardValue" TEXT NOT NULL,
     "city" TEXT NOT NULL,
     "address" TEXT,
     "count" INTEGER NOT NULL DEFAULT 0

@@ -24,38 +24,38 @@ model Company {
 
 model PositionLevel {
   id        String     @id @default(uuid())
-  value     String     @unique
+  cardValue     String     @unique
   jobOffers JobOffer[] @relation("PositionLevels")
 }
 
 model ContractType {
   id        String     @id @default(uuid())
-  value     String     @unique
+  cardValue     String     @unique
   jobOffers JobOffer[] @relation("ContractTypes")
 }
 
 model WorkMode {
   id        String     @id @default(uuid())
-  value     String     @unique
+  cardValue     String     @unique
   jobOffers JobOffer[] @relation("WorkModes")
 }
 
 model WorkSchedule {
   id        String     @id @default(uuid())
-  value     String     @unique
+  cardValue     String     @unique
   jobOffers JobOffer[] @relation("WorkSchedules")
 }
 
 model Technology {
   id        String     @id @default(uuid())
-  value     String     @unique
+  cardValue     String     @unique
   jobOffers JobOffer[] @relation("Technologies")
   count     Int        @default(0)
 }
 
 model OfferUrl {
   id         String   @id @default(uuid())
-  value      String
+  cardValue      String
   jobOfferId String
   jobOffer   JobOffer @relation("OfferUrls", fields: [jobOfferId], references: [id], onDelete: Cascade)
 
@@ -64,7 +64,7 @@ model OfferUrl {
 
 model Workplace {
   id        String     @id @default(uuid())
-  value     String     @unique
+  cardValue     String     @unique
   city      String
   address   String?
   count     Int        @default(0)
@@ -127,7 +127,7 @@ model TopWorkplace {
 
 model TopCategory {
   id           String            @id @default(uuid())
-  value        String
+  cardValue        String
   count        Int               @default(0)
   statisticsId String            @default("general-statistics")
   statistics   GeneralStatistics @relation(fields: [statisticsId], references: [id])

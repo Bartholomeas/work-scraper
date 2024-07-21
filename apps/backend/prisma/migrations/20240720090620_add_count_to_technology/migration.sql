@@ -3,7 +3,7 @@ PRAGMA defer_foreign_keys=ON;
 PRAGMA foreign_keys=OFF;
 CREATE TABLE "new_Technology" (
     "id" TEXT NOT NULL PRIMARY KEY,
-    "value" TEXT NOT NULL,
+    "cardValue" TEXT NOT NULL,
     "count" INTEGER NOT NULL DEFAULT 0
 );
 INSERT INTO "new_Technology" ("id", "value") SELECT "id", "value" FROM "Technology";

@@ -7,6 +7,8 @@ interface TextProps {
   size?: TextVariants["size"];
   align?: TextVariants["align"];
   weight?: TextVariants["weight"];
+  color?: TextVariants["color"];
+  transform?: TextVariants["transform"];
   as?: "p" | "span";
   className?: HTMLAttributes["class"];
 }

@@ -6,9 +6,9 @@ import { useGetOffersList } from "@/api/offers/getOffers";
 
 import OffersFiltersTopBar from "@/components/offers/filters/top-bar/OffersFiltersTopWrapper.vue";
 import OffersListLayout from "@/components/offers/OffersListLayout.vue";
-import OffersItemsList from "@/components/offers/OffersItemsList.vue";
+import OffersItemsList from "@/components/offers/list/OffersItemsList.vue";
 
-const OffersStatCards = defineAsyncComponent(() => import("@/components/offers/OffersStatCards.vue"));
+const OffersStatCards = defineAsyncComponent(() => import("@/components/offers/list/OffersStatCards.vue"));
 const OffersSideFilters = defineAsyncComponent(() => import("@/components/offers/filters/side-bar/OffersSideFilters.vue"));
 const OffersPagination = defineAsyncComponent(() => import("@/components/offers/filters/OffersPagination.vue"));
 

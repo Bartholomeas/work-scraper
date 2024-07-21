@@ -8,7 +8,7 @@ const props = defineProps<{
 </script>
 
 <template>
-  <Title order="h3" :class-name="props.class">
+  <Title order="h3" size="h2" weight="bold" :class-name="props.class">
     <slot />
   </Title>
 </template>
