@@ -14,20 +14,27 @@ import { BarChart, Building2, Cpu } from "lucide-vue-next";
 
 const { data: stats } = useGetGeneralStatistics();
 
-const serializedWorkplaces: StatCardItem[] = computed(() =>
-  stats.value?.topWorkplaces?.map(workplace => ({
-    id: workplace.id,
-    label: workplace.city.toUpperCase(),
-    value: workplace.count,
-  })),
+const serializedWorkplaces = computed(() =>
+  stats.value?.topWorkplaces?.map(
+    workplace =>
+      ({
+        id: workplace.id,
+        label: workplace.city.toUpperCase(),
+        value: workplace.count,
+      }) satisfies StatCardItem,
+  ),
 );
-const serializedCategories: StatCardItem[] = computed(() =>
-  stats.value?.topCategories?.map(category => ({
-    id: category.id,
-    label: category.value.toUpperCase(),
-    value: category?.count,
-    percentageOfAll: getPercentOf(category?.count, stats.value?.totalOffers),
-  })),
+
+const serializedCategories = computed(() =>
+  stats.value?.topCategories?.map(
+    category =>
+      ({
+        id: category.id,
+        label: category.value.toUpperCase(),
+        value: category?.count,
+        percentageOfAll: getPercentOf(category?.count, stats.value?.totalOffers),
+      }) satisfies StatCardItem,
+  ),
 );
 </script>
 

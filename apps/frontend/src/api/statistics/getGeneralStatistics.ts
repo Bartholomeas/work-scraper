@@ -10,9 +10,7 @@ import { statisticsQueryKeys } from "@/api/statistics/statisticsQueryKeys";
 export const getGeneralStatistics = async (): Promise<GeneralStatisticsResponse | undefined> => {
   try {
     const url = STATISTICS_URL + "/general";
-    const data = await fetcher.get<GeneralStatisticsResponse>(url);
-    return data;
-    // return generalStatisticsSchema.parse(data) satisfies GeneralStatisticsResponse;
+    return await fetcher.get<GeneralStatisticsResponse>(url);
   } catch (err) {
     throw err;
   }
