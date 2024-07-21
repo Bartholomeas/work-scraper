@@ -31,7 +31,7 @@ describe("GET offers/metadata", () => {
 
     expect(isCorrectMetadata.success).toBe(true);
     expect(meta?.page).toBe(1);
-    expect(meta?.perPage).toBe(24);
+    expect(meta?.perPage).toBe(48);
     expect(meta?.total).toBeGreaterThanOrEqual(1);
     expect(meta?.totalPages).toBe(1);
     expect(meta?.hasPrevPage).toBe(false);

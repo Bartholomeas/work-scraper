@@ -60,7 +60,7 @@ const serializedCategories = computed(() =>
         :key="`offerStatCard-${stats?.id}`"
         title="Najbardziej pożądane umiejętności"
         :cardValue="serializedCategories"
-        description="Te technologie są teraz najbardziej pożądane"
+        description="Najczęściej występujące w ogłoszeniach"
         :icon="Cpu"
         items-wrapper-class-name="sm:grid sm:grid-cols-2 sm:gap-x-8"
       />

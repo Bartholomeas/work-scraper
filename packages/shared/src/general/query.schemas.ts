@@ -8,7 +8,7 @@ const toNumberWithDefault = (defaultValue: number) => (val: unknown) => {
 
 export const paginationSchema = z.object({
   page: z.preprocess(toNumberWithDefault(1), z.number().min(1)),
-  perPage: z.preprocess(toNumberWithDefault(24), z.number().min(8)),
+  perPage: z.preprocess(toNumberWithDefault(48), z.number().min(8)),
 });
 export const paginationMetadataSchema = z.intersection(
   paginationSchema,

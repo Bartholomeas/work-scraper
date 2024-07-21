@@ -146,7 +146,7 @@ class OffersService implements IOffersService {
    */
   public async getJobOffers(params: OffersQueryParams | undefined) {
     const defaultParams: { perPage: OffersQueryParams["perPage"]; page: OffersQueryParams["page"] } = {
-      perPage: params?.perPage ?? 24,
+      perPage: params?.perPage ?? 48,
       page: params?.page && params?.page < 1 ? 1 : params?.page ?? 1,
     };
 

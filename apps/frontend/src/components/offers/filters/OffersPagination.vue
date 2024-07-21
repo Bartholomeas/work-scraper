@@ -36,7 +36,7 @@ const handlePageChange = (page: number = 1) => {
   <Pagination
     v-slot="{ page }"
     :total="meta?.total ?? 1"
-    :items-per-page="meta?.perPage ?? 24"
+    :items-per-page="meta?.perPage ?? 48"
     :sibling-count="1"
     :default-page="1"
     show-edges

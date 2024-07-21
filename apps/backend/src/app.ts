@@ -29,7 +29,7 @@ declare global {
 
 export const app: Express = express();
 const corsOptions: CorsOptions = {
-  origin: "http://localhost:5173",
+  origin: ["http://localhost:5173", "http://localhost:4173"],
 };
 
 app.use(cors(corsOptions));
