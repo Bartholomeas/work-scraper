@@ -1,0 +1,32 @@
+{
+  "name": "config",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "files": [
+    "eslint-front.mjs",
+    "eslint-back.mjs"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@eslint/js": "^9.2.0",
+    "@typescript-eslint/eslint-plugin": "^7.16.1",
+    "@typescript-eslint/parser": "^7.16.1",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-jsx-a11y": "^6.8.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "eslint-plugin-prettier-vue": "^5.0.0",
+    "eslint-plugin-vue": "^9.26.0",
+    "globals": "^15.2.0",
+    "typescript-eslint": "^7.9.0",
+    "vite-plugin-eslint": "^1.8.1"
+  }
+}

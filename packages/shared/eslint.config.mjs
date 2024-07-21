@@ -5,8 +5,8 @@ import parserTypescript from "@typescript-eslint/parser";
 export default [
   {
     extends: [
-      "eslint:recommended",
-      "plugin:@typescript-eslint/recommended",
+      "config:recommended",
+      "plugin:@typescript-config/recommended",
       "prettier",
     ],
     files: ["*.ts", "*.tsx", "*.vue"],
@@ -15,7 +15,7 @@ export default [
       parserOptions: {
         sourceType: "module",
         project: "./backend.json",
-        parser: "@typescript-eslint/parser",
+        parser: "@typescript-config/parser",
         ecmaVersion: 2021,
       },
     },
