@@ -55,9 +55,7 @@ class OffersService implements IOffersService {
           id: cat.id,
         },
         data: {
-          count: {
-            set: cat._count.jobOffers,
-          },
+          count: cat._count.jobOffers,
         },
       }),
     );

@@ -51,7 +51,7 @@ const serializedCategories: StatCardItem[] = computed(() =>
       />
       <OffersStatCard
         :key="`offerStatCard-${stats?.id}`"
-        title="Najczęstsze technologie"
+        title="Najbardziej pożądane umiejętności"
         :cardValue="serializedCategories"
         description="Te technologie są teraz najbardziej pożądane"
         :icon="Cpu"

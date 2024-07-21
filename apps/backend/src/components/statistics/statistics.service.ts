@@ -70,7 +70,7 @@ class StatisticsService implements IStatisticsService {
 
     console.time("Delete categories");
     await this.prisma.topCategory.deleteMany({});
-    console.time("Delete categories");
+    console.timeEnd("Delete categories");
 
     const topWorkplacesData = {
       connectOrCreate: topWorkplaces.map(place => ({
