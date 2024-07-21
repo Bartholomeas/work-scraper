@@ -10,7 +10,8 @@
     },
     "build": {
       "outputs": [
-        "dist/**"
+        "dist/**",
+        "./vercel/**"
       ],
       "dependsOn": [
         "^build",
