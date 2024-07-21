@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
-import { cn } from "@/utils/utils";
+import Title from "@/components/common/title/Title.vue";
 
 const props = defineProps<{
   class?: HTMLAttributes["class"];
@@ -8,7 +8,7 @@ const props = defineProps<{
 </script>
 
 <template>
-  <h3 :class="cn('font-semibold leading-none tracking-tight', props.class)">
+  <Title order="h3" size="h2" weight="bold" :class-name="props.class">
     <slot />
-  </h3>
+  </Title>
 </template>

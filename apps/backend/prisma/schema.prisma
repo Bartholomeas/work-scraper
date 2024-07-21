@@ -1,13 +1,11 @@
-// url          = env("DATABASE_URL")
+generator client {
+  provider = "prisma-client-js"
+}
 
 datasource db {
   provider     = "sqlite"
   url          = "file:./dev.db?mode=memory&cache=shared"
   relationMode = "prisma"
-}
-
-generator client {
-  provider = "prisma-client-js"
 }
 
 model User {
@@ -49,8 +47,8 @@ model WorkSchedule {
 model Technology {
   id        String     @id @default(uuid())
   value     String     @unique
-  jobOffers JobOffer[] @relation("Technologies")
   count     Int        @default(0)
+  jobOffers JobOffer[] @relation("Technologies")
 }
 
 model OfferUrl {

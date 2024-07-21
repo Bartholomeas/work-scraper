@@ -14,44 +14,44 @@ CREATE TABLE "Company" (
 -- CreateTable
 CREATE TABLE "PositionLevel" (
     "id" TEXT NOT NULL PRIMARY KEY,
-    "value" TEXT NOT NULL
+    "cardValue" TEXT NOT NULL
 );
 
 -- CreateTable
 CREATE TABLE "ContractType" (
     "id" TEXT NOT NULL PRIMARY KEY,
-    "value" TEXT NOT NULL
+    "cardValue" TEXT NOT NULL
 );
 
 -- CreateTable
 CREATE TABLE "WorkMode" (
     "id" TEXT NOT NULL PRIMARY KEY,
-    "value" TEXT NOT NULL
+    "cardValue" TEXT NOT NULL
 );
 
 -- CreateTable
 CREATE TABLE "WorkSchedule" (
     "id" TEXT NOT NULL PRIMARY KEY,
-    "value" TEXT NOT NULL
+    "cardValue" TEXT NOT NULL
 );
 
 -- CreateTable
 CREATE TABLE "Technology" (
     "id" TEXT NOT NULL PRIMARY KEY,
-    "value" TEXT NOT NULL
+    "cardValue" TEXT NOT NULL
 );
 
 -- CreateTable
 CREATE TABLE "OfferUrl" (
     "id" TEXT NOT NULL PRIMARY KEY,
-    "value" TEXT NOT NULL,
+    "cardValue" TEXT NOT NULL,
     "jobOfferId" TEXT NOT NULL
 );
 
 -- CreateTable
 CREATE TABLE "Workplace" (
     "id" TEXT NOT NULL PRIMARY KEY,
-    "value" TEXT NOT NULL
+    "cardValue" TEXT NOT NULL
 );
 
 -- CreateTable

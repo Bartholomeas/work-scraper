@@ -81,6 +81,7 @@ class OffersController {
       const data = await this.scrapperController.scrapeOffersData();
       // Update workplaces counts
       await this.offersService.updateWorkplacesCounts();
+      await this.offersService.updateCategoriesCounts();
       // Generate general stats from stats controller // Not 100% sure its best way to invoke another controller here because of SOLID principles
       await statisticsModule.controller.generateGeneralStatistics(req, res, next);
 

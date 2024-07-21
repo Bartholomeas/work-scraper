@@ -40,7 +40,7 @@ class OfferHelper {
   public static getDefaultParams(params: OffersQueryParams | undefined) {
     return {
       take: params?.perPage,
-      skip: (params?.perPage ?? 24) * ((params?.page ?? 1) - 1),
+      skip: (params?.perPage ?? 48) * ((params?.page ?? 1) - 1),
       // take: params?.perPage ? parseInt(params?.perPage) : 24,
       // skip: (params?.perPage ? parseInt(params?.perPage) : 24) * ((params?.page ? parseInt(params?.page) : 1) - 1),
       orderBy: params?.orderBy

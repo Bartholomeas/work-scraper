@@ -1,8 +1,8 @@
 /*
   Warnings:
 
-  - You are about to drop the column `workplaceId` on the `TopWorkplace` table. All the data in the column will be lost.
-  - Added the required column `city` to the `TopWorkplace` table without a default value. This is not possible if the table is not empty.
+  - You are about to drop the column `workplaceId` on the `TopWorkplace` table. All the cardValue in the column will be lost.
+  - Added the required column `city` to the `TopWorkplace` table without a default cardValue. This is not possible if the table is not empty.
 
 */
 -- RedefineTables

@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { PrismaInstance } from "@/components/libs/prisma.instance";
 
 interface IStatisticsService {
-  getGeneralStatistics(): Promise<unknown>;
+  // getGeneralStatistics(): Promise<GeneralStatisticsResponse | undefined>;
 
   generateGeneralStatistics(): Promise<unknown>;
 }
@@ -41,6 +41,7 @@ class StatisticsService implements IStatisticsService {
       orderBy: {
         count: "desc",
       },
+
       select: {
         id: true,
         value: true,
@@ -69,7 +70,7 @@ class StatisticsService implements IStatisticsService {
 
     console.time("Delete categories");
     await this.prisma.topCategory.deleteMany({});
-    console.time("Delete categories");
+    console.timeEnd("Delete categories");
 
     const topWorkplacesData = {
       connectOrCreate: topWorkplaces.map(place => ({
