@@ -19,7 +19,8 @@
     "seed:dev": "NODE_ENV=development && ts-node ./prisma/seed.ts",
     "seed:test": "NODE_ENV=test && dotenv -e .env.test -- ts-node ./prisma/seed.ts",
     "reset:db:test": "NODE_ENV=test && dotenv -e .env.test -- pnpx prisma migrate reset",
-    "test": "NODE_ENV=test && dotenv -e .env.test -- jest"
+    "test": "NODE_ENV=test && dotenv -e .env.test -- jest",
+    "vercel-build": "echo Vercel build command"
   },
   "_moduleAliases": {
     "@": "dist"

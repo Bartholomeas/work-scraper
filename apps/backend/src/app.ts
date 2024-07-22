@@ -5,7 +5,10 @@ import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import compression from "compression";
 import cookieParser from "cookie-parser";
+
 import { BASE_URL } from "@/misc/constants";
+import { ERROR_CODES } from "@/misc/error.constants";
+
 import { AppError, type AppErrorInterface } from "@/utils/app-error";
 
 import { errorHandler } from "@/middleware/error-handler";
@@ -13,7 +16,6 @@ import { errorHandler } from "@/middleware/error-handler";
 import { authModule } from "@/components/auth/auth.module";
 import { offersModule } from "@/components/offers/offers.module";
 import { ErrorController } from "@/components/error/error.controller";
-import { ERROR_CODES } from "@/misc/error.constants";
 import { statisticsModule } from "@/components/statistics/statistics.module";
 
 // For some reason imported in tsconfig doesnt work :(
@@ -59,7 +61,7 @@ app.use(BASE_URL + "/auth", authModule.router);
 app.use(BASE_URL + "/offers", offersModule.router);
 app.use(BASE_URL + "/statistics", statisticsModule.router);
 
-app.all("*", (req, res, next) => {
+app.all("*", (req: Request, res: Response, next: NextFunction) => {
   next(
     new AppError({
       statusCode: 404,

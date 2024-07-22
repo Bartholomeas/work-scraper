@@ -16,7 +16,7 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "apps/backend/src/index.ts"
+      "dest": "apps/backend/src/server.ts"
     }
   ]
 }
