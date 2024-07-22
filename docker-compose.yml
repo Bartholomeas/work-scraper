@@ -1,0 +1,22 @@
+services:
+  app:
+    tty: true
+    image: node:20
+    volumes:
+      - .:/app
+      - ~/.pnpm-store:/.pnpm-store
+      - node_modules:/app/node_modules
+    working_dir: /app
+    ports:
+      - '8080:8080'
+    command: bash -c 'npm install -g pnpm && pnpm install --frozen-lockfile -r && pnpm turbo run dev --filter=backend'
+    environment:
+      NODE_ENV:
+      PORT:
+      JW_EXPIRES_IN:
+      JWT_SECRET:
+      DATABASE_URL:
+      SECRET_PHRASE:
+volumes:
+  node_modules:
+    driver: local
