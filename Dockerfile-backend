@@ -1,0 +1,41 @@
+FROM node:20 as pruner
+FROM ubuntu:latest
+LABEL authors="bartholomeas"
+
+RUN apt update && \
+    apt install git \
+RUN curl -f https://get.pnpm.io/v9.1.js | node - add --global pnpm
+
+RUN pnpm add -g turbo
+WORKDIR "/app"
+RUN pwd
+
+# Prune backend project (create backend dir with all needed packages and directories)
+COPY .git ./.git
+COPY . .
+RUN pwd
+RUN turbo prune --scope=backend --docker
+
+# Add pruned lockfile and package.json of workspace
+FROM pruner as builder
+WORKDIR "/app"
+COPY --from=pruner /app/out/json/ .
+COPY --from=pruner /app/out/pnpm-lock ./pnpm-lock.yaml
+
+# Install only packages that are needed to build the target
+RUN pnpm install --frozen-lockfile --prod
+COPY --from=pruner /app/.git ./.git
+COPY --from=pruner /app/out/full/ .
+RUN turbo build --filter=backend
+RUN pwd
+RUN ls
+
+# Copy source code of prunde workspaces and build
+FROM node:20-alpine
+WORKDIR "/app"
+EXPOSE 8080
+COPY --from=builder /app/apps/backend/dist .
+COPY --from=pruner /app/out/json/ .
+COPY --from=pruner /app/out/pnpm-lock ./pnpm-lock.yaml
+RUN pnpm install --production
+CMD node ./apps/backend/dist/
