@@ -22,7 +22,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "dependencies": {
-    "turbo": "^1.13.3"
+    "turbo": "^2.0.9"
   },
   "engines": {
     "npm": ">=10.5.2",

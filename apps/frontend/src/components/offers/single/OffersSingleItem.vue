@@ -62,11 +62,11 @@ const formattedExpirationDate = computed(() => formatDate(offer?.expirationDate)
       </div>
       <div class="flex flex-col justify-between gap-2 max-md:mt-2 md:items-end">
         <div class="flex flex-row-reverse flex-nowrap items-end justify-between gap-2 md:flex-col">
-          <p class="text-primary text-right text-lg font-bold md:mb-2">{{ salaryRangeString ?? "Nie podano" }}</p>
+          <p class="text-primary text-right text-lg font-bold md:mb-2">{{ salaryRangeString ?? "Nie podano widełek" }}</p>
           <OfferBadges :position-levels="offer?.positionLevels" :work-modes="offer?.workModes" :contract-types="offer?.contractTypes" />
         </div>
         <div class="flex grow items-center gap-2 self-end max-md:w-full">
-          <OffersDetailsDialog :offer="offer" :salary-text="salaryRangeString ?? 'Nie podano'">
+          <OffersDetailsDialog :offer="offer" :salary-text="salaryRangeString ?? 'Nie podano widełek'">
             <Button variant="secondary">
               Szczegóły
               <Info class="ml-2 h-4 w-4" />
