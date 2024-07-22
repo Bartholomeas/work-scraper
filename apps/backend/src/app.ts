@@ -49,7 +49,7 @@ app.use(express.urlencoded({ extended: false, limit: "10kb" }));
 app.use(cookieParser());
 
 if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
-1;
+
 app.use((req: Request, res: Response, next: NextFunction) => {
   req.requestTime = new Date().toISOString();
   next();

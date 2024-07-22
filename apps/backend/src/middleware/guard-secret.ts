@@ -11,7 +11,7 @@ export const guardSecret = (secret: string | undefined) => (req: Request, res: R
         message: "Secret is empty.",
       }),
     );
-  console.log("Secrets", secret, req.query);
+
   if (req.query?.secret === secret) {
     console.log("Correct secret");
     next();
