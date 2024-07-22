@@ -5,7 +5,6 @@ import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import compression from "compression";
 import cookieParser from "cookie-parser";
-
 import { BASE_URL } from "@/misc/constants";
 import { AppError, type AppErrorInterface } from "@/utils/app-error";
 
