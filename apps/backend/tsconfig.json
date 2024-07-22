@@ -21,7 +21,7 @@
       "DOM"
     ],
     "outDir": "./dist",
-    "rootDir": "./",
+    "rootDir": "./src",
     "forceConsistentCasingInFileNames": true,
     "typeRoots": [
       "types",
