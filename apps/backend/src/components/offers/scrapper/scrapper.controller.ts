@@ -93,15 +93,15 @@ class ScrapperController implements IScrapperController {
       });
       await Promise.all([pracujScrapper.initializePage(), justjoinScrapper.initializePage()]);
 
-      const isOutdated = await this.offersService.checkDataIsOutdated();
       let data: JobOffer[] = [];
 
-      if (isOutdated) {
-        data = await Promise.all([justjoinScrapper.getScrappedData(), pracujScrapper.getScrappedData()]).then(res =>
-          res.flatMap(el => el.data),
-        );
-        await this.offersService.saveJobOffers(data);
-      }
+      // const isOutdated = await this.offersService.checkDataIsOutdated();
+      // if (isOutdated) {
+      data = await Promise.all([justjoinScrapper.getScrappedData(), pracujScrapper.getScrappedData()]).then(res =>
+        res.flatMap(el => el.data),
+      );
+      await this.offersService.saveJobOffers(data);
+      // }
       await this.browserManager.closeBrowserInstance();
 
       return data;
