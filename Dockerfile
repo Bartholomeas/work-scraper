@@ -3,9 +3,10 @@ RUN apt update && \
     apt install git 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
+
 RUN corepack enable
 
-#RUN curl -f https://get.pnpm.io/v9.1.js | node - add --global pnpm
+RUN curl -f https://get.pnpm.io/v9.1.js | node - add --global pnpm
 #RUN corepack enable
 #RUN corepack prepare pnpm@9.1.0 --activate
 
