@@ -9,7 +9,7 @@ import cookieParser from "cookie-parser";
 import { BASE_URL } from "@/misc/constants";
 import { ERROR_CODES } from "@/misc/error.constants";
 
-import { AppError, type AppErrorInterface } from "@/utils/app-error";
+import { AppErrorController, type AppErrorInterface } from "@/components/error/app-error.controller";
 
 import { errorHandler } from "@/middleware/error-handler";
 
@@ -63,7 +63,7 @@ app.use(BASE_URL + "/statistics", statisticsModule.router);
 
 app.all("*", (req: Request, res: Response, next: NextFunction) => {
   next(
-    new AppError({
+    new AppErrorController({
       statusCode: 404,
       code: ERROR_CODES.not_found,
       message: `Cannot find ${req.originalUrl}`,

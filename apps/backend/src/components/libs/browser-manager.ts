@@ -1,6 +1,6 @@
 import { Browser, executablePath } from "puppeteer";
 import puppeteer from "puppeteer-extra";
-import { AppError } from "@/utils/app-error";
+import { AppErrorController } from "@/components/error/app-error.controller";
 import { ERROR_CODES } from "@/misc/error.constants";
 
 class BrowserManager {
@@ -49,7 +49,7 @@ class BrowserManager {
       });
     } catch (err) {
       console.log("Scrapper is easily detectable", err);
-      throw new AppError({
+      throw new AppErrorController({
         statusCode: 500,
         code: ERROR_CODES.internal_error,
         message: JSON.stringify(err),

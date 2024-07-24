@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { ERROR_CODES } from "@/misc/error.constants";
-import { AppError } from "@/utils/app-error";
+import { AppErrorController } from "@/components/error/app-error.controller";
 import { PrismaInstance } from "@/components/libs/prisma.instance";
 
 import type { OffersBaseCategories } from "shared/src/offers/offers.types";
@@ -47,7 +47,7 @@ class OffersCategoriesService implements IOffersCategoriesService {
         categories,
       };
     } catch (err) {
-      throw new AppError({
+      throw new AppErrorController({
         statusCode: 400,
         code: ERROR_CODES.invalid_type,
         message: JSON.stringify(err),

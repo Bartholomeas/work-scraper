@@ -20,18 +20,18 @@ export const generalStatisticsSchema = z.object({
 });
 
 export const dailyAllOffersCountPayloadSchema = z.object({
-  totalOffers: z.number({ message: "Total offers must be a number" }),
+  totalOffers: z.number(),
 });
 
 export const dailyCountPayloadSchema = z.object({
-  juniorOffers: z.number({ message: "Junior offers must be a number" }),
-  midOffers: z.number({ message: "Mid offers must be a number" }),
-  seniorOffers: z.number({ message: "Senior offers must be a number" }),
-  otherOffers: z.number({ message: "Other offers must be a number" }),
+  juniorOffers: z.number({ message: "juniorOffers must be a number" }),
+  midOffers: z.number({ message: "midOffers must be a number" }),
+  seniorOffers: z.number({ message: "seniorOffers must be a number" }),
+  otherOffers: z.number({ message: "otherOffers must be a number" }),
 });
 
 const dailyCategorySchema = z.object({
-  name: z.string({ message: "Name is required" }),
+  name: z.string({ message: "name is required" }),
   count: z.number().default(0),
 });
 export const dailyCategoriesPayloadSchema = z.object({

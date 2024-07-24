@@ -3,7 +3,7 @@ import { type Browser, type Page } from "puppeteer";
 import type { CurrencyCodes, JobOffer, SalaryTypes, ScrappedDataResponse, TimeUnitTypes } from "shared/src/offers/offers.types";
 
 import { generateId } from "@/utils/generate-id";
-import { AppError } from "@/utils/app-error";
+import { AppErrorController } from "@/components/error/app-error.controller";
 import { ERROR_CODES } from "@/misc/error.constants";
 
 import { ScrapperBase, type ScrapperBaseProps } from "@/components/offers/scrapper/scrapper-base";
@@ -120,7 +120,7 @@ class ScrapperPracuj extends ScrapperBase {
       return [];
     } catch (err) {
       if (retries > 0) return this.scrapePage<T>(pageNumber, retries - 1);
-      throw new AppError({
+      throw new AppErrorController({
         statusCode: 500,
         code: ERROR_CODES.internal_error,
         message: `scrapePage: ${JSON.stringify(err)}`,

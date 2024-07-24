@@ -1,6 +1,6 @@
 import type { JobOffer, OffersWorkplaceListItem } from "shared/src/offers/offers.types";
 
-import { AppError } from "@/utils/app-error";
+import { AppErrorController } from "@/components/error/app-error.controller";
 import { ERROR_CODES } from "@/misc/error.constants";
 
 import { BrowserManager } from "@/components/libs/browser-manager";
@@ -41,7 +41,7 @@ class ScrapperController implements IScrapperController {
     try {
       return await this.offersService.updateCategoriesCounts();
     } catch (err) {
-      throw new AppError({
+      throw new AppErrorController({
         statusCode: 404,
         code: ERROR_CODES.invalid_data,
         message: JSON.stringify(err),
@@ -53,7 +53,7 @@ class ScrapperController implements IScrapperController {
     try {
       return await this.offersService.updateWorkplacesCounts();
     } catch (err) {
-      throw new AppError({
+      throw new AppErrorController({
         statusCode: 404,
         code: ERROR_CODES.invalid_data,
         message: JSON.stringify(err),
@@ -106,9 +106,9 @@ class ScrapperController implements IScrapperController {
 
       return data;
     } catch (err) {
-      if (err instanceof AppError) throw err;
+      if (err instanceof AppErrorController) throw err;
       else
-        throw new AppError({
+        throw new AppErrorController({
           statusCode: 500,
           code: ERROR_CODES.internal_error,
           message: JSON.stringify(err),

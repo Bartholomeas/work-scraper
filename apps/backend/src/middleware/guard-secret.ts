@@ -1,11 +1,11 @@
 import type { NextFunction, Request, Response } from "express";
-import { AppError } from "@/utils/app-error";
+import { AppErrorController } from "@/components/error/app-error.controller";
 import { ERROR_CODES } from "@/misc/error.constants";
 
 export const guardSecret = (secret: string | undefined) => (req: Request, res: Response, next: NextFunction) => {
   if (!req.query.secret)
     next(
-      new AppError({
+      new AppErrorController({
         statusCode: 404,
         code: ERROR_CODES.invalid_data,
         message: "Secret is empty.",
@@ -17,7 +17,7 @@ export const guardSecret = (secret: string | undefined) => (req: Request, res: R
     next();
   } else
     next(
-      new AppError({
+      new AppErrorController({
         statusCode: 404,
         code: ERROR_CODES.invalid_data,
         message: "Wrong secret phrase",

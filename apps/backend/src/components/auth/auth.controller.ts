@@ -6,7 +6,7 @@ import { type AuthService } from "./auth.service";
 
 import type { DecodedJwtToken, User } from "@/types/auth.types";
 import { JWT_COOKIE_NAME, JWT_EXPIRES_IN, JWT_SECRET } from "@/misc/constants";
-import { AppError } from "@/utils/app-error";
+import { AppErrorController } from "@/components/error/app-error.controller";
 import { ERROR_CODES, ERROR_MESSAGES } from "@/misc/error.constants";
 
 class AuthController {
@@ -43,7 +43,7 @@ class AuthController {
 
     if (!token)
       next(
-        new AppError({
+        new AppErrorController({
           statusCode: 401,
           code: ERROR_CODES.not_logged_in,
           message: ERROR_MESSAGES.not_logged_in,
@@ -55,7 +55,7 @@ class AuthController {
     const currentUser = await this.authService.getUser({ id: decoded?.id });
     if (!currentUser)
       next(
-        new AppError({
+        new AppErrorController({
           statusCode: 401,
           code: ERROR_CODES.user_not_exist,
           message: ERROR_MESSAGES.user_not_exist,
@@ -73,13 +73,13 @@ class AuthController {
 
         const { password, ...currentUser } = await this.authService.getUser({ id: decoded?.id });
 
-        if (!currentUser) next(new AppError({ message: "Current user doesnt exist.", statusCode: 404 }));
+        if (!currentUser) next(new AppErrorController({ message: "Current user doesnt exist.", statusCode: 404 }));
 
         return res.status(200).json(currentUser);
       } catch (err) {
         next(err);
       }
-    } else next(new AppError({ message: "Cannot find auth session.", statusCode: 404 }));
+    } else next(new AppErrorController({ message: "Cannot find auth session.", statusCode: 404 }));
   };
 
   signUp = async (req: Request, res: Response, next: NextFunction) => {
@@ -99,12 +99,12 @@ class AuthController {
   signIn = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { email, password } = req.body;
-      if (!email || !password) next(new AppError({ message: "Provide email and password.", statusCode: 400 }));
+      if (!email || !password) next(new AppErrorController({ message: "Provide email and password.", statusCode: 400 }));
 
       const { password: userPassword, user } = await this.authService.getUser({ email });
       if (!userPassword || !(await this.comparePasswords(password, userPassword)))
         next(
-          new AppError({
+          new AppErrorController({
             statusCode: 400,
             message: "Invalid credentials",
           }),

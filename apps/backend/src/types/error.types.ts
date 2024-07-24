@@ -1,4 +1,7 @@
+import type { ZodIssueCode } from "zod";
+
 export type ErrorCodes =
+  | ZodIssueCode
   | "not_found"
   | "user_exists"
   | "internal_error"

@@ -4,7 +4,7 @@ import StealthPlugin from "puppeteer-extra-plugin-stealth";
 
 import { offersQueryParamsSchema } from "shared/src/offers/offers.schemas";
 
-import { AppError } from "@/utils/app-error";
+import { AppErrorController } from "@/components/error/app-error.controller";
 import { ERROR_CODES } from "@/misc/error.constants";
 
 import { OffersCategoriesService } from "@/components/offers/service/offers-categories.service";
@@ -32,7 +32,7 @@ class OffersController {
       res.status(200).json(data);
     } catch (err) {
       next(
-        new AppError({
+        new AppErrorController({
           statusCode: 404,
           code: ERROR_CODES.invalid_data,
           message: JSON.stringify(err),
@@ -46,7 +46,7 @@ class OffersController {
       res.status(200).json(data);
     } catch (err) {
       next(
-        new AppError({
+        new AppErrorController({
           statusCode: 404,
           code: ERROR_CODES.invalid_data,
           message: JSON.stringify(err),
@@ -66,7 +66,7 @@ class OffersController {
       });
     } catch (err) {
       next(
-        new AppError({
+        new AppErrorController({
           statusCode: 400,
           code: ERROR_CODES.invalid_type,
           message: JSON.stringify(err),
@@ -92,7 +92,7 @@ class OffersController {
       });
     } catch (err) {
       next(
-        new AppError({
+        new AppErrorController({
           statusCode: 400,
           code: ERROR_CODES.invalid_type,
           message: JSON.stringify(err),
@@ -107,7 +107,7 @@ class OffersController {
       res.status(200).json(data);
     } catch (err) {
       next(
-        new AppError({
+        new AppErrorController({
           statusCode: 400,
           code: ERROR_CODES.invalid_type,
           message: JSON.stringify(err),
@@ -138,7 +138,7 @@ class OffersController {
       res.status(200).json(placesDTO);
     } catch (err) {
       next(
-        new AppError({
+        new AppErrorController({
           statusCode: 400,
           code: ERROR_CODES.invalid_type,
           message: JSON.stringify(err),
