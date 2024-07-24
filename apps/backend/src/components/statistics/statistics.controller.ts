@@ -1,7 +1,6 @@
 import { NextFunction, type Request, type Response } from "express";
 
-import { AppError } from "@/utils/app-error";
-import { ERROR_CODES } from "@/misc/error.constants";
+import { AppErrorController } from "@/components/error/app-error.controller";
 
 import type { StatisticsService } from "@/components/statistics/statistics.service";
 import {
@@ -9,6 +8,7 @@ import {
   dailyCategoriesPayloadSchema,
   dailyCountPayloadSchema,
 } from "shared/src/statistics/statistics.schemas";
+import { ErrorHandlerController } from "@/components/error/error-handler.controller";
 
 interface IStatisticsController {
   getGeneralStatistics(req: Request, res: Response, next: NextFunction): void;
@@ -29,13 +29,7 @@ class StatisticsController implements IStatisticsController {
       const data = await this.statisticsService.addAllOffersCountStatistics(payload);
       res.status(201).json(data);
     } catch (err) {
-      next(
-        new AppError({
-          statusCode: 500,
-          code: ERROR_CODES.internal_error,
-          message: JSON.stringify(err),
-        }),
-      );
+      next(ErrorHandlerController.handleError(err));
     }
   };
 
@@ -45,13 +39,7 @@ class StatisticsController implements IStatisticsController {
       const data = await this.statisticsService.addDailyOffersCountStatistics(payload);
       res.status(201).json(data);
     } catch (err) {
-      next(
-        new AppError({
-          statusCode: 500,
-          code: ERROR_CODES.internal_error,
-          message: JSON.stringify(err),
-        }),
-      );
+      next(ErrorHandlerController.handleError(err));
     }
   };
   public postDailyCategoriesStatistics = async (req: Request, res: Response, next: NextFunction) => {
@@ -60,13 +48,7 @@ class StatisticsController implements IStatisticsController {
       const data = await this.statisticsService.addDailyCategoriesStatistics(payload);
       res.status(201).json(data);
     } catch (err) {
-      next(
-        new AppError({
-          statusCode: 500,
-          code: ERROR_CODES.internal_error,
-          message: JSON.stringify(err),
-        }),
-      );
+      next(ErrorHandlerController.handleError(err));
     }
   };
 
@@ -75,13 +57,7 @@ class StatisticsController implements IStatisticsController {
       const data = await this.statisticsService.retrieveAllDailyOffersCountStatistics();
       res.status(200).json(data);
     } catch (err) {
-      next(
-        new AppError({
-          statusCode: 500,
-          code: ERROR_CODES.internal_error,
-          message: JSON.stringify(err),
-        }),
-      );
+      next(ErrorHandlerController.handleError(err));
     }
   };
 
@@ -90,28 +66,16 @@ class StatisticsController implements IStatisticsController {
       const data = await this.statisticsService.retrieveDailyCategoryStatistics();
       res.status(200).json(data);
     } catch (err) {
-      next(
-        new AppError({
-          statusCode: 500,
-          code: ERROR_CODES.internal_error,
-          message: JSON.stringify(err),
-        }),
-      );
+      next(ErrorHandlerController.handleError(err));
     }
   };
 
-  public getDailyCountStatistics = async (req: Request, res: Response, next: NextFunction) => {
+  public getDailyPositionsCountStatistics = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const data = await this.statisticsService.retrieveDailyCountStatistics();
+      const data = await this.statisticsService.retrieveDailyPositionsCountStatistics();
       res.status(200).json(data);
     } catch (err) {
-      next(
-        new AppError({
-          statusCode: 500,
-          code: ERROR_CODES.internal_error,
-          message: JSON.stringify(err),
-        }),
-      );
+      next(ErrorHandlerController.handleError(err));
     }
   };
 
@@ -120,13 +84,7 @@ class StatisticsController implements IStatisticsController {
       const data = await this.statisticsService.getGeneralStatistics();
       res.status(200).json(data);
     } catch (err) {
-      next(
-        new AppError({
-          statusCode: 500,
-          code: ERROR_CODES.internal_error,
-          message: JSON.stringify(err),
-        }),
-      );
+      next(ErrorHandlerController.handleError(err));
     }
   };
 
@@ -135,14 +93,7 @@ class StatisticsController implements IStatisticsController {
       const data = await this.statisticsService.generateGeneralStatistics();
       res.status(201).json(data);
     } catch (err) {
-      if (err instanceof AppError) next(err);
-      next(
-        new AppError({
-          statusCode: 500,
-          code: ERROR_CODES.internal_error,
-          message: JSON.stringify(err),
-        }),
-      );
+      next(ErrorHandlerController.handleError(err));
     }
   };
 }

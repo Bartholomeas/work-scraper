@@ -13,7 +13,7 @@ export interface AppErrorProps {
   message: string;
 }
 
-class AppError extends Error {
+class AppErrorController extends Error {
   public statusCode: number;
   public isOperational: boolean;
   public code: ErrorCodes;
@@ -33,4 +33,4 @@ class AppError extends Error {
   }
 }
 
-export { AppError };
+export { AppErrorController };

@@ -2,7 +2,7 @@ import path from "node:path";
 import { type Browser, type Page } from "puppeteer";
 import dayjs from "dayjs";
 
-import { AppError } from "@/utils/app-error";
+import { AppErrorController } from "@/components/error/app-error.controller";
 import { ERROR_CODES } from "@/misc/error.constants";
 
 import { MINUTES_TO_OUTDATE } from "@/components/offers/helpers/offers.constants";
@@ -77,7 +77,7 @@ abstract class ScrapperBase {
       });
       return this.standardizeData(aggregatedData);
     } catch (err) {
-      throw new AppError({
+      throw new AppErrorController({
         statusCode: 400,
         code: ERROR_CODES.invalid_data,
         message: `SaveScrappedData: ${JSON.stringify(err)}`,

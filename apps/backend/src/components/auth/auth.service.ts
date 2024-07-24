@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import type { SignUpPayload } from "@/schemas/auth.schemas";
-import { AppError } from "@/utils/app-error";
+import { AppErrorController } from "@/components/error/app-error.controller";
 import { ERROR_CODES, ERROR_MESSAGES } from "@/misc/error.constants";
 import { PrismaInstance } from "@/components/libs/prisma.instance";
 
@@ -23,7 +23,7 @@ class AuthService {
       },
     });
     if (existingUser)
-      throw new AppError({
+      throw new AppErrorController({
         message: ERROR_MESSAGES.user_exists,
         code: ERROR_CODES.user_exists,
         statusCode: 400,

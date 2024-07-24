@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import type { AppErrorInterface } from "@/utils/app-error";
+import type { AppErrorInterface } from "@/components/error/app-error.controller";
 
 export class ErrorController {
   constructor(err: AppErrorInterface, req: Request, res: Response) {
@@ -13,7 +13,6 @@ export class ErrorController {
 
   sendErrorDev(err: AppErrorInterface, req: Request, res: Response) {
     return res.status(err.statusCode).json({
-      // status: err.statusCode,
       error: err,
       message: err.message,
       stack: err.stack,

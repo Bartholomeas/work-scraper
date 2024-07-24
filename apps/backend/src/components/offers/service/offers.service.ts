@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 
 import type { JobOffer, JobOffersResponse, OffersQueryParams, OffersWorkplaceListItem } from "shared/src/offers/offers.types";
 
-import { AppError } from "@/utils/app-error";
+import { AppErrorController } from "@/components/error/app-error.controller";
 
 import { OFFERS_METADATA_ID } from "@/misc/constants";
 import { ERROR_CODES } from "@/misc/error.constants";
@@ -96,7 +96,7 @@ class OffersService implements IOffersService {
 
       return this.prisma.$transaction(transaction);
     } catch (err) {
-      throw new AppError({
+      throw new AppErrorController({
         statusCode: 500,
         code: ERROR_CODES.internal_error,
         message: JSON.stringify(err),
@@ -130,7 +130,7 @@ class OffersService implements IOffersService {
     try {
       return await this.prisma.offersMetadata.findUnique({ where: { id: OFFERS_METADATA_ID } });
     } catch (err) {
-      throw new AppError({
+      throw new AppErrorController({
         statusCode: 400,
         code: ERROR_CODES.invalid_type,
         message: JSON.stringify(err),
@@ -142,7 +142,7 @@ class OffersService implements IOffersService {
    * Fetches job offers based on specified query parameters.
    * @param {OffersQueryParams | undefined} params - Query parameters for job offer search.
    * @returns {Promise<JobOffersResponse>} A promise that resolves to job offers with pagination metadata.
-   * @throws {AppError} Throws an error if the operation fails.
+   * @throws {AppErrorController} Throws an error if the operation fails.
    */
   public async getJobOffers(params: OffersQueryParams | undefined) {
     const defaultParams: { perPage: OffersQueryParams["perPage"]; page: OffersQueryParams["page"] } = {
@@ -227,7 +227,7 @@ class OffersService implements IOffersService {
         data: OfferHelper.parsePrismaToJobOffer(data as never[]),
       } satisfies JobOffersResponse;
     } catch (err) {
-      throw new AppError({
+      throw new AppErrorController({
         statusCode: 400,
         code: ERROR_CODES.internal_error,
         message: JSON.stringify(err),
@@ -260,7 +260,7 @@ class OffersService implements IOffersService {
       await this.setOffersMetadata({ total: totalCount ?? 0 });
       return;
     } catch (err) {
-      throw new AppError({
+      throw new AppErrorController({
         statusCode: 400,
         code: ERROR_CODES.internal_error,
         message: JSON.stringify(err),
@@ -280,7 +280,7 @@ class OffersService implements IOffersService {
         },
       });
     } catch (err) {
-      throw new AppError({
+      throw new AppErrorController({
         statusCode: 400,
         code: ERROR_CODES.invalid_data,
         message: JSON.stringify(err),
@@ -301,7 +301,7 @@ class OffersService implements IOffersService {
       if (!metadata) return true;
       return dayjs().diff(dayjs(metadata?.updatedAt), "hours") > hoursAmount;
     } catch (err) {
-      throw new AppError({
+      throw new AppErrorController({
         statusCode: 400,
         code: ERROR_CODES.invalid_data,
         message: JSON.stringify(err),
@@ -323,7 +323,7 @@ class OffersService implements IOffersService {
       console.log(`Deleted ${res.count} outdated records`);
       return res.count;
     } catch (err) {
-      throw new AppError({
+      throw new AppErrorController({
         statusCode: 400,
         code: ERROR_CODES.invalid_type,
         message: JSON.stringify(err),
