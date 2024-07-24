@@ -1,6 +1,10 @@
 <script setup lang="ts">
-import Header from "@/components/layout/header/Header.vue";
+import { useTitle } from "@vueuse/core";
 import { HEADER_HEIGHT } from "@/constants";
+import Header from "@/components/layout/header/Header.vue";
+
+const title = useTitle();
+title.value = "Oferty z IT | Scrappie";
 </script>
 
 <template>

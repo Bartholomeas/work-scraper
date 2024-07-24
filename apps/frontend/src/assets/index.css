@@ -4,6 +4,7 @@
 
 @layer base {
     :root {
+        /*Base variables*/
         --background: #ffffff;
         --background-lighter: #efefef;
         --foreground: 222.2 84% 4.9%;
@@ -39,9 +40,24 @@
         --ring: 222.2 84% 4.9%;
 
         --radius: 0.5rem;
+
+        /*Charts variables*/
+        --vis-tooltip-background-color: none !important;
+        --vis-tooltip-border-color: none !important;
+        --vis-tooltip-text-color: none !important;
+        --vis-tooltip-shadow-color: none !important;
+        --vis-tooltip-backdrop-filter: none !important;
+        --vis-tooltip-padding: none !important;
+
+        --vis-primary-color: var(--primary);
+        /* change to any hsl value you want */
+        --vis-secondary-color: 160 81% 40%;
+        --vis-text-color: var(--muted-foreground);
+
     }
 
     .dark {
+        /*Base variables*/
         --background: #010612;
         --background-lighter: #0e1426;
         --foreground: 210 40% 98%;
@@ -75,10 +91,78 @@
         --error: #f32;
 
         --ring: 212.7 26.8% 83.9%;
+
+        /*Charts variables*/
+        --vis-tooltip-background-color: none !important;
+        --vis-tooltip-border-color: none !important;
+        --vis-tooltip-text-color: none !important;
+        --vis-tooltip-shadow-color: none !important;
+        --vis-tooltip-backdrop-filter: none !important;
+        --vis-tooltip-padding: none !important;
+
+        --vis-primary-color: var(--primary);
+        /* change to any hsl value you want */
+        --vis-secondary-color: 160 81% 40%;
+        --vis-text-color: var(--muted-foreground);
     }
 }
 
 @layer base {
+
+
+    /* Heading classes */
+    .h1 {
+        @apply text-[34px] leading-[39px] tracking-[2%] lg:text-[40px] lg:leading-[48px];
+    }
+
+    .h2 {
+        @apply text-[32px] leading-[40px] tracking-[2%] lg:text-[36px] lg:leading-[44px];
+    }
+
+    .h3 {
+        @apply text-[28px] leading-[36px] tracking-[2%]
+        lg:text-[32px] lg:leading-[40px];
+    }
+
+    .h4 {
+        @apply text-[24px] leading-[32px]
+        lg:text-[28px] lg:leading-[36px];
+    }
+
+    .h5 {
+        @apply text-[20px] leading-[28px]
+        lg:text-[24px] lg:leading-[32px];
+    }
+
+    .h6 {
+        @apply text-[18px] leading-[24px]
+        lg:text-[20px] lg:leading-[28px];
+    }
+
+    h1 {
+        @apply h1;
+    }
+
+    h2 {
+        @apply h2;
+    }
+
+    h3 {
+        @apply h3;
+    }
+
+    h4 {
+        @apply h4;
+    }
+
+    h5 {
+        @apply h5;
+    }
+
+    h6 {
+        @apply h6;
+    }
+
     p,
     span,
     button,

@@ -4,7 +4,7 @@ import { coreSearchParamsSchema } from "shared/src/offers/offers.schemas";
 import { HEADER_HEIGHT } from "@/constants";
 
 import FiltersWrapper from "@/components/special/FiltersWrapper.vue";
-import OffersFiltersTopBar from "@/components/offers/filters/top-bar/OffersFiltersTopBar.vue";
+import OffersFiltersTopBar from "@/components/views/offers/filters/top-bar/OffersFiltersTopBar.vue";
 </script>
 
 <template>

@@ -4,13 +4,14 @@ import { useRoute } from "vue-router";
 
 import { useGetOffersList } from "@/api/offers/getOffers";
 
-import OffersFiltersTopBar from "@/components/offers/filters/top-bar/OffersFiltersTopWrapper.vue";
-import OffersListLayout from "@/components/offers/OffersListLayout.vue";
-import OffersItemsList from "@/components/offers/list/OffersItemsList.vue";
+import Title from "@/components/common/title/Title.vue";
+import OffersFiltersTopBar from "@/components/views/offers/filters/top-bar/OffersFiltersTopWrapper.vue";
+import OffersListLayout from "@/components/views/offers/OffersListLayout.vue";
+import OffersItemsList from "@/components/views/offers/list/OffersItemsList.vue";
 
-const OffersStatCards = defineAsyncComponent(() => import("@/components/offers/list/OffersStatCards.vue"));
-const OffersSideFilters = defineAsyncComponent(() => import("@/components/offers/filters/side-bar/OffersSideFilters.vue"));
-const OffersPagination = defineAsyncComponent(() => import("@/components/offers/filters/OffersPagination.vue"));
+const OffersStatCards = defineAsyncComponent(() => import("@/components/views/offers/list/OffersStatCards.vue"));
+const OffersSideFilters = defineAsyncComponent(() => import("@/components/views/offers/filters/side-bar/OffersSideFilters.vue"));
+const OffersPagination = defineAsyncComponent(() => import("@/components/views/offers/filters/OffersPagination.vue"));
 
 const route = useRoute();
 const params = computed(() => route.query);
@@ -20,7 +21,7 @@ const { data, isLoading } = useGetOffersList(params);
 
 <template>
   <div class="bg-accent-card flex w-full flex-col gap-6">
-    <h1 class="text-[36px] font-bold">Oferty pracy</h1>
+    <Title order="h1" size="h1" class="font-bold">Oferty pracy</Title>
     <OffersStatCards />
     <OffersListLayout>
       <template #top-bar>

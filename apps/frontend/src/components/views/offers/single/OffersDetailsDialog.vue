@@ -17,8 +17,8 @@ import {
 } from "@/components/ui/dialog";
 import type { JobOffer } from "shared/src/offers/offers.types";
 import { Separator } from "@/components/ui/separator";
-import OfferBadges from "@/components/offers/single/OfferBadges.vue";
-import OffersIconValueBox from "@/components/offers/single/OffersIconValueBox.vue";
+import OfferBadges from "@/components/views/offers/single/OfferBadges.vue";
+import OffersIconValueBox from "@/components/views/offers/single/OffersIconValueBox.vue";
 
 import { ArrowRight, Building2, Calendar, MapPin } from "lucide-vue-next";
 

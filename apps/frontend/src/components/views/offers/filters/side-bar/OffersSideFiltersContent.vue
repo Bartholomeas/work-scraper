@@ -10,11 +10,13 @@ import { parseZodSchemaToInputNames } from "@/lib/zod/parseZodSchemaToInputNames
 import { isKeyOf } from "@/utils/isKeyOf";
 import { getCategoryName } from "@/utils/getCategoryName";
 
-import OffersSidebarButtons from "@/components/offers/filters/side-bar/OffersSidebarButtons.vue";
+import OffersSidebarButtons from "@/components/views/offers/filters/side-bar/OffersSidebarButtons.vue";
 import CheckboxControlled from "@/components/common/form/inputs-controlled/CheckboxControlled.vue";
 import FiltersWrapper from "@/components/special/FiltersWrapper.vue";
 
-const OffersSideWorkplaceSelect = defineAsyncComponent(() => import("@/components/offers/filters/side-bar/OffersSideWorkplaceSelect.vue"));
+const OffersSideWorkplaceSelect = defineAsyncComponent(
+  () => import("@/components/views/offers/filters/side-bar/OffersSideWorkplaceSelect.vue"),
+);
 
 const { data: categories } = useGetOffersBaseCategories();
 const inputNames = parseZodSchemaToInputNames(baseCategoriesSchema);

@@ -19,7 +19,7 @@ const props = withDefaults(defineProps<TitleProps>(), {
 const variantProps = computed(() => {
   const { className, order, ...rest } = props;
 
-  return rest;
+  return { ...rest, size: rest.size ?? props.order };
 });
 </script>
 
