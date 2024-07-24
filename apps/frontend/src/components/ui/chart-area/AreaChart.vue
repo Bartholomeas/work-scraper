@@ -1,67 +1,73 @@
 <script setup lang="ts" generic="T extends Record<string, any>">
-import { type BulletLegendItemInterface, CurveType } from '@unovis/ts'
-import { VisArea, VisAxis, VisLine, VisXYContainer } from '@unovis/vue'
-import { Area, Axis, Line } from '@unovis/ts'
-import { type Component, computed, ref } from 'vue'
-import { useMounted } from '@vueuse/core'
-import { useId } from 'radix-vue'
-import type { BaseChartProps } from '.'
-import { ChartCrosshair, ChartLegend, defaultColors } from '@/components/ui/chart'
-import { cn } from '@/utils/utils'
+import { Area, Axis, type BulletLegendItemInterface, CurveType, Line } from "@unovis/ts";
+import { VisArea, VisAxis, VisLine, VisXYContainer } from "@unovis/vue";
+import { type Component, computed, ref } from "vue";
+import { useMounted } from "@vueuse/core";
+import { useId } from "radix-vue";
+import type { BaseChartProps } from ".";
+import { ChartCrosshair, ChartLegend, defaultColors } from "@/components/ui/chart";
+import { cn } from "@/utils/utils";
 
-const props = withDefaults(defineProps<BaseChartProps<T> & {
-  /**
-   * Render custom tooltip component.
-   */
-  customTooltip?: Component
-  /**
-   * Type of curve
-   */
-  curveType?: CurveType
-  /**
-   * Controls the visibility of gradient.
-   * @default true
-   */
-  showGradiant?: boolean
-}>(), {
-  curveType: CurveType.MonotoneX,
-  filterOpacity: 0.2,
-  margin: () => ({ top: 0, bottom: 0, left: 0, right: 0 }),
-  showXAxis: true,
-  showYAxis: true,
-  showTooltip: true,
-  showLegend: true,
-  showGridLine: true,
-  showGradiant: true,
-})
+const props = withDefaults(
+  defineProps<
+    BaseChartProps<T> & {
+      /**
+       * Render custom tooltip component.
+       */
+      customTooltip?: Component;
+      /**
+       * Type of curve
+       */
+      curveType?: CurveType;
+      /**
+       * Controls the visibility of gradient.
+       * @default true
+       */
+      showGradiant?: boolean;
+    }
+  >(),
+  {
+    curveType: CurveType.MonotoneX,
+    filterOpacity: 0.2,
+    margin: () => ({ top: 0, bottom: 0, left: 0, right: 0 }),
+    showXAxis: true,
+    showYAxis: true,
+    showTooltip: true,
+    showLegend: true,
+    showGridLine: true,
+    showGradiant: true,
+  },
+);
 
 const emits = defineEmits<{
-  legendItemClick: [d: BulletLegendItemInterface, i: number]
-}>()
+  legendItemClick: [d: BulletLegendItemInterface, i: number];
+}>();
 
-type KeyOfT = Extract<keyof T, string>
-type Data = typeof props.data[number]
+type KeyOfT = Extract<keyof T, string>;
+type Data = (typeof props.data)[number];
 
-const chartRef = useId()
+const chartRef = useId();
 
-const index = computed(() => props.index as KeyOfT)
-const colors = computed(() => props.colors?.length ? props.colors : defaultColors(props.categories.length))
+const index = computed(() => props.index as KeyOfT);
+const colors = computed(() => (props.colors?.length ? props.colors : defaultColors(props.categories.length)));
 
-const legendItems = ref<BulletLegendItemInterface[]>(props.categories.map((category, i) => ({
-  name: category,
-  color: colors.value[i],
-  inactive: false,
-})))
+const legendItems = ref<BulletLegendItemInterface[]>(
+  props.categories.map((category, i) => ({
+    name: category,
+    color: colors.value[i],
+    inactive: false,
+  })),
+);
 
-const isMounted = useMounted()
+const isMounted = useMounted();
 
 function handleLegendItemClick(d: BulletLegendItemInterface, i: number) {
-  emits('legendItemClick', d, i)
+  emits("legendItemClick", d, i);
 }
 </script>
 
 <template>
-  <div :class="cn('w-full h-[400px] flex flex-col items-end', $attrs.class ?? '')">
+  <div :class="cn('flex h-[400px] w-full flex-col items-end', $attrs.class ?? '')">
     <ChartLegend v-if="showLegend" v-model:items="legendItems" @legend-item-click="handleLegendItemClick" />
 
     <VisXYContainer :style="{ height: isMounted ? '100%' : 'auto' }" :margin="{ left: 20, right: 20 }" :data="data">

@@ -184,3 +184,11 @@
         @apply bg-background text-foreground;
     }
 }
+
+@layer components {
+    .charts {
+        h1, h2, h3 {
+            @apply text-lg
+        }
+    }
+}
