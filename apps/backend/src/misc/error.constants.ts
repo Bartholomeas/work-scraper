@@ -1,5 +1,5 @@
 import type { ErrorCodes } from "@/types/error.types";
-import { ZodIssueCode } from "zod/lib/ZodError";
+import { z } from "zod";
 
 export const ERROR_CODES: Record<ErrorCodes, ErrorCodes> = {
   not_found: "not_found",
@@ -8,7 +8,7 @@ export const ERROR_CODES: Record<ErrorCodes, ErrorCodes> = {
   invalid_data: "invalid_data",
   user_not_exist: "user_not_exist",
   not_logged_in: "not_logged_in",
-  ...ZodIssueCode,
+  ...z.ZodIssueCode,
 };
 
 export const ERROR_MESSAGES: Record<ErrorCodes, string> = {
