@@ -4,12 +4,12 @@ import StealthPlugin from "puppeteer-extra-plugin-stealth";
 
 import { offersQueryParamsSchema } from "shared/src/offers/offers.schemas";
 
+import { ErrorHandlerController } from "@/components/error/error-handler.controller";
 import { OffersCategoriesService } from "@/components/offers/service/offers-categories.service";
 import { ScrapperController } from "@/components/offers/scrapper/scrapper.controller";
 import { StatisticsService } from "@/components/statistics/statistics.service";
 
 import type { OffersService } from "@/components/offers/service/offers.service";
-import { ErrorHandlerController } from "@/components/error/error-handler.controller";
 
 puppeteer.use(StealthPlugin());
 
