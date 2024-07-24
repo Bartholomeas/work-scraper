@@ -9,7 +9,7 @@ import { ERROR_CODES } from "@/misc/error.constants";
 
 import { OffersCategoriesService } from "@/components/offers/service/offers-categories.service";
 import { ScrapperController } from "@/components/offers/scrapper/scrapper.controller";
-import { statisticsModule } from "@/components/statistics/statistics.module";
+import { StatisticsService } from "@/components/statistics/statistics.service";
 
 import type { OffersService } from "@/components/offers/service/offers.service";
 
@@ -58,7 +58,6 @@ class OffersController {
   public deleteOutdatedOffers = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const deletedCount = await this.offersService.deleteOutdatedRecords();
-      // console.log("Deleted count xdd: ", deletedCount);
 
       res.status(200).json({
         createdAt: new Date(Date.now()),
@@ -82,8 +81,10 @@ class OffersController {
       // Update workplaces counts
       await this.offersService.updateWorkplacesCounts();
       await this.offersService.updateCategoriesCounts();
+
       // Generate general stats from stats controller // Not 100% sure its best way to invoke another controller here because of SOLID principles
-      await statisticsModule.controller.generateGeneralStatistics(req, res, next);
+      const statsService = new StatisticsService();
+      await statsService.generateGeneralStatistics();
 
       res.status(200).json({
         createdAt: new Date(Date.now()),

@@ -1,6 +1,7 @@
 import express, { type Router } from "express";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
+
 import { guardSecret } from "@/middleware/guard-secret";
 import { SECRET_PHRASE } from "@/misc/constants";
 import { OffersController } from "./offers.controller";

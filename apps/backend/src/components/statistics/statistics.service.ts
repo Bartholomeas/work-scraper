@@ -1,8 +1,14 @@
 import { PrismaClient } from "@prisma/client";
+import type { DailyAllOffersCountPayload, DailyCategoriesPayload, DailyCountPayload } from "shared/src/statistics/statistics.types";
+
 import { PrismaInstance } from "@/components/libs/prisma.instance";
 
 interface IStatisticsService {
-  // getGeneralStatistics(): Promise<GeneralStatisticsResponse | undefined>;
+  addAllOffersCountStatistics(payload: DailyAllOffersCountPayload): Promise<unknown>;
+
+  addDailyOffersCountStatistics(payload: DailyCountPayload): Promise<unknown>;
+
+  addDailyCategoriesStatistics(payload: DailyCategoriesPayload): Promise<unknown>;
 
   generateGeneralStatistics(): Promise<unknown>;
 }
@@ -12,6 +18,77 @@ class StatisticsService implements IStatisticsService {
 
   constructor() {
     this.prisma = PrismaInstance.getInstance();
+  }
+
+  public async addAllOffersCountStatistics(payload: DailyAllOffersCountPayload) {
+    return this.prisma.allOffersCountStatistics.create({
+      data: payload,
+    });
+  }
+
+  public async addDailyOffersCountStatistics(payload: DailyCountPayload) {
+    return this.prisma.offersCountStatistics.create({
+      data: payload,
+    });
+  }
+
+  public async addDailyCategoriesStatistics(payload: DailyCategoriesPayload) {
+    return this.prisma.categoriesStatistics.create({
+      select: {
+        id: true,
+        createdAt: true,
+        categories: {
+          select: {
+            id: true,
+            name: true,
+            count: true,
+          },
+        },
+      },
+      data: {
+        categories: {
+          create: payload?.categories?.map(category => ({
+            count: category.count,
+            name: category.name,
+          })),
+        },
+      },
+    });
+  }
+
+  public async retrieveAllDailyOffersCountStatistics() {
+    return this.prisma.allOffersCountStatistics.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  }
+
+  public async retrieveDailyCountStatistics() {
+    return this.prisma.offersCountStatistics.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  }
+
+  public async retrieveDailyCategoryStatistics() {
+    return this.prisma.categoriesStatistics.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+      select: {
+        id: true,
+        createdAt: true,
+        categories: {
+          select: {
+            id: true,
+            name: true,
+            count: true,
+          },
+        },
+      },
+    });
   }
 
   public async getGeneralStatistics() {
