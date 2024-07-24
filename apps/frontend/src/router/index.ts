@@ -12,6 +12,11 @@ const routes = [
     name: "Stats",
     component: () => import("@/views/Statistics.vue"),
   },
+  {
+    path: routeUrls.policy,
+    name: "Policy",
+    component: () => import("@/views/Statistics.vue"),
+  },
 ];
 
 export const router = createRouter({

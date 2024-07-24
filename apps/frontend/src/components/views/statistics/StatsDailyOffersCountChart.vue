@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { AreaChart } from "@/components/ui/chart-area";
+import { useGetAllDailyOffersCount } from "@/api/statistics/getAllDailyOffersCount";
+import { watch } from "vue";
 
 const countLabel = "Liczba ofert w danym momencie";
 
@@ -40,6 +42,11 @@ const data = [
     predicted: 500,
   },
 ];
+const { data: stats } = useGetAllDailyOffersCount();
+
+watch(stats, newVal => {
+  console.log("XD", newVal?.[0]);
+});
 </script>
 
 <template>

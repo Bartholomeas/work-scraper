@@ -22,13 +22,31 @@ export const generalStatisticsSchema = z.object({
 export const dailyAllOffersCountPayloadSchema = z.object({
   totalOffers: z.number(),
 });
-
-export const dailyCountPayloadSchema = z.object({
+export const dailyAllOffersCountResponseSchema = z.array(
+  z.intersection(
+    z.object({
+      id: z.string(),
+      createdAt: z.string().datetime(),
+    }),
+    dailyAllOffersCountPayloadSchema,
+  ),
+);
+export const dailyPositionsCountPayloadSchema = z.object({
   juniorOffers: z.number({ message: "juniorOffers must be a number" }),
   midOffers: z.number({ message: "midOffers must be a number" }),
   seniorOffers: z.number({ message: "seniorOffers must be a number" }),
   otherOffers: z.number({ message: "otherOffers must be a number" }),
 });
+
+export const dailyPositionsCountResponseSchema = z.array(
+  z.intersection(
+    z.object({
+      id: z.string(),
+      createdAt: z.string().datetime(),
+    }),
+    dailyPositionsCountPayloadSchema,
+  ),
+);
 
 const dailyCategorySchema = z.object({
   name: z.string({ message: "name is required" }),

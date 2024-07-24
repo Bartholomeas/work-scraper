@@ -14,4 +14,8 @@ export const HEADER_LINKS: HeaderLinks[] = [
     label: "Statystyki",
     to: routeUrls.statistics,
   },
+  {
+    label: "Polityka strony",
+    to: routeUrls.policy,
+  },
 ];

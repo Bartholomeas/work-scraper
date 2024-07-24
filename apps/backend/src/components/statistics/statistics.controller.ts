@@ -6,7 +6,7 @@ import type { StatisticsService } from "@/components/statistics/statistics.servi
 import {
   dailyAllOffersCountPayloadSchema,
   dailyCategoriesPayloadSchema,
-  dailyCountPayloadSchema,
+  dailyPositionsCountPayloadSchema,
 } from "shared/src/statistics/statistics.schemas";
 import { ErrorHandlerController } from "@/components/error/error-handler.controller";
 
@@ -35,7 +35,7 @@ class StatisticsController implements IStatisticsController {
 
   public postDailyOffersCountStatistics = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const payload = dailyCountPayloadSchema.parse(req.body);
+      const payload = dailyPositionsCountPayloadSchema.parse(req.body);
       const data = await this.statisticsService.addDailyOffersCountStatistics(payload);
       res.status(201).json(data);
     } catch (err) {

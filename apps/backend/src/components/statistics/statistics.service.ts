@@ -1,14 +1,18 @@
 import { Prisma, PrismaClient } from "@prisma/client";
-import type { DailyAllOffersCountPayload, DailyCategoriesPayload, DailyCountPayload } from "shared/src/statistics/statistics.types";
+import type {
+  DailyAllOffersCountPayload,
+  DailyCategoriesCountPayload,
+  DailyPositionsCountPayload,
+} from "shared/src/statistics/statistics.types";
 
 import { PrismaInstance } from "@/components/libs/prisma.instance";
 
 interface IStatisticsService {
   addAllOffersCountStatistics(payload: DailyAllOffersCountPayload): Promise<unknown>;
 
-  addDailyOffersCountStatistics(payload: DailyCountPayload): Promise<unknown>;
+  addDailyOffersCountStatistics(payload: DailyPositionsCountPayload): Promise<unknown>;
 
-  addDailyCategoriesStatistics(payload: DailyCategoriesPayload): Promise<unknown>;
+  addDailyCategoriesStatistics(payload: DailyCategoriesCountPayload): Promise<unknown>;
 
   generateGeneralStatistics(): Promise<unknown>;
 }
@@ -26,13 +30,13 @@ class StatisticsService implements IStatisticsService {
     });
   }
 
-  public async addDailyOffersCountStatistics(payload: DailyCountPayload) {
+  public async addDailyOffersCountStatistics(payload: DailyPositionsCountPayload) {
     return this.prisma.offersCountStatistics.create({
       data: payload,
     });
   }
 
-  public async addDailyCategoriesStatistics(payload: DailyCategoriesPayload) {
+  public async addDailyCategoriesStatistics(payload: DailyCategoriesCountPayload) {
     return this.prisma.categoriesStatistics.create({
       select: {
         id: true,
