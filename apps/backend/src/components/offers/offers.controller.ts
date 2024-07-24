@@ -4,14 +4,12 @@ import StealthPlugin from "puppeteer-extra-plugin-stealth";
 
 import { offersQueryParamsSchema } from "shared/src/offers/offers.schemas";
 
-import { AppErrorController } from "@/components/error/app-error.controller";
-import { ERROR_CODES } from "@/misc/error.constants";
-
 import { OffersCategoriesService } from "@/components/offers/service/offers-categories.service";
 import { ScrapperController } from "@/components/offers/scrapper/scrapper.controller";
 import { StatisticsService } from "@/components/statistics/statistics.service";
 
 import type { OffersService } from "@/components/offers/service/offers.service";
+import { ErrorHandlerController } from "@/components/error/error-handler.controller";
 
 puppeteer.use(StealthPlugin());
 
@@ -31,13 +29,7 @@ class OffersController {
       const data = await this.offersService.updateCategoriesCounts();
       res.status(200).json(data);
     } catch (err) {
-      next(
-        new AppErrorController({
-          statusCode: 404,
-          code: ERROR_CODES.invalid_data,
-          message: JSON.stringify(err),
-        }),
-      );
+      next(ErrorHandlerController.handleError(err));
     }
   };
   public updateWorkplacesCounts = async (req: Request, res: Response, next: NextFunction) => {
@@ -45,13 +37,7 @@ class OffersController {
       const data = await this.offersService.updateWorkplacesCounts();
       res.status(200).json(data);
     } catch (err) {
-      next(
-        new AppErrorController({
-          statusCode: 404,
-          code: ERROR_CODES.invalid_data,
-          message: JSON.stringify(err),
-        }),
-      );
+      next(ErrorHandlerController.handleError(err));
     }
   };
 
@@ -65,13 +51,7 @@ class OffersController {
         // data2: deletedCount.length,
       });
     } catch (err) {
-      next(
-        new AppErrorController({
-          statusCode: 400,
-          code: ERROR_CODES.invalid_type,
-          message: JSON.stringify(err),
-        }),
-      );
+      next(ErrorHandlerController.handleError(err));
     }
   };
 
@@ -91,13 +71,7 @@ class OffersController {
         data,
       });
     } catch (err) {
-      next(
-        new AppErrorController({
-          statusCode: 400,
-          code: ERROR_CODES.invalid_type,
-          message: JSON.stringify(err),
-        }),
-      );
+      next(ErrorHandlerController.handleError(err));
     }
   };
 
@@ -106,13 +80,7 @@ class OffersController {
       const data = await this.offersService.getOffersMetadata();
       res.status(200).json(data);
     } catch (err) {
-      next(
-        new AppErrorController({
-          statusCode: 400,
-          code: ERROR_CODES.invalid_type,
-          message: JSON.stringify(err),
-        }),
-      );
+      next(ErrorHandlerController.handleError(err));
     }
   };
 
@@ -127,7 +95,7 @@ class OffersController {
         data,
       });
     } catch (err) {
-      next(err);
+      next(ErrorHandlerController.handleError(err));
     }
   };
 
@@ -137,13 +105,7 @@ class OffersController {
 
       res.status(200).json(placesDTO);
     } catch (err) {
-      next(
-        new AppErrorController({
-          statusCode: 400,
-          code: ERROR_CODES.invalid_type,
-          message: JSON.stringify(err),
-        }),
-      );
+      next(ErrorHandlerController.handleError(err));
     }
   };
 
@@ -152,7 +114,7 @@ class OffersController {
       const data = await this.offersCategoriesService.getBaseCategories();
       res.status(200).json(data);
     } catch (err) {
-      next(err);
+      next(ErrorHandlerController.handleError(err));
     }
   };
 }

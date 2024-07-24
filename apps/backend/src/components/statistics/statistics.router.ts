@@ -19,7 +19,7 @@ class StatisticsRouter {
     // Daily
     // GET
     router.get("/daily/all-offers-count", this.statisticsController.getAllDailyOffersCountStatistics);
-    router.get("/daily/position-offers", this.statisticsController.getDailyCountStatistics);
+    router.get("/daily/position-offers", this.statisticsController.getDailyPositionsCountStatistics);
     router.get("/daily/categories", this.statisticsController.getDailyCategoryStatistics);
     // POST
     router.post("/daily/all-offers-count", guardSecret(SECRET_PHRASE), this.statisticsController.postAllOffersCountStatistics);

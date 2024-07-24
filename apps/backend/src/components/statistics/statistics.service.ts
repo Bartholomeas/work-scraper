@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 import type { DailyAllOffersCountPayload, DailyCategoriesPayload, DailyCountPayload } from "shared/src/statistics/statistics.types";
 
 import { PrismaInstance } from "@/components/libs/prisma.instance";
@@ -64,7 +64,7 @@ class StatisticsService implements IStatisticsService {
     });
   }
 
-  public async retrieveDailyCountStatistics() {
+  public async retrieveDailyPositionsCountStatistics() {
     return this.prisma.offersCountStatistics.findMany({
       orderBy: {
         createdAt: "desc",
