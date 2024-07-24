@@ -42,7 +42,6 @@ class StatisticsController implements IStatisticsController {
   public postDailyOffersCountStatistics = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const payload = dailyCountPayloadSchema.parse(req.body);
-      console.log("PEJLOD", payload);
       const data = await this.statisticsService.addDailyOffersCountStatistics(payload);
       res.status(201).json(data);
     } catch (err) {
@@ -71,9 +70,9 @@ class StatisticsController implements IStatisticsController {
     }
   };
 
-  public getAllOffersCountStatistics = async (req: Request, res: Response, next: NextFunction) => {
+  public getAllDailyOffersCountStatistics = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const data = await this.statisticsService.retrieveDailyCategoryStatistics();
+      const data = await this.statisticsService.retrieveAllDailyOffersCountStatistics();
       res.status(200).json(data);
     } catch (err) {
       next(

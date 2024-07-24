@@ -57,15 +57,38 @@ class StatisticsService implements IStatisticsService {
   }
 
   public async retrieveAllDailyOffersCountStatistics() {
-    return this.prisma.allOffersCountStatistics.findMany({});
+    return this.prisma.allOffersCountStatistics.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
   }
 
   public async retrieveDailyCountStatistics() {
-    return this.prisma.offersCountStatistics.findMany({});
+    return this.prisma.offersCountStatistics.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
   }
 
   public async retrieveDailyCategoryStatistics() {
-    return this.prisma.categoriesStatistics.findMany({});
+    return this.prisma.categoriesStatistics.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+      select: {
+        id: true,
+        createdAt: true,
+        categories: {
+          select: {
+            id: true,
+            name: true,
+            count: true,
+          },
+        },
+      },
+    });
   }
 
   public async getGeneralStatistics() {
