@@ -3,6 +3,7 @@ import {
   dailyAllOffersCountPayloadSchema,
   dailyAllOffersCountResponseSchema,
   dailyCategoriesPayloadSchema,
+  dailyCategoriesResponseSchema,
   dailyPositionsCountPayloadSchema,
   dailyPositionsCountResponseSchema,
   generalStatisticsSchema,
@@ -17,4 +18,4 @@ export type DailyPositionsCountPayload = z.infer<typeof dailyPositionsCountPaylo
 export type DailyPositionsCountResponse = z.infer<typeof dailyPositionsCountResponseSchema>;
 
 export type DailyCategoriesCountPayload = z.infer<typeof dailyCategoriesPayloadSchema>;
-export type DailyCategoriesCountResponse = z.infer<typeof dailyCategoriesPayloadSchema>;
+export type DailyCategoriesCountResponse = z.infer<typeof dailyCategoriesResponseSchema>;

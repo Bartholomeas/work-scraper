@@ -49,9 +49,18 @@ export const dailyPositionsCountResponseSchema = z.array(
 );
 
 const dailyCategorySchema = z.object({
+  id: z.string(),
   name: z.string({ message: "name is required" }),
   count: z.number().default(0),
 });
 export const dailyCategoriesPayloadSchema = z.object({
   categories: z.array(dailyCategorySchema),
 });
+
+export const dailyCategoriesResponseSchema = z.array(
+  z.object({
+    id: z.string(),
+    createdAt: z.string().datetime(),
+    categories: z.array(dailyCategorySchema),
+  }),
+);

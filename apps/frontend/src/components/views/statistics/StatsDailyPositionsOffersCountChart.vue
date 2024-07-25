@@ -4,8 +4,8 @@ import dayjs from "dayjs";
 
 import { DATE_FORMAT_WITH_HOURS } from "@/constants";
 import { useGetDailyPositionsOffersCount } from "@/api/statistics/getDailyPositionsOffersCount";
-import { AreaChart } from "@/components/ui/chart-area";
 import StatsTitleWrapper from "@/components/views/statistics/StatsTitleWrapper.vue";
+import { LineChart } from "@/components/ui/chart-line";
 
 const juniorLabel = "Juniorzy";
 const midLabel = "Regular";
@@ -13,7 +13,7 @@ const seniorLabel = "Seniorzy";
 const otherLabel = "Pozostałe";
 
 const { data: stats } = useGetDailyPositionsOffersCount();
-console.log(stats?.value?.[0]);
+
 const chartData = computed(
   () =>
     stats?.value?.map(stat => ({
@@ -28,11 +28,11 @@ const chartData = computed(
 
 <template>
   <StatsTitleWrapper title="Według pozycji">
-    <AreaChart
+    <LineChart
       class="charts"
       :data="chartData"
       index="name"
-      :colors="['var(--primary)', 'yellow', 'orange', 'red']"
+      :colors="['var(--primary)', 'gold', 'orange', 'red']"
       :categories="[juniorLabel, midLabel, seniorLabel, otherLabel]"
     />
   </StatsTitleWrapper>
