@@ -18,7 +18,7 @@ export const getDailyCategoriesOffersCount = async () => {
 };
 
 export const useGetDailyCategoriesOffersCount = () =>
-  useQuery({
+  useQuery<DailyCategoriesCountResponse>({
     queryKey: statisticsQueryKeys.getDailyCategoriesOffersCount(),
     queryFn: getDailyCategoriesOffersCount,
   });
