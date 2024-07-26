@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 
 import { DATE_FORMAT } from "@/constants";
 import { useGetAllDailyOffersCountStats } from "@/api/statistics/getAllDailyOffersCountStats";
+
 import { AreaChart } from "@/components/ui/chart-area";
 import StatsTitleWrapper from "@/components/views/statistics/StatsTitleWrapper.vue";
 
@@ -14,7 +15,7 @@ const { data: stats } = useGetAllDailyOffersCountStats();
 const chartData = computed(
   () =>
     stats?.value?.map(stat => ({
-      name: dayjs(stat.createdAt).format(`${DATE_FORMAT} HH:mm`),
+      name: dayjs(stat.createdAt).format(DATE_FORMAT),
       [countLabel]: stat.totalOffers,
     })) ?? [],
 );
