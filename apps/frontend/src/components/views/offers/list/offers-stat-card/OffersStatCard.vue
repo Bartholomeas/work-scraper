@@ -1,12 +1,14 @@
 <script setup lang="ts">
+import type { HTMLAttributes } from "vue";
+
+import { cn } from "@/utils/utils";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Text from "@/components/common/text/Text.vue";
-import OfferStatCardItem from "@/components/offers/list/offers-stat-card/OfferStatCardItem.vue";
-import type { StatCardItem } from "@/components/offers/list/offers-stat-card/OffersStatCardItem.types";
+import OfferStatCardItem from "@/components/views/offers/list/offers-stat-card/OfferStatCardItem.vue";
 
+import type { StatCardItem } from "@/components/views/offers/list/offers-stat-card/OffersStatCardItem.types";
 import { type LucideIcon } from "lucide-vue-next";
-import { cn } from "@/utils/utils";
-import type { HTMLAttributes } from "vue";
 
 interface OffersStatCardProps {
   title: string;

@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import OffersSingleItem from "@/components/offers/single/OffersSingleItem.vue";
-import type { JobOffersResponse } from "shared/src/offers/offers.types";
-import OfferSingleItemSkeleton from "@/components/offers/single/OfferSingleItemSkeleton.vue";
 import { computed } from "vue";
+
+import type { JobOffersResponse } from "shared/src/offers/offers.types";
+
+import OffersSingleItem from "@/components/views/offers/single/OffersSingleItem.vue";
+import OfferSingleItemSkeleton from "@/components/views/offers/single/OfferSingleItemSkeleton.vue";
 import NoResultsCard from "@/components/common/NoResultsCard.vue";
 
 interface OffersItemsListProps {

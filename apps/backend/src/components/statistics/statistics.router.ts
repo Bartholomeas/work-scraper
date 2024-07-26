@@ -1,7 +1,8 @@
 import express, { type Router } from "express";
+
+import { SECRET_PHRASE } from "@/misc/constants";
 import type { StatisticsController } from "@/components/statistics/statistics.controller";
 import { guardSecret } from "@/middleware/guard-secret";
-import { SECRET_PHRASE } from "@/misc/constants";
 
 class StatisticsRouter {
   private statisticsController: StatisticsController;
@@ -15,7 +16,6 @@ class StatisticsRouter {
     // Default stats
     router.get("/general", this.statisticsController.getGeneralStatistics);
     router.post("/generate-general", guardSecret(SECRET_PHRASE), this.statisticsController.generateGeneralStatistics);
-
     // Daily
     // GET
     router.get("/daily/all-offers-count", this.statisticsController.getAllDailyOffersCountStatistics);
@@ -23,7 +23,7 @@ class StatisticsRouter {
     router.get("/daily/categories", this.statisticsController.getDailyCategoryStatistics);
     // POST
     router.post("/daily/all-offers-count", guardSecret(SECRET_PHRASE), this.statisticsController.postAllOffersCountStatistics);
-    router.post("/daily/offers-count", guardSecret(SECRET_PHRASE), this.statisticsController.postDailyOffersCountStatistics);
+    router.post("/daily/position-offers", guardSecret(SECRET_PHRASE), this.statisticsController.postDailyOffersCountStatistics);
     router.post("/daily/categories", guardSecret(SECRET_PHRASE), this.statisticsController.postDailyCategoriesStatistics);
 
     return router;

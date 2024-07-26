@@ -7,8 +7,8 @@ import { DATE_FORMAT } from "@/constants";
 
 import { useGetGeneralStatistics } from "@/api/statistics/getGeneralStatistics";
 
-import OffersStatCard from "@/components/offers/list/offers-stat-card/OffersStatCard.vue";
-import type { StatCardItem } from "@/components/offers/list/offers-stat-card/OffersStatCardItem.types";
+import OffersStatCard from "@/components/views/offers/list/offers-stat-card/OffersStatCard.vue";
+import type { StatCardItem } from "@/components/views/offers/list/offers-stat-card/OffersStatCardItem.types";
 
 import { BarChart, Building2, Cpu } from "lucide-vue-next";
 

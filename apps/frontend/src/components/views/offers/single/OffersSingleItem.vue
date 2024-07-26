@@ -8,14 +8,14 @@ import { formatPrice } from "@/utils/formatPrice";
 import { Button, buttonVariants } from "@/components/ui/button/Button.variants";
 import { Card } from "@/components/ui/card";
 
-import OffersIconValueBox from "@/components/offers/single/OffersIconValueBox.vue";
-import OfferBadges from "@/components/offers/single/OfferBadges.vue";
+import OffersIconValueBox from "@/components/views/offers/single/OffersIconValueBox.vue";
+import OfferBadges from "@/components/views/offers/single/OfferBadges.vue";
 
 import { ArrowRight, Building2, Calendar, Info, MapPin } from "lucide-vue-next";
 import { createStringFromArr } from "@/utils/createStringFromArr";
 import { transformTimeUnitType } from "@/utils/apiCodesTransform";
 
-const OffersDetailsDialog = defineAsyncComponent(() => import("@/components/offers/single/OffersDetailsDialog.vue"));
+const OffersDetailsDialog = defineAsyncComponent(() => import("@/components/views/offers/single/OffersDetailsDialog.vue"));
 
 interface OffersTableRowProps {
   offer: JobOffer;

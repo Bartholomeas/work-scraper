@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { StatCardItem } from "@/components/offers/list/offers-stat-card/OffersStatCardItem.types";
+import type { StatCardItem } from "@/components/views/offers/list/offers-stat-card/OffersStatCardItem.types";
 import Text from "@/components/common/text/Text.vue";
 
 interface OfferStatCardItemProps extends StatCardItem {}
