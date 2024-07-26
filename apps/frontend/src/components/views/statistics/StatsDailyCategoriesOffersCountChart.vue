@@ -14,10 +14,11 @@ const { chartData, categoryNames } = useDailyCategoriesChartData(stats);
     <BarChart
       class="charts"
       :data="chartData"
+      type="stacked"
       index="createdAt"
       :categories="categoryNames"
       :colors="['var(--primary)', 'gold', 'orange', 'red', 'purple']"
-      :rounded-corners="16"
+      :rounded-corners="12"
     />
   </StatsTitleWrapper>
 </template>

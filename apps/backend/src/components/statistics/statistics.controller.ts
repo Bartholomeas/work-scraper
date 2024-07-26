@@ -1,13 +1,13 @@
 import { NextFunction, type Request, type Response } from "express";
 
-import { AppErrorController } from "@/components/error/app-error.controller";
-
-import type { StatisticsService } from "@/components/statistics/statistics.service";
 import {
   dailyAllOffersCountPayloadSchema,
   dailyCategoriesPayloadSchema,
   dailyPositionsCountPayloadSchema,
+  dailyWorkplacesPayloadSchema,
 } from "shared/src/statistics/statistics.schemas";
+
+import type { StatisticsService } from "@/components/statistics/statistics.service";
 import { ErrorHandlerController } from "@/components/error/error-handler.controller";
 
 interface IStatisticsController {
@@ -42,6 +42,7 @@ class StatisticsController implements IStatisticsController {
       next(ErrorHandlerController.handleError(err));
     }
   };
+
   public postDailyCategoriesStatistics = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const payload = dailyCategoriesPayloadSchema.parse(req.body);
@@ -51,10 +52,19 @@ class StatisticsController implements IStatisticsController {
       next(ErrorHandlerController.handleError(err));
     }
   };
+  public postDailyWorkplacesStatistics = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const payload = dailyWorkplacesPayloadSchema.parse(req.body);
+      const data = await this.statisticsService.addDailyWorkplacesStatistics(payload);
+      res.status(201).json(data);
+    } catch (err) {
+      next(ErrorHandlerController.handleError(err));
+    }
+  };
 
   public getAllDailyOffersCountStatistics = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const data = await this.statisticsService.retrieveAllDailyOffersCountStatistics();
+      const data = await this.statisticsService.retrieveAllDailyOffersStatistics();
       res.status(200).json(data);
     } catch (err) {
       next(ErrorHandlerController.handleError(err));
@@ -70,9 +80,17 @@ class StatisticsController implements IStatisticsController {
     }
   };
 
-  public getDailyPositionsCountStatistics = async (req: Request, res: Response, next: NextFunction) => {
+  public getDailyPositionsStatistics = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const data = await this.statisticsService.retrieveDailyPositionsCountStatistics();
+      const data = await this.statisticsService.retrieveDailyPositionsStatistics();
+      res.status(200).json(data);
+    } catch (err) {
+      next(ErrorHandlerController.handleError(err));
+    }
+  };
+  public getDailyWorkplacesStatistics = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const data = await this.statisticsService.retrieveDailyWorkplacesStatistics();
       res.status(200).json(data);
     } catch (err) {
       next(ErrorHandlerController.handleError(err));

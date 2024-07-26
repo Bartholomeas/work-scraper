@@ -19,12 +19,14 @@ class StatisticsRouter {
     // Daily
     // GET
     router.get("/daily/all-offers-count", this.statisticsController.getAllDailyOffersCountStatistics);
-    router.get("/daily/position-offers", this.statisticsController.getDailyPositionsCountStatistics);
+    router.get("/daily/position-offers", this.statisticsController.getDailyPositionsStatistics);
     router.get("/daily/categories", this.statisticsController.getDailyCategoryStatistics);
+    router.get("/daily/workplaces", this.statisticsController.getDailyWorkplacesStatistics);
     // POST
     router.post("/daily/all-offers-count", guardSecret(SECRET_PHRASE), this.statisticsController.postAllOffersCountStatistics);
     router.post("/daily/position-offers", guardSecret(SECRET_PHRASE), this.statisticsController.postDailyOffersCountStatistics);
     router.post("/daily/categories", guardSecret(SECRET_PHRASE), this.statisticsController.postDailyCategoriesStatistics);
+    router.post("/daily/workplaces", guardSecret(SECRET_PHRASE), this.statisticsController.postDailyWorkplacesStatistics);
 
     return router;
   }

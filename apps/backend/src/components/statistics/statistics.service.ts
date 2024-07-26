@@ -3,6 +3,7 @@ import type {
   DailyAllOffersCountPayload,
   DailyCategoriesCountPayload,
   DailyPositionsCountPayload,
+  DailyWorkplacesCountPayload,
 } from "shared/src/statistics/statistics.types";
 
 import { PrismaInstance } from "@/components/libs/prisma.instance";
@@ -13,6 +14,18 @@ interface IStatisticsService {
   addDailyOffersCountStatistics(payload: DailyPositionsCountPayload): Promise<unknown>;
 
   addDailyCategoriesStatistics(payload: DailyCategoriesCountPayload): Promise<unknown>;
+
+  addDailyWorkplacesStatistics(payload: DailyWorkplacesCountPayload): Promise<unknown>;
+
+  retrieveAllDailyOffersStatistics(): Promise<unknown>;
+
+  retrieveDailyPositionsStatistics(): Promise<unknown>;
+
+  retrieveDailyCategoryStatistics(): Promise<unknown>;
+
+  retrieveDailyWorkplacesStatistics(): Promise<unknown>;
+
+  getGeneralStatistics(): Promise<unknown>;
 
   generateGeneralStatistics(): Promise<unknown>;
 }
@@ -60,7 +73,31 @@ class StatisticsService implements IStatisticsService {
     });
   }
 
-  public async retrieveAllDailyOffersCountStatistics() {
+  public async addDailyWorkplacesStatistics(payload: DailyWorkplacesCountPayload) {
+    return this.prisma.workplacesStatistics.create({
+      select: {
+        id: true,
+        createdAt: true,
+        workplaces: {
+          select: {
+            id: true,
+            city: true,
+            count: true,
+          },
+        },
+      },
+      data: {
+        workplaces: {
+          create: payload?.workplaces?.map(workplace => ({
+            city: workplace.city,
+            count: workplace.count,
+          })),
+        },
+      },
+    });
+  }
+
+  public async retrieveAllDailyOffersStatistics() {
     return this.prisma.allOffersCountStatistics.findMany({
       orderBy: {
         createdAt: "asc",
@@ -68,7 +105,7 @@ class StatisticsService implements IStatisticsService {
     });
   }
 
-  public async retrieveDailyPositionsCountStatistics() {
+  public async retrieveDailyPositionsStatistics() {
     return this.prisma.offersCountStatistics.findMany({
       orderBy: {
         createdAt: "asc",
@@ -88,6 +125,25 @@ class StatisticsService implements IStatisticsService {
           select: {
             id: true,
             name: true,
+            count: true,
+          },
+        },
+      },
+    });
+  }
+
+  public async retrieveDailyWorkplacesStatistics() {
+    return this.prisma.workplacesStatistics.findMany({
+      orderBy: {
+        createdAt: "asc",
+      },
+      select: {
+        id: true,
+        createdAt: true,
+        workplaces: {
+          select: {
+            id: true,
+            city: true,
             count: true,
           },
         },

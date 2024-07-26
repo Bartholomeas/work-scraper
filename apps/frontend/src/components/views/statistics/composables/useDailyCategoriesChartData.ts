@@ -1,7 +1,8 @@
 import { computed, type Ref } from "vue";
 import dayjs from "dayjs";
-import { DATE_FORMAT_WITH_HOURS } from "@/constants";
+
 import type { DailyCategoriesCountResponse } from "shared/src/statistics/statistics.types";
+import { DATE_FORMAT_WITH_HOURS } from "@/constants";
 
 interface ParsedCategoryRecord<T = string> {
   [key: string]: string | number;
@@ -39,4 +40,5 @@ const useDailyCategoriesChartData = <T extends Ref<DailyCategoriesCountResponse 
   });
   return { chartData, categoryNames };
 };
+
 export { useDailyCategoriesChartData };
