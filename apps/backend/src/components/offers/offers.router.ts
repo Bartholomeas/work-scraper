@@ -17,7 +17,8 @@ class OffersRouter {
     const router = express.Router();
     puppeteer.use(StealthPlugin());
     router.get("/metadata", this.offersController.getOffersMetadata);
-    router.get("/base-categories", this.offersController.getOffersBaseCategories);
+    router.get("/base-filters", this.offersController.getOffersBaseFilters);
+    router.get("/base-categories", this.offersController.getOffersCategoryFilters);
     // process.env doesn't work for now, mock secret
     router.post("/scrape", guardSecret(SECRET_PHRASE), this.offersController.scrapeOffersData);
     router.delete("/delete-outdated", guardSecret(SECRET_PHRASE), this.offersController.deleteOutdatedOffers);

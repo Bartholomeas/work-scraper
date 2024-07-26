@@ -6,16 +6,16 @@ import { fetcher } from "@/utils/fetcher";
 
 import { offersQueryKeys } from "@/api/offers/offersQueryKeys";
 
-export const getOffersBaseCategories = async (): Promise<OffersBaseCategories | undefined> => {
+export const getOffersBaseFilters = async (): Promise<OffersBaseCategories | undefined> => {
   try {
-    return await fetcher.get<OffersBaseCategories>(OFFERS_URL + "/base-categories");
+    return await fetcher.get<OffersBaseCategories>(OFFERS_URL + "/base-filters");
   } catch (err) {
     throw err;
   }
 };
 
-export const useGetOffersBaseCategories = () =>
+export const useGetOffersBaseFilters = () =>
   useQuery({
-    queryKey: offersQueryKeys.getOffersBaseCategories(),
-    queryFn: getOffersBaseCategories,
+    queryKey: offersQueryKeys.getOffersBaseFilters(),
+    queryFn: getOffersBaseFilters,
   });

@@ -98,7 +98,7 @@ export const baseCategoriesSchema = z.object({
   // search: z.string().optional(),
   // orderBy: z.enum(["createdAt", "expirationDate", "salary"]).default("createdAt"),
   // sortOrder: z.enum(["asc", "desc"]).default("desc"),
-  categories: z.preprocess(stringToArray, z.array(offerTechCategories)).optional(),
+  categories: z.preprocess(stringToArray, z.array(z.string())).optional(),
   dataSources: z.preprocess(stringToArray, z.array(dataSourceCodesSchema)).optional(),
   positionLevels: z.preprocess(stringToArray, z.array(positionLevelsSchema)).optional(),
   contractTypes: z.preprocess(stringToArray, z.array(contractTypeCodesSchema)).optional(),

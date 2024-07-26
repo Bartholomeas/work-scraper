@@ -17,7 +17,7 @@ const StatsDailyWorkplacesCountChart = defineAsyncComponent(
 <template>
   <div class="flex flex-col gap-6">
     <Title order="h1">Statystyki</Title>
-    <section class="grid grid-cols-1 gap-8 lg:grid-cols-1">
+    <section class="grid grid-cols-1 gap-8 lg:grid-cols-2">
       <StatsDailyAllOffersCountChart />
       <StatsDailyCategoriesOffersCountChart />
       <StatsDailyPositionsOffersCountChart />
