@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { defineAsyncComponent, inject, watch } from "vue";
+import { computed, defineAsyncComponent } from "vue";
 
 import { baseCategoriesSchema } from "shared/src/offers/offers.schemas";
 import type { CategoryRecord } from "shared/src/offers/offers.types";
 
-import { useGetOffersBaseCategories } from "@/api/offers/getOffersBaseCategories";
+import { useGetOffersBaseFilters } from "@/api/offers/getOffersBaseFilters";
 import { parseZodSchemaToInputNames } from "@/lib/zod/parseZodSchemaToInputNames";
 
 import { isKeyOf } from "@/utils/isKeyOf";
@@ -18,21 +18,11 @@ const OffersSideWorkplaceSelect = defineAsyncComponent(
   () => import("@/components/views/offers/filters/side-bar/OffersSideWorkplaceSelect.vue"),
 );
 
-const { data: categories } = useGetOffersBaseCategories();
-const inputNames = parseZodSchemaToInputNames(baseCategoriesSchema);
-
-const values = inject<Record<string, unknown>>("formValues");
-
-watch(
-  () => values,
-  newVal => {
-    console.log("Xdd", newVal);
-  },
-);
-// console.log("Hyhyhy", values);
+const { data: baseFilters } = useGetOffersBaseFilters();
+const inputNames = computed(() => parseZodSchemaToInputNames(baseCategoriesSchema));
 </script>
 <template>
-  <aside class="h-full w-full overflow-y-auto lg:p-3">
+  <aside class="relative h-full w-full overflow-y-auto lg:p-3">
     <FiltersWrapper
       class-name="flex flex-col gap-4 max-lg:pb-6"
       v-slot="{ clearFilters }"
@@ -42,11 +32,12 @@ watch(
         contractTypes: [],
         workModes: [],
         workSchedules: [],
+        categories: [],
       }"
     >
       <OffersSideWorkplaceSelect :name="inputNames.workplaces" />
 
-      <template v-if="categories" v-for="[key, category] in Object.entries(categories)">
+      <template v-if="baseFilters" v-for="[key, category] in Object.entries(baseFilters)">
         <CheckboxControlled
           v-if="isKeyOf(inputNames, key)"
           :label="category?.name"

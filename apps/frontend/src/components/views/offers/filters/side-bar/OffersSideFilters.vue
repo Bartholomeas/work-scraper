@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { defineAsyncComponent, ref } from "vue";
 
-import { useGetWorkplaces } from "@/api/offers/getWorkplaces";
-
-import OffersSideFiltersContent from "@/components/views/offers/filters/side-bar/OffersSideFiltersContent.vue";
 import OffersSideFiltersDesktop from "@/components/views/offers/filters/side-bar/OffersSideFiltersDesktop.vue";
 import OffersSideFiltersMobile from "@/components/views/offers/filters/side-bar/OffersSideFiltersMobile.vue";
 
-const { data } = useGetWorkplaces();
+const OffersSideFiltersContent = defineAsyncComponent(
+  () => import("@/components/views/offers/filters/side-bar/OffersSideFiltersContent.vue"),
+);
 
 const isMobileScreen = ref(window.innerWidth < 992);
 

@@ -109,9 +109,9 @@ class OffersController {
     }
   };
 
-  public getOffersBaseCategories = async (req: Request, res: Response, next: NextFunction) => {
+  public getOffersBaseFilters = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const data = await this.offersCategoriesService.getBaseCategories();
+      const data = await this.offersCategoriesService.retrieveBaseFilters();
       res.status(200).json(data);
     } catch (err) {
       next(ErrorHandlerController.handleError(err));

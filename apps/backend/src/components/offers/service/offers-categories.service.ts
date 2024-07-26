@@ -6,7 +6,7 @@ import { PrismaInstance } from "@/components/libs/prisma.instance";
 import type { OffersBaseCategories } from "shared/src/offers/offers.types";
 
 interface IOffersCategoriesService {
-  getBaseCategories(): Promise<OffersBaseCategories>;
+  retrieveBaseFilters(): Promise<OffersBaseCategories>;
 }
 
 class OffersCategoriesService implements IOffersCategoriesService {
@@ -16,7 +16,7 @@ class OffersCategoriesService implements IOffersCategoriesService {
     this.prisma = PrismaInstance.getInstance();
   }
 
-  public async getBaseCategories(): Promise<OffersBaseCategories> {
+  public async retrieveBaseFilters(): Promise<OffersBaseCategories> {
     try {
       const contractTypes = {
         name: "Forma zatrudnienia",
@@ -36,7 +36,12 @@ class OffersCategoriesService implements IOffersCategoriesService {
       } as OffersBaseCategories["workSchedules"];
       const categories = {
         name: "Kategorie",
-        items: [],
+        items: await this.prisma.technology.findMany({
+          take: 15,
+          orderBy: {
+            count: "desc",
+          },
+        }),
       };
 
       return {
