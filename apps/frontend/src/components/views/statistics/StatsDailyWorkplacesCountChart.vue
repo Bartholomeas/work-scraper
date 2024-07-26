@@ -15,8 +15,8 @@ const { chartData, categoryNames } = useDailyWorkplacesChartData(stats);
     <BarChart
       class="charts"
       :data="chartData"
-      type="stacked"
       index="createdAt"
+      type="stacked"
       :categories="categoryNames"
       :colors="['var(--primary)', 'gold', 'orange', 'red', 'purple']"
       :rounded-corners="12"

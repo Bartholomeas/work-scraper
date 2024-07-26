@@ -1,19 +1,29 @@
 import { NextFunction, type Request, type Response } from "express";
 
-import {
-  dailyAllOffersCountPayloadSchema,
-  dailyCategoriesPayloadSchema,
-  dailyPositionsCountPayloadSchema,
-  dailyWorkplacesPayloadSchema,
-} from "shared/src/statistics/statistics.schemas";
-
 import type { StatisticsService } from "@/components/statistics/statistics.service";
 import { ErrorHandlerController } from "@/components/error/error-handler.controller";
+import { StatisticsCron } from "@/components/statistics/statistics-cron";
 
-interface IStatisticsController {
-  getGeneralStatistics(req: Request, res: Response, next: NextFunction): void;
+export interface IStatisticsController {
+  generateAllOffersCountStatistics(): Promise<unknown>;
 
-  generateGeneralStatistics(req: Request, res: Response, next: NextFunction): Promise<unknown>;
+  generateDailyPositionsStatistics(): Promise<unknown>;
+
+  generateDailyCategoriesStatistics(): Promise<unknown>;
+
+  generateDailyWorkplacesStatistics(): Promise<unknown>;
+
+  getAllDailyOffersCountStatistics(req: Request, res: Response, next: NextFunction): Promise<void>;
+
+  getDailyCategoryStatistics(req: Request, res: Response, next: NextFunction): Promise<void>;
+
+  getDailyPositionsStatistics(req: Request, res: Response, next: NextFunction): Promise<void>;
+
+  getDailyWorkplacesStatistics(req: Request, res: Response, next: NextFunction): Promise<void>;
+
+  getGeneralStatistics(req: Request, res: Response, next: NextFunction): Promise<void>;
+
+  generateGeneralStatistics(req: Request, res: Response, next: NextFunction): Promise<void>;
 }
 
 class StatisticsController implements IStatisticsController {
@@ -21,44 +31,38 @@ class StatisticsController implements IStatisticsController {
 
   constructor(statisticsService: StatisticsService) {
     this.statisticsService = statisticsService;
+    new StatisticsCron(this);
   }
 
-  public postAllOffersCountStatistics = async (req: Request, res: Response, next: NextFunction) => {
+  public generateAllOffersCountStatistics = async () => {
     try {
-      const payload = dailyAllOffersCountPayloadSchema.parse(req.body);
-      const data = await this.statisticsService.addAllOffersCountStatistics(payload);
-      res.status(201).json(data);
+      return await this.statisticsService.addAllOffersCountStatistics();
     } catch (err) {
-      next(ErrorHandlerController.handleError(err));
+      throw ErrorHandlerController.handleError(err);
     }
   };
 
-  public postDailyOffersCountStatistics = async (req: Request, res: Response, next: NextFunction) => {
+  public generateDailyPositionsStatistics = async () => {
     try {
-      const payload = dailyPositionsCountPayloadSchema.parse(req.body);
-      const data = await this.statisticsService.addDailyOffersCountStatistics(payload);
-      res.status(201).json(data);
+      // const payload = dailyPositionsCountPayloadSchema.parse(req.body);
+      return await this.statisticsService.addDailyPositionsStatistics();
     } catch (err) {
-      next(ErrorHandlerController.handleError(err));
+      throw ErrorHandlerController.handleError(err);
     }
   };
 
-  public postDailyCategoriesStatistics = async (req: Request, res: Response, next: NextFunction) => {
+  public generateDailyCategoriesStatistics = async () => {
     try {
-      const payload = dailyCategoriesPayloadSchema.parse(req.body);
-      const data = await this.statisticsService.addDailyCategoriesStatistics(payload);
-      res.status(201).json(data);
+      return await this.statisticsService.addDailyCategoriesStatistics();
     } catch (err) {
-      next(ErrorHandlerController.handleError(err));
+      throw ErrorHandlerController.handleError(err);
     }
   };
-  public postDailyWorkplacesStatistics = async (req: Request, res: Response, next: NextFunction) => {
+  public generateDailyWorkplacesStatistics = async () => {
     try {
-      const payload = dailyWorkplacesPayloadSchema.parse(req.body);
-      const data = await this.statisticsService.addDailyWorkplacesStatistics(payload);
-      res.status(201).json(data);
+      return await this.statisticsService.addDailyWorkplacesStatistics();
     } catch (err) {
-      next(ErrorHandlerController.handleError(err));
+      throw ErrorHandlerController.handleError(err);
     }
   };
 

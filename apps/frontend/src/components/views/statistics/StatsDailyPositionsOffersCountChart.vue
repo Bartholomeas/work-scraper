@@ -2,8 +2,9 @@
 import { computed } from "vue";
 import dayjs from "dayjs";
 
-import { DATE_FORMAT_WITH_HOURS } from "@/constants";
+import { DATE_FORMAT } from "@/constants";
 import { useGetDailyPositionsStats } from "@/api/statistics/getDailyPositionsStats";
+
 import StatsTitleWrapper from "@/components/views/statistics/StatsTitleWrapper.vue";
 import { LineChart } from "@/components/ui/chart-line";
 
@@ -17,7 +18,7 @@ const { data: stats } = useGetDailyPositionsStats();
 const chartData = computed(
   () =>
     stats?.value?.map(stat => ({
-      name: dayjs(stat.createdAt).format(DATE_FORMAT_WITH_HOURS),
+      name: dayjs(stat.createdAt).format(DATE_FORMAT),
       [juniorLabel]: stat.juniorOffers,
       [midLabel]: stat.midOffers,
       [seniorLabel]: stat.seniorOffers,

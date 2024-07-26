@@ -11,7 +11,7 @@ import { PrismaInstance } from "@/components/libs/prisma.instance";
 interface IStatisticsService {
   addAllOffersCountStatistics(payload: DailyAllOffersCountPayload): Promise<unknown>;
 
-  addDailyOffersCountStatistics(payload: DailyPositionsCountPayload): Promise<unknown>;
+  addDailyPositionsStatistics(payload: DailyPositionsCountPayload): Promise<unknown>;
 
   addDailyCategoriesStatistics(payload: DailyCategoriesCountPayload): Promise<unknown>;
 
@@ -37,19 +37,84 @@ class StatisticsService implements IStatisticsService {
     this.prisma = PrismaInstance.getInstance();
   }
 
-  public async addAllOffersCountStatistics(payload: DailyAllOffersCountPayload) {
+  public async addAllOffersCountStatistics() {
+    const offersCount = await this.prisma.jobOffer.count();
+
     return this.prisma.allOffersCountStatistics.create({
-      data: payload,
+      data: {
+        totalOffers: offersCount,
+      },
     });
   }
 
-  public async addDailyOffersCountStatistics(payload: DailyPositionsCountPayload) {
+  public async addDailyPositionsStatistics() {
+    const juniorOffers = await this.prisma.jobOffer.count({
+      where: {
+        positionLevels: {
+          some: {
+            value: {
+              equals: "junior",
+            },
+          },
+        },
+      },
+    });
+    const midOffers = await this.prisma.jobOffer.count({
+      where: {
+        positionLevels: {
+          some: {
+            value: {
+              equals: "mid",
+            },
+          },
+        },
+      },
+    });
+    const seniorOffers = await this.prisma.jobOffer.count({
+      where: {
+        positionLevels: {
+          some: {
+            value: {
+              equals: "senior",
+            },
+          },
+        },
+      },
+    });
+
+    const otherOffers = await this.prisma.jobOffer.count({
+      where: {
+        positionLevels: {
+          some: {
+            value: {
+              notIn: ["junior", "mid", "senior"],
+            },
+          },
+        },
+      },
+    });
+
     return this.prisma.offersCountStatistics.create({
-      data: payload,
+      data: {
+        juniorOffers,
+        midOffers,
+        seniorOffers,
+        otherOffers,
+      },
     });
   }
 
-  public async addDailyCategoriesStatistics(payload: DailyCategoriesCountPayload) {
+  public async addDailyCategoriesStatistics() {
+    const topCategories = await this.prisma.technology.findMany({
+      take: 6,
+      select: {
+        value: true,
+        count: true,
+      },
+      orderBy: {
+        count: "desc",
+      },
+    });
     return this.prisma.categoriesStatistics.create({
       select: {
         id: true,
@@ -64,16 +129,27 @@ class StatisticsService implements IStatisticsService {
       },
       data: {
         categories: {
-          create: payload?.categories?.map(category => ({
-            count: category.count,
-            name: category.name,
-          })),
+          create:
+            topCategories?.map(category => ({
+              name: category.value,
+              count: category.count,
+            })) ?? [],
         },
       },
     });
   }
 
-  public async addDailyWorkplacesStatistics(payload: DailyWorkplacesCountPayload) {
+  public async addDailyWorkplacesStatistics() {
+    const topWorkplaces = await this.prisma.workplace.findMany({
+      take: 8,
+      orderBy: {
+        count: "desc",
+      },
+      select: {
+        city: true,
+        count: true,
+      },
+    });
     return this.prisma.workplacesStatistics.create({
       select: {
         id: true,
@@ -88,10 +164,7 @@ class StatisticsService implements IStatisticsService {
       },
       data: {
         workplaces: {
-          create: payload?.workplaces?.map(workplace => ({
-            city: workplace.city,
-            count: workplace.count,
-          })),
+          create: topWorkplaces,
         },
       },
     });
