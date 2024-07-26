@@ -74,8 +74,10 @@ export const dailyWorkplacesPayloadSchema = z.object({
   workplaces: z.array(dailyWorkplaceSchema),
 });
 
-export const dailyWorkplacesResponseSchema = z.object({
-  id: z.string(),
-  createdAt: z.string().datetime(),
-  workplaces: z.array(dailyWorkplaceSchema),
-});
+export const dailyWorkplacesResponseSchema = z.array(
+  z.object({
+    id: z.string(),
+    createdAt: z.string().datetime(),
+    workplaces: z.array(dailyWorkplaceSchema),
+  }),
+);

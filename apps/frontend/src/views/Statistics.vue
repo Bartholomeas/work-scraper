@@ -9,6 +9,9 @@ const StatsDailyCategoriesOffersCountChart = defineAsyncComponent(
 const StatsDailyPositionsOffersCountChart = defineAsyncComponent(
   () => import("@/components/views/statistics/StatsDailyPositionsOffersCountChart.vue"),
 );
+const StatsDailyWorkplacesCountChart = defineAsyncComponent(
+  () => import("@/components/views/statistics/StatsDailyWorkplacesCountChart.vue"),
+);
 </script>
 
 <template>
@@ -18,6 +21,7 @@ const StatsDailyPositionsOffersCountChart = defineAsyncComponent(
       <StatsDailyAllOffersCountChart />
       <StatsDailyCategoriesOffersCountChart />
       <StatsDailyPositionsOffersCountChart />
+      <StatsDailyWorkplacesCountChart />
     </section>
   </div>
 </template>
