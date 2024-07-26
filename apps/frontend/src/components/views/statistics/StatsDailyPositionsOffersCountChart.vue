@@ -3,7 +3,7 @@ import { computed } from "vue";
 import dayjs from "dayjs";
 
 import { DATE_FORMAT_WITH_HOURS } from "@/constants";
-import { useGetDailyPositionsOffersCount } from "@/api/statistics/getDailyPositionsOffersCount";
+import { useGetDailyPositionsStats } from "@/api/statistics/getDailyPositionsStats";
 import StatsTitleWrapper from "@/components/views/statistics/StatsTitleWrapper.vue";
 import { LineChart } from "@/components/ui/chart-line";
 
@@ -12,7 +12,7 @@ const midLabel = "Regular";
 const seniorLabel = "Seniorzy";
 const otherLabel = "Pozostałe";
 
-const { data: stats } = useGetDailyPositionsOffersCount();
+const { data: stats } = useGetDailyPositionsStats();
 
 const chartData = computed(
   () =>

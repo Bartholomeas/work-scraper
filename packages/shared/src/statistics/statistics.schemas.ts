@@ -64,3 +64,20 @@ export const dailyCategoriesResponseSchema = z.array(
     categories: z.array(dailyCategorySchema),
   }),
 );
+
+const dailyWorkplaceSchema = z.object({
+  id: z.string().optional(),
+  city: z.string({ message: "city is required" }),
+  count: z.number().default(0),
+});
+export const dailyWorkplacesPayloadSchema = z.object({
+  workplaces: z.array(dailyWorkplaceSchema),
+});
+
+export const dailyWorkplacesResponseSchema = z.array(
+  z.object({
+    id: z.string(),
+    createdAt: z.string().datetime(),
+    workplaces: z.array(dailyWorkplaceSchema),
+  }),
+);

@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import { useGetDailyCategoriesStats } from "@/api/statistics/getDailyCategoriesStats";
+import { useGetDailyWorkplacesStats } from "@/api/statistics/getDailyWorkplacesStats";
 
 import { BarChart } from "@/components/ui/chart-bar";
-import { useDailyCategoriesChartData } from "@/components/views/statistics/composables/useDailyCategoriesChartData";
 import StatsTitleWrapper from "@/components/views/statistics/StatsTitleWrapper.vue";
+import { useDailyWorkplacesChartData } from "@/components/views/statistics/composables/useDailyWorkplacesChartData";
 
-const { data: stats } = useGetDailyCategoriesStats();
-const { chartData, categoryNames } = useDailyCategoriesChartData(stats);
+const { data: stats } = useGetDailyWorkplacesStats();
+
+const { chartData, categoryNames } = useDailyWorkplacesChartData(stats);
 </script>
 
 <template>
-  <StatsTitleWrapper title="Według kategorii" v-if="categoryNames.length > 0">
+  <StatsTitleWrapper title="Według miasta" v-if="categoryNames.length > 0">
     <BarChart
       class="charts"
       :data="chartData"
