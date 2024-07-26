@@ -1,13 +1,14 @@
-import { createQueryKeyFactory, type QueryFunctionContextCreator } from "@/lib/tanstack-query/queryKeyFactory";
+import { createQueryKeyFactory } from "@/lib/tanstack-query/queryKeyFactory";
 
 const keyFactory = createQueryKeyFactory("statistics");
 export const statisticsQueryKeys = {
   getGeneralStatistics: () => keyFactory.detail("getGeneralStatistics"),
 
   // Daily stats
-  getAllDailyOffersCount: () => keyFactory.detail("getAllDailyOffersCount"),
-  getDailyPositionOffersCount: () => keyFactory.detail("getDailyPositionOffersCount"),
-  getDailyCategoriesOffersCount: () => keyFactory.detail("getDailyCategoriesOffersCount"),
+  getAllDailyOffersCountStats: () => keyFactory.detail("getAllDailyOffersCountStats"),
+  getDailyPositionStats: () => keyFactory.detail("getDailyPositionStats"),
+  getDailyCategoriesStats: () => keyFactory.detail("getDailyCategoriesStats"),
+  getDailyWorkplacesStats: () => keyFactory.detail("getDailyWorkplacesStats"),
 };
 
-export type StatisticsQueryFunctionContext = QueryFunctionContextCreator<typeof statisticsQueryKeys>;
+// export type StatisticsQueryFunctionContext = QueryFunctionContextCreator<typeof statisticsQueryKeys>;

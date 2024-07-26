@@ -8,7 +8,7 @@ import { fetcher } from "@/utils/fetcher";
 
 import { statisticsQueryKeys } from "@/api/statistics/statisticsQueryKeys";
 
-export const getAllDailyOffersCount = async () => {
+export const getAllDailyOffersCountStats = async () => {
   try {
     const url = `${STATISTICS_DAILY_URL}/all-offers-count`;
     const data = await fetcher.get<DailyAllOffersCountResponse>(url);
@@ -18,8 +18,8 @@ export const getAllDailyOffersCount = async () => {
   }
 };
 
-export const useGetAllDailyOffersCount = () =>
+export const useGetAllDailyOffersCountStats = () =>
   useQuery({
-    queryKey: statisticsQueryKeys.getAllDailyOffersCount(),
-    queryFn: getAllDailyOffersCount,
+    queryKey: statisticsQueryKeys.getAllDailyOffersCountStats(),
+    queryFn: getAllDailyOffersCountStats,
   });

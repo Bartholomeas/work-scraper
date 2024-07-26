@@ -3,13 +3,13 @@ import { computed } from "vue";
 import dayjs from "dayjs";
 
 import { DATE_FORMAT } from "@/constants";
-import { useGetAllDailyOffersCount } from "@/api/statistics/getAllDailyOffersCount";
+import { useGetAllDailyOffersCountStats } from "@/api/statistics/getAllDailyOffersCountStats";
 import { AreaChart } from "@/components/ui/chart-area";
 import StatsTitleWrapper from "@/components/views/statistics/StatsTitleWrapper.vue";
 
 const countLabel = "Liczba ofert w danym momencie";
 
-const { data: stats } = useGetAllDailyOffersCount();
+const { data: stats } = useGetAllDailyOffersCountStats();
 
 const chartData = computed(
   () =>
