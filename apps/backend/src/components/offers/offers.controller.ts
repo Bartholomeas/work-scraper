@@ -117,15 +117,6 @@ class OffersController {
       next(ErrorHandlerController.handleError(err));
     }
   };
-
-  public getOffersCategoryFilters = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const data = await this.offersCategoriesService.retrieveCategoryFilters();
-      res.status(200).json(data);
-    } catch (err) {
-      next(ErrorHandlerController.handleError(err));
-    }
-  };
 }
 
 export { OffersController };

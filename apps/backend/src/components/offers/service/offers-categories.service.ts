@@ -16,15 +16,6 @@ class OffersCategoriesService implements IOffersCategoriesService {
     this.prisma = PrismaInstance.getInstance();
   }
 
-  public async retrieveCategoryFilters() {
-    return this.prisma.technology.findMany({
-      take: 15,
-      orderBy: {
-        count: "desc",
-      },
-    });
-  }
-
   public async retrieveBaseFilters(): Promise<OffersBaseCategories> {
     try {
       const contractTypes = {
