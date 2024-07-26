@@ -63,7 +63,7 @@ class StatisticsService implements IStatisticsService {
   public async retrieveAllDailyOffersCountStatistics() {
     return this.prisma.allOffersCountStatistics.findMany({
       orderBy: {
-        createdAt: "desc",
+        createdAt: "asc",
       },
     });
   }
@@ -71,7 +71,7 @@ class StatisticsService implements IStatisticsService {
   public async retrieveDailyPositionsCountStatistics() {
     return this.prisma.offersCountStatistics.findMany({
       orderBy: {
-        createdAt: "desc",
+        createdAt: "asc",
       },
     });
   }
@@ -79,7 +79,7 @@ class StatisticsService implements IStatisticsService {
   public async retrieveDailyCategoryStatistics() {
     return this.prisma.categoriesStatistics.findMany({
       orderBy: {
-        createdAt: "desc",
+        createdAt: "asc",
       },
       select: {
         id: true,

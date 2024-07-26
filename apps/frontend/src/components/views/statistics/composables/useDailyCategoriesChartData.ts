@@ -24,7 +24,6 @@ const useDailyCategoriesChartData = <T extends Ref<DailyCategoriesCountResponse 
         let currentCategory = {
           createdAt: dayjs(stat.createdAt).format(DATE_FORMAT_WITH_HOURS),
         };
-
         for (let category of stat.categories) {
           Object.assign(currentCategory, { [category.name]: category.count });
         }

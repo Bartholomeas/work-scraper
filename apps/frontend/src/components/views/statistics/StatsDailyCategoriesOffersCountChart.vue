@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { watch } from "vue";
-
 import { useGetDailyCategoriesOffersCount } from "@/api/statistics/getDailyCategoriesOffersCount";
 
 import { BarChart } from "@/components/ui/chart-bar";
@@ -9,14 +7,10 @@ import StatsTitleWrapper from "@/components/views/statistics/StatsTitleWrapper.v
 
 const { data: stats } = useGetDailyCategoriesOffersCount();
 const { chartData, categoryNames } = useDailyCategoriesChartData(stats);
-
-watch(categoryNames, newVal => {
-  console.log("Xdd", newVal);
-});
 </script>
 
 <template>
-  <StatsTitleWrapper title="Według kategorii">
+  <StatsTitleWrapper title="Według kategorii" v-if="categoryNames.length > 0">
     <BarChart
       class="charts"
       :data="chartData"
