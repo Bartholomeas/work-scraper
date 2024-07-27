@@ -15,7 +15,7 @@ const routes = [
   {
     path: routeUrls.policy,
     name: "Policy",
-    component: () => import("@/views/Statistics.vue"),
+    component: () => import("@/views/Politics.vue"),
   },
 ];
 
