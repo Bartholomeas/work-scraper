@@ -21,8 +21,9 @@ const useFilters = ({ filterKeys }: UseFiltersProps = {}) => {
 
   const query = computed(() => route.query);
 
-  const submitFilters = <T extends Record<string, unknown> = Record<string, unknown>>(params: T = {} as T) => {
-    const mergedParams = { ...route.query, page: "1", ...params };
+  const submitFilters = <T extends Record<string, unknown> = Record<string, unknown>>(params: T = {} as T, isClearing = false) => {
+    const mergedParams = isClearing ? { page: "1", ...params } : { ...query.value, page: "1", ...params };
+
     const filteredParams = parseParamsRecords<T>(mergedParams, filterKeys);
     router.push({
       path: "",
@@ -31,17 +32,21 @@ const useFilters = ({ filterKeys }: UseFiltersProps = {}) => {
   };
 
   const clearFiltersParams = <T extends (...args: unknown[]) => void>(cb?: T) => {
-    let filteredParams;
-
     if (cb && typeof cb === "function") cb();
 
-    if (Array.isArray(filterKeys) && filterKeys.length > 0) {
-      filteredParams = parseParamsRecords(route.params, filterKeys);
-    } else {
-      filteredParams = {};
-    }
+    const filteredParams =
+      Array.isArray(filterKeys) && filterKeys.length > 0
+        ? parseParamsRecords({}, filterKeys)
+        : {
+            page: "1",
+            orderBy: "createdAt",
+            sortOrder: "asc",
+          };
 
-    submitFilters(filteredParams);
+    router.push({
+      path: "",
+      query: filteredParams,
+    });
   };
 
   const getValueOfQueryKey = <T extends string>(key: string): T | undefined =>

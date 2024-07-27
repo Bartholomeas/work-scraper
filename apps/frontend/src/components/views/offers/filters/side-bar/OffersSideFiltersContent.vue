@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, defineAsyncComponent } from "vue";
-import { useRoute } from "vue-router";
 
 import { baseCategoriesSchema } from "shared/src/offers/offers.schemas";
 import type {
@@ -27,8 +26,15 @@ const OffersSideWorkplaceSelect = defineAsyncComponent(
 );
 
 const { data: baseFilters } = useGetOffersBaseFilters();
-const { query, getValueOfQueryKey } = useFilters();
-const route = useRoute();
+const { getValueOfQueryKey } = useFilters();
+
+const defaultInitValues = computed(() => ({
+  positionLevels: [],
+  contractTypes: [],
+  workModes: [],
+  workSchedules: [],
+  categories: [],
+}));
 
 const initialParamsValues = computed(() => ({
   positionLevels: (getValueOfQueryKey("positionLevels")?.split(",") as PositionLevelsCodes[]) ?? [],
@@ -44,7 +50,7 @@ const inputNames = computed(() => parseZodSchemaToInputNames(baseCategoriesSchem
   <aside class="relative h-full w-full overflow-y-auto">
     <FiltersWrapper
       class-name="flex flex-col gap-4 max-lg:pb-6"
-      v-slot="{ clearFilters }"
+      v-slot="{ clearFilters, resetForm }"
       :filters-schema="baseCategoriesSchema"
       :initial-values="initialParamsValues"
     >
@@ -59,7 +65,7 @@ const inputNames = computed(() => parseZodSchemaToInputNames(baseCategoriesSchem
         />
       </template>
 
-      <OffersSidebarButtons :clear-filters="clearFilters" />
+      <OffersSidebarButtons :clear-filters="clearFilters" :reset-form="resetForm" :default-init-values="defaultInitValues" />
     </FiltersWrapper>
   </aside>
 </template>
