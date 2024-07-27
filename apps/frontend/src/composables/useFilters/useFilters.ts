@@ -2,6 +2,10 @@ import { useRoute, useRouter } from "vue-router";
 
 import type { FilterKeys } from "@/composables/useFilters/useFilters.types";
 import { parseParamsRecords } from "@/composables/useFilters/useFilters.utils";
+import { computed } from "vue";
+
+const checkKeyExistsInQuery = (key: string, object: Record<string, unknown>): key is keyof typeof object =>
+  key in object && typeof object[key] === "string";
 
 interface UseFiltersProps {
   filterKeys?: FilterKeys;
@@ -14,6 +18,8 @@ interface UseFiltersProps {
 const useFilters = ({ filterKeys }: UseFiltersProps = {}) => {
   const router = useRouter();
   const route = useRoute();
+
+  const query = computed(() => route.query);
 
   const submitFilters = <T extends Record<string, unknown> = Record<string, unknown>>(params: T = {} as T) => {
     const mergedParams = { ...route.query, page: "1", ...params };
@@ -36,9 +42,11 @@ const useFilters = ({ filterKeys }: UseFiltersProps = {}) => {
     }
 
     submitFilters(filteredParams);
-    // router.push({ query: filteredParams });
   };
 
-  return { submitFilters, clearFiltersParams, currentParams: route.params };
+  const getValueOfQueryKey = <T extends string>(key: string): T | undefined =>
+    checkKeyExistsInQuery(key, query.value) ? (query.value?.[key]?.toString() as T) : undefined;
+
+  return { submitFilters, clearFiltersParams, query, getValueOfQueryKey };
 };
 export { useFilters };

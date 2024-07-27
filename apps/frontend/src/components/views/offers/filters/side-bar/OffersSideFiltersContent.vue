@@ -1,8 +1,15 @@
 <script setup lang="ts">
 import { computed, defineAsyncComponent } from "vue";
+import { useRoute } from "vue-router";
 
 import { baseCategoriesSchema } from "shared/src/offers/offers.schemas";
-import type { CategoryRecord } from "shared/src/offers/offers.types";
+import type {
+  CategoryRecord,
+  ContractTypesCodes,
+  PositionLevelsCodes,
+  WorkModesCodes,
+  WorkSchedulesCodes,
+} from "shared/src/offers/offers.types";
 
 import { useGetOffersBaseFilters } from "@/api/offers/getOffersBaseFilters";
 import { parseZodSchemaToInputNames } from "@/lib/zod/parseZodSchemaToInputNames";
@@ -10,6 +17,7 @@ import { parseZodSchemaToInputNames } from "@/lib/zod/parseZodSchemaToInputNames
 import { isKeyOf } from "@/utils/isKeyOf";
 import { getCategoryName } from "@/utils/getCategoryName";
 
+import { useFilters } from "@/composables/useFilters/useFilters";
 import OffersSidebarButtons from "@/components/views/offers/filters/side-bar/OffersSidebarButtons.vue";
 import CheckboxControlled from "@/components/common/form/inputs-controlled/CheckboxControlled.vue";
 import FiltersWrapper from "@/components/special/FiltersWrapper.vue";
@@ -19,21 +27,26 @@ const OffersSideWorkplaceSelect = defineAsyncComponent(
 );
 
 const { data: baseFilters } = useGetOffersBaseFilters();
+const { query, getValueOfQueryKey } = useFilters();
+const route = useRoute();
+
+const initialParamsValues = computed(() => ({
+  positionLevels: (getValueOfQueryKey("positionLevels")?.split(",") as PositionLevelsCodes[]) ?? [],
+  contractTypes: (getValueOfQueryKey("contractTypes")?.split(",") as ContractTypesCodes[]) ?? [],
+  workModes: (getValueOfQueryKey("workModes")?.split(",") as WorkModesCodes[]) ?? [],
+  workSchedules: (getValueOfQueryKey("workSchedules")?.split(",") as WorkSchedulesCodes[]) ?? [],
+  categories: getValueOfQueryKey("categories")?.split(",") ?? [],
+}));
+
 const inputNames = computed(() => parseZodSchemaToInputNames(baseCategoriesSchema));
 </script>
 <template>
-  <aside class="relative h-full w-full overflow-y-auto lg:p-3">
+  <aside class="relative h-full w-full overflow-y-auto">
     <FiltersWrapper
       class-name="flex flex-col gap-4 max-lg:pb-6"
       v-slot="{ clearFilters }"
       :filters-schema="baseCategoriesSchema"
-      :initial-values="{
-        positionLevels: [],
-        contractTypes: [],
-        workModes: [],
-        workSchedules: [],
-        categories: [],
-      }"
+      :initial-values="initialParamsValues"
     >
       <OffersSideWorkplaceSelect :name="inputNames.workplaces" />
 
