@@ -1,9 +1,10 @@
 <script setup lang="ts" generic="T extends ZodSchema">
-import { useFilters } from "@/composables/useFilters/useFilters";
 import { type HTMLAttributes, provide } from "vue";
+import { z, ZodSchema } from "zod";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
-import { z, ZodSchema } from "zod";
+
+import { useFilters } from "@/composables/useFilters/useFilters";
 
 interface FiltersWrapperProps<TSchema extends ZodSchema> {
   filterKeys?: string[];
@@ -14,7 +15,7 @@ interface FiltersWrapperProps<TSchema extends ZodSchema> {
   style?: HTMLAttributes["style"];
 }
 
-const { filterKeys, withAutoSubmit, filtersSchema, initialValues, className, style } = withDefaults(defineProps<FiltersWrapperProps<T>>(), {
+const { filtersSchema, initialValues, className, style } = withDefaults(defineProps<FiltersWrapperProps<T>>(), {
   withAutoSubmit: false,
 });
 
@@ -42,11 +43,12 @@ provide("onSubmit", onSubmit);
 defineExpose({
   clearFilters,
   onSubmit,
+  resetForm,
 });
 </script>
 
 <template>
   <form @submit="onSubmit" :class="className" :style="style">
-    <slot :clear-filters="clearFilters" :on-submit="onSubmit" />
+    <slot :clear-filters="clearFilters" :on-submit="onSubmit" :reset-form="resetForm" />
   </form>
 </template>
