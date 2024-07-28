@@ -1,7 +1,8 @@
 import "tsconfig-paths";
 import dotenv from "dotenv";
 
-const envFile = `.env.${process.env.NODE_ENV ?? "development"}`;
+// const envFile = `.env.${process.env.NODE_ENV ?? "developmenta"}`;
+const envFile = `.env`;
 dotenv.config({ path: envFile });
 
 (async () => {

@@ -10,4 +10,4 @@ export const OFFERS_URL = `${API_URL}/offers`;
 export const STATISTICS_URL = `${API_URL}/statistics`;
 export const STATISTICS_DAILY_URL = `${STATISTICS_URL}/daily`;
 
-export const PAGE_NAME = "Scrappie";
+export const PAGE_NAME = "ITotyle";

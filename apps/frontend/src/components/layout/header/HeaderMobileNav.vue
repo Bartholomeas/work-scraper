@@ -20,7 +20,7 @@ import { Menu } from "lucide-vue-next";
           <span class="sr-only">Otwórz lub zamknij nawigację</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" class="w-[85vw]">
+      <SheetContent side="left" class="z-[120] w-[85vw]">
         <nav>
           <ul class="grid gap-6 text-lg font-medium">
             <li>
