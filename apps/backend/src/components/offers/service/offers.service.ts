@@ -153,18 +153,7 @@ class OffersService implements IOffersService {
     try {
       const data = await this.prisma.jobOffer.findMany({
         ...OfferHelper.getDefaultParams({ ...params, ...defaultParams } as OffersQueryParams),
-        where: OfferHelper.getJobOffersCondiitons({ ...params, ...defaultParams } as OffersQueryParams),
-        // where: {
-        //   ...OfferHelper.getSearchConditions(params?.search),
-        //   AND: [
-        //     ...OfferHelper.getCategoriesConditions(params?.categories),
-        //     ...OfferHelper.getPositionLevelsConditions(params?.positionLevels),
-        //     ...OfferHelper.getContractTypesConditions(params?.contractTypes),
-        //     ...OfferHelper.getWorkModesConditions(params?.workModes),
-        //     ...OfferHelper.getWorkSchedulesConditions(params?.workSchedules),
-        //   ],
-        // ...OfferHelper.getDataSourcesConditions(params?.dataSources),
-        // },
+        where: OfferHelper.getJobOffersConditions({ ...params, ...defaultParams } as OffersQueryParams),
         include: {
           company: true,
           salaryRange: true,
@@ -207,7 +196,7 @@ class OffersService implements IOffersService {
 
       const totalOffers = await this.prisma.jobOffer
         .count({
-          where: OfferHelper.getJobOffersCondiitons({ ...params, ...defaultParams } as OffersQueryParams),
+          where: OfferHelper.getJobOffersConditions({ ...params, ...defaultParams } as OffersQueryParams),
         })
         .catch(() => 0);
 

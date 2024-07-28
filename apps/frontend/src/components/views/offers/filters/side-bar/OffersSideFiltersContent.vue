@@ -5,6 +5,7 @@ import { baseCategoriesSchema } from "shared/src/offers/offers.schemas";
 import type {
   CategoryRecord,
   ContractTypesCodes,
+  DataSourceCodes,
   PositionLevelsCodes,
   WorkModesCodes,
   WorkSchedulesCodes,
@@ -33,6 +34,7 @@ const defaultInitValues = computed(() => ({
   contractTypes: [],
   workModes: [],
   workSchedules: [],
+  dataSources: [],
   categories: [],
 }));
 
@@ -41,6 +43,7 @@ const initialParamsValues = computed(() => ({
   contractTypes: (getValueOfQueryKey("contractTypes")?.split(",") as ContractTypesCodes[]) ?? [],
   workModes: (getValueOfQueryKey("workModes")?.split(",") as WorkModesCodes[]) ?? [],
   workSchedules: (getValueOfQueryKey("workSchedules")?.split(",") as WorkSchedulesCodes[]) ?? [],
+  dataSources: (getValueOfQueryKey("dataSources")?.split(",") as DataSourceCodes[]) ?? [],
   categories: getValueOfQueryKey("categories")?.split(",") ?? [],
 }));
 
