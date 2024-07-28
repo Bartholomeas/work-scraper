@@ -11,6 +11,7 @@ import { isContractTypesArr, isWorkModesArr, isWorkPositionLevelsArr, isWorkSche
 import { PRACUJ_DATA_FILENAME } from "@/components/offers/helpers/offers.constants";
 
 import type { JobOfferPracuj } from "@/types/offers/pracuj.types";
+import { PRACUJ_NAME } from "@/misc/constants";
 
 const SCRAPPED_PAGE_WIDTH = 1200;
 const SCRAPPED_PAGE_HEIGHT = 980;
@@ -48,9 +49,9 @@ class ScrapperPracuj extends ScrapperBase {
       const salaryRange = this.standardizeSalary(offer?.salaryDisplayText);
 
       const idHash = `${offer?.jobTitle}-${offer?.companyName}-${offer?.lastPublicated}-pracuj`;
-      const parsedOffer = {
+      return {
         id: generateId(idHash),
-        dataSourceCode: "pracuj",
+        dataSourceCode: PRACUJ_NAME,
         slug: "",
         positionName: offer?.jobTitle,
         company: {
@@ -75,8 +76,6 @@ class ScrapperPracuj extends ScrapperBase {
           };
         }),
       } satisfies JobOffer;
-
-      return parsedOffer;
       // return { ...parsedOffer, slug: generateJobOfferSlug(parsedOffer) } as JobOffer;
     });
   }

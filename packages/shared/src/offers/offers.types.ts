@@ -55,6 +55,7 @@ export interface OffersBaseCategories {
   workModes: OffersBaseCategory<WorkModesCodes>;
   workSchedules: OffersBaseCategory<WorkSchedulesCodes>;
   categories: OffersBaseCategory<string>;
+  dataSources: OffersBaseCategory<string>;
 }
 
 export interface OffersWorkplaceListItem {

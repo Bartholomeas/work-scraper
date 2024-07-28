@@ -13,16 +13,15 @@ type PrismaJobOffer = JobOffer & {
 };
 
 class OfferHelper {
-  private static keysToMap = ["workplaces", "workModes", "contractTypes", "technologies", "workSchedules", "positionLevels"] as const;
+  // private static keysToMap = ["workplaces", "workModes", "contractTypes", "technologies", "workSchedules", "positionLevels"] as const;
 
-  constructor() {}
-
-  public static getJobOffersCondiitons(params: OffersQueryParams | undefined) {
+  public static getJobOffersConditions(params: OffersQueryParams | undefined) {
     try {
       return {
         ...this.getSearchConditions(params?.search),
         AND: [
           ...this.getCategoriesConditions(params?.categories),
+          ...this.getDataSourcesConditions(params?.dataSources),
           ...this.getPositionLevelsConditions(params?.positionLevels),
           ...this.getContractTypesConditions(params?.contractTypes),
           ...this.getWorkModesConditions(params?.workModes),
@@ -131,14 +130,14 @@ class OfferHelper {
   }
 
   public static getDataSourcesConditions(dataSources?: OffersQueryParams["dataSources"]) {
-    return Array.isArray(dataSources) && dataSources.length > 0
-      ? dataSources.map(value => ({
-          dataSource: {
-            some: {
-              value,
+    return Array.isArray(dataSources)
+      ? [
+          {
+            dataSourceCode: {
+              in: dataSources,
             },
           },
-        }))
+        ]
       : [];
   }
 

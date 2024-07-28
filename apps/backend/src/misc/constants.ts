@@ -13,3 +13,6 @@ export const OFFERS_METADATA_ID = "offers-metadata";
 export const PASSWORD_REGEX = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/;
 export const EMAIL_REGEX = /^[\w-\\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
 export const DATE_FORMAT = "DD.MM.YYYY";
+
+export const JUSTJOIN_NAME = "justjoin";
+export const PRACUJ_NAME = "pracuj";

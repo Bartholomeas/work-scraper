@@ -1,5 +1,8 @@
 import { PrismaClient } from "@prisma/client";
+
+import { JUSTJOIN_NAME, PRACUJ_NAME } from "@/misc/constants";
 import { ERROR_CODES } from "@/misc/error.constants";
+
 import { AppErrorController } from "@/components/error/app-error.controller";
 import { PrismaInstance } from "@/components/libs/prisma.instance";
 
@@ -34,6 +37,19 @@ class OffersCategoriesService implements IOffersCategoriesService {
         name: "Etat",
         items: await this.prisma.workSchedule.findMany(),
       } as OffersBaseCategories["workSchedules"];
+      const dataSources = {
+        name: "Źródło ofert",
+        items: [
+          {
+            id: "2db909e1-ec5f-4ad1-a6ef-7736ce1e1c5f",
+            value: JUSTJOIN_NAME,
+          },
+          {
+            id: "6a7a44cc-08d4-47e9-acb1-f2bb397d48b2",
+            value: PRACUJ_NAME,
+          },
+        ],
+      } as OffersBaseCategories["dataSources"];
       const categories = {
         name: "Kategorie",
         items: await this.prisma.technology.findMany({
@@ -49,6 +65,7 @@ class OffersCategoriesService implements IOffersCategoriesService {
         positionLevels,
         workModes,
         workSchedules,
+        dataSources,
         categories,
       };
     } catch (err) {
