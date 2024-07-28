@@ -10,7 +10,7 @@ import Logo from "@/components/special/Logo.vue";
     class="container hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:justify-between md:gap-4 md:text-sm"
   >
     <ul class="hidden gap-6 md:flex md:flex-row md:items-center md:gap-4">
-      <li>
+      <li class="mr-6">
         <Logo />
       </li>
       <li v-for="link in HEADER_LINKS" :key="`navLink-${link.label.toLowerCase().split(' ').join('-')}-${link.to}`">

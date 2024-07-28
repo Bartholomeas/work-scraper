@@ -1,5 +1,4 @@
 export const BASE_URL = "/api/v1";
-
 export const DATABASE_URL = process.env.DATABASE_URL ?? ("file:./dev.db?mode=memory&cache=shared" as string);
 export const { SECRET_PHRASE } = process.env;
 export const { PORT } = process.env;
