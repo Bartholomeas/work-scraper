@@ -238,11 +238,11 @@ class ScrapperPracuj extends ScrapperBase {
     const standardizedLevels = levels.reduce(
       (acc, _level) => {
         const level = _level.toLowerCase();
-        if (level.includes("junior")) acc.push("junior");
+        if (level.includes("junior") || level.includes("młodszy")) acc.push("junior");
         else if (level.includes("mid") || level.includes("regular") || level.includes("ekspert")) acc.push("mid");
         else if (level.includes("senior")) acc.push("senior");
         else if (level.includes("menager") || level.includes("kierownik") || level.includes("menedżer")) acc.push("manager");
-        else if (level.includes("intern") || level.includes("staż") || level.includes("praktyk")) acc.push("intern");
+        else if (level.includes("intern") || level.includes("staż") || level.includes("praktykant")) acc.push("intern");
         return acc;
       },
       [] as JobOffer["positionLevels"],

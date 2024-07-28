@@ -1,26 +1,21 @@
 <script setup lang="ts">
 import { computed } from "vue";
 
+import type { JobOffer } from "shared/src/offers/offers.types";
+
 import { createStringFromArr } from "@/utils/createStringFromArr";
 import { formatDate } from "@/utils/formatDate";
 
 import { Button, buttonVariants } from "@/components/ui/button/Button.variants";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import type { JobOffer } from "shared/src/offers/offers.types";
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
+
+import Title from "@/components/common/title/Title.vue";
 import OfferBadges from "@/components/views/offers/single/OfferBadges.vue";
 import OffersIconValueBox from "@/components/views/offers/single/OffersIconValueBox.vue";
 
-import { ArrowRight, Building2, Calendar, MapPin } from "lucide-vue-next";
+import { ArrowRight, Building2, Calendar, HardDrive, MapPin } from "lucide-vue-next";
 
 interface OffersDetailsDialogProps {
   offer: JobOffer;
@@ -41,14 +36,14 @@ const formattedExpirationDate = computed(() => formatDate(offer?.expirationDate)
     <DialogContent class="z-[500] flex max-h-[90dvh] flex-col gap-4 overflow-y-auto">
       <DialogHeader class="flex flex-col">
         <div class="flex gap-4">
-          <img
-            :src="offer?.company?.logoUrl ?? ''"
-            :alt="`Logo firmy ${offer?.company?.name}`"
-            loading="lazy"
-            height="120"
-            width="120"
-            class="aspect-square max-h-[120px] rounded-md bg-white object-contain p-2"
-          />
+          <!--          <img-->
+          <!--            :src="offer?.company?.logoUrl ?? ''"-->
+          <!--            :alt="`Logo firmy ${offer?.company?.name}`"-->
+          <!--            loading="lazy"-->
+          <!--            height="120"-->
+          <!--            width="120"-->
+          <!--            class="aspect-square max-h-[120px] rounded-md bg-white object-contain p-2"-->
+          <!--          />-->
           <div class="flex flex-col justify-center gap-1">
             <DialogTitle class="text-left text-[24px]">{{ offer?.positionName }}</DialogTitle>
             <p class="text-primary text-left text-lg font-bold md:mb-2">{{ salaryText }}</p>
@@ -58,14 +53,28 @@ const formattedExpirationDate = computed(() => formatDate(offer?.expirationDate)
         <div class="mb-2 flex flex-col gap-2">
           <OffersIconValueBox :icon="Building2" :value="offer?.company?.name" />
           <OffersIconValueBox :icon="MapPin" :value="workCities" />
-          <OffersIconValueBox :icon="Calendar" :value="formattedExpirationDate" />
+          <OffersIconValueBox :icon="Calendar" :value="`Koniec: ${formattedExpirationDate}`" />
+          <OffersIconValueBox :icon="HardDrive" :value="offer?.dataSourceCode" class="uppercase" />
         </div>
 
-        <OfferBadges :position-levels="offer?.positionLevels" :work-modes="offer?.workModes" :contract-types="offer?.contractTypes" />
+        <OfferBadges
+          class-name="flex-row flex-wrap"
+          :position-levels="offer?.positionLevels"
+          :work-modes="offer?.workModes"
+          :contract-types="offer?.contractTypes"
+        />
       </DialogHeader>
 
       <Separator />
-      <DialogDescription>{{ offer?.description }}</DialogDescription>
+      <div class="flex flex-col gap-2">
+        <Title order="h4">Technologie</Title>
+        <div class="flex w-full flex-wrap gap-2">
+          <Badge v-for="category in offer?.technologies" :key="`${offer?.id}-${category}`" variant="secondary" class="uppercase"
+            >{{ category }}
+          </Badge>
+        </div>
+      </div>
+      <!--      <DialogDescription>{{ offer?.description }}</DialogDescription>-->
 
       <Separator />
       <DialogFooter class="flex flex-nowrap gap-2">

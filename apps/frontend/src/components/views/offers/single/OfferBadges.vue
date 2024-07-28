@@ -1,27 +1,30 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, type HTMLAttributes } from "vue";
 
 import type { JobOffer } from "shared/src/offers/offers.types";
 
-import { Badge } from "@/components/ui/badge";
+import { cn } from "@/utils/utils";
 import { createStringFromArr } from "@/utils/createStringFromArr";
 import { getCategoryName } from "@/utils/getCategoryName";
+
+import { Badge } from "@/components/ui/badge";
 
 interface OfferBadgesProps {
   positionLevels: JobOffer["positionLevels"];
   workModes: JobOffer["workModes"];
   contractTypes: JobOffer["contractTypes"];
+  className?: HTMLAttributes["class"];
 }
 
-const { positionLevels, workModes, contractTypes } = defineProps<OfferBadgesProps>();
+const props = defineProps<OfferBadgesProps>();
 
-const positionLevelsString = computed(() => createStringFromArr(positionLevels.map(el => getCategoryName(el))).toUpperCase());
-const workModesString = computed(() => createStringFromArr(workModes.map(el => getCategoryName(el))).toUpperCase());
-const contractTypesString = computed(() => createStringFromArr(contractTypes.map(el => getCategoryName(el))).toUpperCase());
+const positionLevelsString = computed(() => createStringFromArr(props.positionLevels.map(el => getCategoryName(el))).toUpperCase());
+const workModesString = computed(() => createStringFromArr(props.workModes.map(el => getCategoryName(el))).toUpperCase());
+const contractTypesString = computed(() => createStringFromArr(props.contractTypes.map(el => getCategoryName(el))).toUpperCase());
 </script>
 
 <template>
-  <div class="flex flex-col gap-2 md:flex-row">
+  <div :class="cn('flex flex-col gap-2 md:flex-row', props.className)">
     <Badge class="whitespace-nowrap" v-if="positionLevelsString">{{ positionLevelsString }}</Badge>
     <Badge class="whitespace-nowrap" variant="outline" v-if="workModesString">{{ workModesString }}</Badge>
     <Badge class="whitespace-nowrap" variant="secondary" v-if="contractTypesString">{{ contractTypesString }}</Badge>
