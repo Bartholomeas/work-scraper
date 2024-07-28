@@ -3,6 +3,7 @@ import { type HTMLAttributes, provide } from "vue";
 import { z, ZodSchema } from "zod";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
+import { useWindowScroll } from "@vueuse/core";
 
 import { useFilters } from "@/composables/useFilters/useFilters";
 
@@ -17,6 +18,9 @@ interface FiltersWrapperProps<TSchema extends ZodSchema> {
 
 const { filtersSchema, initialValues, className, style } = withDefaults(defineProps<FiltersWrapperProps<T>>(), {
   withAutoSubmit: false,
+});
+const { y } = useWindowScroll({
+  behavior: "smooth",
 });
 
 const { handleSubmit, values, setFieldValue, resetForm } = useForm({
@@ -34,6 +38,7 @@ const clearFilters = () => {
 
 const onSubmit = handleSubmit(values => {
   submitFilters(values);
+  y.value = 0;
 });
 
 provide("formValues", values);

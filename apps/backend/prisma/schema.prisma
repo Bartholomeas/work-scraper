@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider     = "sqlite"
-  url          = "file:./dev.db?mode=memory&cache=shared"
+  url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
 
@@ -172,8 +172,8 @@ model CategorySingleStatistic {
 }
 
 model CategoriesStatistics {
-  id         String                    @id @default(uuid())
-  createdAt  DateTime?                 @default(now())
+  id          String                    @id @default(uuid())
+  createdAt   DateTime?                 @default(now())
   baseFilters CategorySingleStatistic[]
 }
 

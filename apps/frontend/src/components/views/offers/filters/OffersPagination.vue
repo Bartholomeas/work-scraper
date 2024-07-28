@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useRoute } from "vue-router";
+import { useWindowScroll } from "@vueuse/core";
 
 import type { OffersPaginationMetadata } from "shared/src/general/query.types";
-import { useFilters } from "@/composables/useFilters/useFilters";
 
+import { useFilters } from "@/composables/useFilters/useFilters";
 import {
   Pagination,
   PaginationEllipsis,
@@ -20,6 +21,10 @@ interface OffersPaginationProps {
 }
 
 const route = useRoute();
+const { y } = useWindowScroll({
+  behavior: "smooth",
+});
+
 const currentPage = computed(() => (route?.query?.page ? +route?.query?.page : 1));
 
 const { meta } = defineProps<OffersPaginationProps>();
@@ -28,6 +33,7 @@ const { submitFilters } = useFilters({
 });
 
 const handlePageChange = (page: number = 1) => {
+  y.value = 0;
   submitFilters({ page });
 };
 </script>
