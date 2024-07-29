@@ -144,7 +144,7 @@ class OffersService implements IOffersService {
    * @returns {Promise<JobOffersResponse>} A promise that resolves to job offers with pagination metadata.
    * @throws {AppErrorController} Throws an error if the operation fails.
    */
-  public async getJobOffers(params: OffersQueryParams | undefined) {
+  public async getJobOffers(params: OffersQueryParams | undefined): Promise<JobOffersResponse> {
     const defaultParams: { perPage: OffersQueryParams["perPage"]; page: OffersQueryParams["page"] } = {
       perPage: params?.perPage ?? 48,
       page: params?.page && params?.page < 1 ? 1 : (params?.page ?? 1),
@@ -154,11 +154,13 @@ class OffersService implements IOffersService {
       const data = await this.prisma.jobOffer.findMany({
         ...OfferHelper.getDefaultParams({ ...params, ...defaultParams } as OffersQueryParams),
         where: OfferHelper.getJobOffersConditions({ ...params, ...defaultParams } as OffersQueryParams),
-        include: {
-          company: true,
-          salaryRange: true,
-          offerUrls: true,
-
+        select: {
+          id: true,
+          company: {
+            select: {
+              name: true,
+            },
+          },
           workplaces: {
             select: {
               value: true,
@@ -168,26 +170,48 @@ class OffersService implements IOffersService {
           },
           workModes: {
             select: {
+              id: true,
               value: true,
             },
           },
           contractTypes: {
             select: {
+              id: true,
               value: true,
             },
           },
           technologies: {
             select: {
+              id: true,
+              count: true,
               value: true,
             },
           },
           workSchedules: {
             select: {
+              id: true,
               value: true,
             },
           },
           positionLevels: {
             select: {
+              id: true,
+              value: true,
+            },
+          },
+          salaryRange: {
+            select: {
+              id: true,
+              currency: true,
+              min: true,
+              max: true,
+              timeUnit: true,
+              type: true,
+            },
+          },
+          offerUrls: {
+            select: {
+              id: true,
               value: true,
             },
           },
