@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "description": "",
   "main": "./index.js",
+  "prisma": {
+    "schema": "./prisma/schema.prisma"
+  },
   "scripts": {
     "build": "NODE_ENV=production && tsup --tsconfig tsconfig.json --format cjs,esm --dts",
     "dev": "NODE_ENV=development && tsx watch src/server.ts",
