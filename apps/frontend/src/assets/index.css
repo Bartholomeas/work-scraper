@@ -108,7 +108,17 @@
 }
 
 @layer base {
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
 
+    ::-webkit-scrollbar-track {
+        @apply bg-muted/50 rounded-full
+    }
+
+    ::-webkit-scrollbar-thumb {
+        @apply rounded-full bg-muted transition-all hover:bg-muted-foreground
+    }
 
     /* Heading classes */
     .h1 {

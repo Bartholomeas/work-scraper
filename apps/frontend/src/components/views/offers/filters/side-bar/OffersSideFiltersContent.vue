@@ -52,7 +52,7 @@ const inputNames = computed(() => parseZodSchemaToInputNames(baseCategoriesSchem
 <template>
   <aside class="relative h-full w-full overflow-y-auto">
     <FiltersWrapper
-      class-name="flex flex-col gap-4 max-lg:pb-6"
+      class-name="flex flex-col gap-4 max-lg:pb-6 pr-2"
       v-slot="{ clearFilters, resetForm }"
       :filters-schema="baseCategoriesSchema"
       :initial-values="initialParamsValues"
