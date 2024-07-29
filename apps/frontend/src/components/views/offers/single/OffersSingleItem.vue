@@ -42,6 +42,7 @@ const formattedCreationDate = computed(() => formatDate(offer?.createdAt));
 </script>
 
 <template>
+
   <Card
     class="flex flex-col gap-2 p-3 transition-shadow transition-transform hover:z-30 hover:translate-y-[-2px] hover:shadow-xl"
     :aria-label="`Otwórz szczegóły ogłoszenia: ${offer?.positionName ?? ''}`"

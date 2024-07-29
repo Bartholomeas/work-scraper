@@ -66,6 +66,22 @@ class StatisticsController implements IStatisticsController {
     }
   };
 
+  public generateEntireStatistics = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const stats = await Promise.all([
+        this.statisticsService.generateGeneralStatistics(),
+        this.generateAllOffersCountStatistics(),
+        this.generateDailyPositionsStatistics(),
+        this.generateDailyCategoriesStatistics(),
+        this.generateDailyWorkplacesStatistics(),
+      ]);
+
+      res.status(201).json(stats);
+    } catch (err) {
+      next(ErrorHandlerController.handleError(err));
+    }
+  };
+
   public getAllDailyOffersCountStatistics = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data = await this.statisticsService.retrieveAllDailyOffersStatistics();
