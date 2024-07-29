@@ -23,9 +23,10 @@ import OffersSidebarButtons from "@/components/views/offers/filters/side-bar/Off
 import CheckboxControlled from "@/components/common/form/inputs-controlled/checkbox-controlled/CheckboxControlled.vue";
 import FiltersWrapper from "@/components/special/FiltersWrapper.vue";
 import CheckboxControlledSkeleton from "@/components/common/form/inputs-controlled/checkbox-controlled/CheckboxControlledSkeleton.vue";
+import OffersSideWorkplaceSelectSkeleton from "@/components/views/offers/filters/side-bar/side-workplace-select/OffersSideWorkplaceSelectSkeleton.vue";
 
 const OffersSideWorkplaceSelect = defineAsyncComponent(
-  () => import("@/components/views/offers/filters/side-bar/OffersSideWorkplaceSelect.vue"),
+  () => import("@/components/views/offers/filters/side-bar/side-workplace-select/OffersSideWorkplaceSelect.vue"),
 );
 
 const { data: baseFilters, isLoading } = useGetOffersBaseFilters();
@@ -61,7 +62,13 @@ const skeletonsArray = computed(() => new Array(6).fill(0).map((_, i) => i));
       :filters-schema="baseCategoriesSchema"
       :initial-values="initialParamsValues"
     >
-      <OffersSideWorkplaceSelect :name="inputNames.workplaces" />
+      <Suspense>
+        <OffersSideWorkplaceSelect :name="inputNames.workplaces" />
+        <template #fallback>
+          <OffersSideWorkplaceSelectSkeleton />
+        </template>
+      </Suspense>
+
       <CheckboxControlledSkeleton
         v-for="skeleton in skeletonsArray"
         v-if="isLoading"
