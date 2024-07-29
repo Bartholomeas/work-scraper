@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     tty: true
-    image: node:20
+    image: work-scrapper
     volumes:
       - .:/app
       - ~/.pnpm-store:/.pnpm-store
