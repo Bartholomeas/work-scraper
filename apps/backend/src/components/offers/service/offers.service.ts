@@ -157,7 +157,7 @@ class OffersService implements IOffersService {
         select: {
           id: true,
           createdAt: true,
-          updatedAt: true,
+          expirationDate: true,
           positionName: true,
           companyName: true,
           dataSourceCode: true,
