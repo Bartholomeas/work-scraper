@@ -9,7 +9,7 @@ const dbPath = path.join(__dirname, "dev.db");
 const backupDir = path.join(__dirname, "backups");
 const backupFile = path.join(backupDir, `dev-${new Date().toISOString().replace(/:/g, "-")}.db`);
 
-const executeCommand = (command) => {
+const executeCommand = command => {
   return new Promise((resolve, reject) => {
     exec(command, (error, stdout, stderr) => {
       if (error) {
