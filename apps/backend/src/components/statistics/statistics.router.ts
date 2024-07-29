@@ -16,6 +16,7 @@ class StatisticsRouter {
     // Default stats
     router.get("/general", this.statisticsController.getGeneralStatistics);
     router.post("/generate-general", guardSecret(SECRET_PHRASE), this.statisticsController.generateGeneralStatistics);
+    router.post("/generate-all-stats", guardSecret(SECRET_PHRASE), this.statisticsController.generateEntireStatistics);
     // Daily
     // GET
     router.get("/daily/all-offers-count", this.statisticsController.getAllDailyOffersCountStatistics);
