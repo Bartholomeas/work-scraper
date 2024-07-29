@@ -18,15 +18,18 @@ import { isKeyOf } from "@/utils/isKeyOf";
 import { getCategoryName } from "@/utils/getCategoryName";
 
 import { useFilters } from "@/composables/useFilters/useFilters";
+
 import OffersSidebarButtons from "@/components/views/offers/filters/side-bar/OffersSidebarButtons.vue";
-import CheckboxControlled from "@/components/common/form/inputs-controlled/CheckboxControlled.vue";
+import CheckboxControlled from "@/components/common/form/inputs-controlled/checkbox-controlled/CheckboxControlled.vue";
 import FiltersWrapper from "@/components/special/FiltersWrapper.vue";
+import CheckboxControlledSkeleton from "@/components/common/form/inputs-controlled/checkbox-controlled/CheckboxControlledSkeleton.vue";
+import OffersSideWorkplaceSelectSkeleton from "@/components/views/offers/filters/side-bar/side-workplace-select/OffersSideWorkplaceSelectSkeleton.vue";
 
 const OffersSideWorkplaceSelect = defineAsyncComponent(
-  () => import("@/components/views/offers/filters/side-bar/OffersSideWorkplaceSelect.vue"),
+  () => import("@/components/views/offers/filters/side-bar/side-workplace-select/OffersSideWorkplaceSelect.vue"),
 );
 
-const { data: baseFilters } = useGetOffersBaseFilters();
+const { data: baseFilters, isLoading } = useGetOffersBaseFilters();
 const { getValueOfQueryKey } = useFilters();
 
 const defaultInitValues = computed(() => ({
@@ -48,6 +51,8 @@ const initialParamsValues = computed(() => ({
 }));
 
 const inputNames = computed(() => parseZodSchemaToInputNames(baseCategoriesSchema));
+
+const skeletonsArray = computed(() => new Array(6).fill(0).map((_, i) => i));
 </script>
 <template>
   <aside class="relative h-full w-full overflow-y-auto">
@@ -57,9 +62,20 @@ const inputNames = computed(() => parseZodSchemaToInputNames(baseCategoriesSchem
       :filters-schema="baseCategoriesSchema"
       :initial-values="initialParamsValues"
     >
-      <OffersSideWorkplaceSelect :name="inputNames.workplaces" />
+      <Suspense>
+        <OffersSideWorkplaceSelect :name="inputNames.workplaces" />
+        <template #fallback>
+          <OffersSideWorkplaceSelectSkeleton />
+        </template>
+      </Suspense>
 
-      <template v-if="baseFilters" v-for="[key, category] in Object.entries(baseFilters)">
+      <CheckboxControlledSkeleton
+        v-for="skeleton in skeletonsArray"
+        v-if="isLoading"
+        :numberOfItems="5"
+        :key="`checkboxControlledSkeleton-${skeleton}`"
+      />
+      <template v-else-if="baseFilters" v-for="[key, category] in Object.entries(baseFilters)">
         <CheckboxControlled
           v-if="isKeyOf(inputNames, key)"
           :label="category?.name"

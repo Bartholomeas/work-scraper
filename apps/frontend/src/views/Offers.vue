@@ -27,7 +27,7 @@ const { data, isLoading } = useGetOffersList(params);
       <template #top-bar>
         <OffersFiltersTopBar />
       </template>
-      <template #filters class="relative">
+      <template #filters class="relative bg-amber-400">
         <OffersSideFilters />
       </template>
       <OffersItemsList :offers="data?.data" :is-loading="isLoading" />

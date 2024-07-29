@@ -3,202 +3,199 @@
 @tailwind utilities;
 
 @layer base {
-    :root {
-        /*Base variables*/
-        --background: #ffffff;
-        --background-lighter: #efefef;
-        --foreground: 222.2 84% 4.9%;
+  :root {
+    /*Base variables*/
+    --background: #ffffff;
+    --background-lighter: #efefef;
+    --foreground: 222.2 84% 4.9%;
 
-        --muted: 210 40% 96.1%;
-        --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
 
-        --popover: 0 0% 100%;
-        --popover-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
 
-        --card: 0 0% 100%;
-        --card-foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
 
-        --border: 214.3 31.8% 91.4%;
-        --input: 214.3 31.8% 91.4%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
 
-        --primary: #2ae89b;
-        --primary-light: #98eebf;
-        --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: #2ae89b;
+    --primary-light: #98eebf;
+    --primary-foreground: 222.2 47.4% 11.2%;
 
-        --secondary: 210 40% 96.1%;
-        --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
 
-        --accent: 210 40% 96.1%;
-        --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
 
-        --destructive: 0 84.2% 60.2%;
-        --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
 
-        --success: #07ce28;
-        --error: #f32;
+    --success: #07ce28;
+    --error: #f32;
 
-        --ring: 222.2 84% 4.9%;
+    --ring: 222.2 84% 4.9%;
 
-        --radius: 0.5rem;
+    --radius: 0.5rem;
 
-        /*Charts variables*/
-        --vis-tooltip-background-color: none !important;
-        --vis-tooltip-border-color: none !important;
-        --vis-tooltip-text-color: none !important;
-        --vis-tooltip-shadow-color: none !important;
-        --vis-tooltip-backdrop-filter: none !important;
-        --vis-tooltip-padding: none !important;
+    /*Charts variables*/
+    --vis-tooltip-background-color: none !important;
+    --vis-tooltip-border-color: none !important;
+    --vis-tooltip-text-color: none !important;
+    --vis-tooltip-shadow-color: none !important;
+    --vis-tooltip-backdrop-filter: none !important;
+    --vis-tooltip-padding: none !important;
 
-        --vis-primary-color: var(--primary);
-        /* change to any hsl value you want */
-        --vis-secondary-color: 160 81% 40%;
-        --vis-text-color: var(--muted-foreground);
+    --vis-primary-color: var(--primary);
+    /* change to any hsl value you want */
+    --vis-secondary-color: 160 81% 40%;
+    --vis-text-color: var(--muted-foreground);
+  }
 
-    }
+  .dark {
+    /*Base variables*/
+    --background: #010612;
+    --background-lighter: #161b29;
+    --foreground: 210 40% 98%;
 
-    .dark {
-        /*Base variables*/
-        --background: #010612;
-        --background-lighter: #0e1426;
-        --foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
 
-        --muted: 217.2 32.6% 17.5%;
-        --muted-foreground: 215 20.2% 65.1%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
 
-        --popover: 222.2 84% 4.9%;
-        --popover-foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
 
-        --card: 222.2 84% 4.9%;
-        --card-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
 
-        --border: 217.2 32.6% 17.5%;
-        --input: 217.2 32.6% 17.5%;
+    --primary: #2ae89b;
+    --primary-light: #98eebf;
+    --primary-foreground: 222.2 47.4% 11.2%;
 
-        --primary: #2ae89b;
-        --primary-light: #98eebf;
-        --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
 
-        --secondary: 217.2 32.6% 17.5%;
-        --secondary-foreground: 210 40% 98%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
 
-        --accent: 217.2 32.6% 17.5%;
-        --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
 
-        --destructive: 0 62.8% 30.6%;
-        --destructive-foreground: 210 40% 98%;
+    --success: #07ce28;
+    --error: #f32;
 
-        --success: #07ce28;
-        --error: #f32;
+    --ring: 212.7 26.8% 83.9%;
 
-        --ring: 212.7 26.8% 83.9%;
+    /*Charts variables*/
+    --vis-tooltip-background-color: none !important;
+    --vis-tooltip-border-color: none !important;
+    --vis-tooltip-text-color: none !important;
+    --vis-tooltip-shadow-color: none !important;
+    --vis-tooltip-backdrop-filter: none !important;
+    --vis-tooltip-padding: none !important;
 
-        /*Charts variables*/
-        --vis-tooltip-background-color: none !important;
-        --vis-tooltip-border-color: none !important;
-        --vis-tooltip-text-color: none !important;
-        --vis-tooltip-shadow-color: none !important;
-        --vis-tooltip-backdrop-filter: none !important;
-        --vis-tooltip-padding: none !important;
-
-        --vis-primary-color: var(--primary);
-        /* change to any hsl value you want */
-        --vis-secondary-color: 160 81% 40%;
-        --vis-text-color: var(--muted-foreground);
-    }
+    --vis-primary-color: var(--primary);
+    /* change to any hsl value you want */
+    --vis-secondary-color: 160 81% 40%;
+    --vis-text-color: var(--muted-foreground);
+  }
 }
 
 @layer base {
-    ::-webkit-scrollbar {
-        width: 10px;
-    }
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
 
-    ::-webkit-scrollbar-track {
-        @apply bg-muted/50 rounded-full
-    }
+  ::-webkit-scrollbar-track {
+    @apply bg-muted/50 rounded-full;
+  }
 
-    ::-webkit-scrollbar-thumb {
-        @apply rounded-full bg-muted transition-all hover:bg-muted-foreground
-    }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted hover:bg-muted-foreground rounded-full transition-all;
+  }
 
-    /* Heading classes */
-    .h1 {
-        @apply text-[34px] leading-[39px] tracking-[2%] lg:text-[40px] lg:leading-[48px];
-    }
+  /* Heading classes */
+  .h1 {
+    @apply text-[34px] leading-[39px] tracking-[2%] lg:text-[40px] lg:leading-[48px];
+  }
 
-    .h2 {
-        @apply text-[32px] leading-[40px] tracking-[2%] lg:text-[36px] lg:leading-[44px];
-    }
+  .h2 {
+    @apply text-[32px] leading-[40px] tracking-[2%] lg:text-[36px] lg:leading-[44px];
+  }
 
-    .h3 {
-        @apply text-[28px] leading-[36px] tracking-[2%]
-        lg:text-[32px] lg:leading-[40px];
-    }
+  .h3 {
+    @apply text-[28px] leading-[36px] tracking-[2%] lg:text-[32px] lg:leading-[40px];
+  }
 
-    .h4 {
-        @apply text-[24px] leading-[32px]
-        lg:text-[28px] lg:leading-[36px];
-    }
+  .h4 {
+    @apply text-[24px] leading-[32px] lg:text-[28px] lg:leading-[36px];
+  }
 
-    .h5 {
-        @apply text-[20px] leading-[28px]
-        lg:text-[24px] lg:leading-[32px];
-    }
+  .h5 {
+    @apply text-[20px] leading-[28px] lg:text-[24px] lg:leading-[32px];
+  }
 
-    .h6 {
-        @apply text-[18px] leading-[24px]
-        lg:text-[20px] lg:leading-[28px];
-    }
+  .h6 {
+    @apply text-[18px] leading-[24px] lg:text-[20px] lg:leading-[28px];
+  }
 
-    h1 {
-        @apply h1;
-    }
+  h1 {
+    @apply h1;
+  }
 
-    h2 {
-        @apply h2;
-    }
+  h2 {
+    @apply h2;
+  }
 
-    h3 {
-        @apply h3;
-    }
+  h3 {
+    @apply h3;
+  }
 
-    h4 {
-        @apply h4;
-    }
+  h4 {
+    @apply h4;
+  }
 
-    h5 {
-        @apply h5;
-    }
+  h5 {
+    @apply h5;
+  }
 
-    h6 {
-        @apply h6;
-    }
+  h6 {
+    @apply h6;
+  }
 
-    p,
-    span,
-    button,
-    a,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        @apply text-foreground;
-    }
+  p,
+  span,
+  button,
+  a,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply text-foreground;
+  }
 
-    * {
-        @apply border-border;
-    }
+  * {
+    @apply border-border;
+  }
 
-    body {
-        @apply bg-background text-foreground;
-    }
+  body {
+    @apply bg-background text-foreground;
+  }
 }
 
 @layer components {
-    .charts {
-        h1, h2, h3 {
-            @apply text-lg
-        }
+  .charts {
+    h1,
+    h2,
+    h3 {
+      @apply text-lg;
     }
+  }
 }
