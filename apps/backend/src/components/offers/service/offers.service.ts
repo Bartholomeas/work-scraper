@@ -156,6 +156,11 @@ class OffersService implements IOffersService {
         where: OfferHelper.getJobOffersConditions({ ...params, ...defaultParams } as OffersQueryParams),
         select: {
           id: true,
+          createdAt: true,
+          updatedAt: true,
+          positionName: true,
+          companyName: true,
+          dataSourceCode: true,
           company: {
             select: {
               name: true,

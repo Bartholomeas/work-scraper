@@ -5,7 +5,7 @@ import Header from "@/components/layout/header/Header.vue";
 import Footer from "@/components/layout/Footer.vue";
 
 const title = useTitle();
-title.value = `Oferty z IT | ${PAGE_NAME}`;
+title.value = `Oferty pracy z IT | ${PAGE_NAME}`;
 </script>
 
 <template>
