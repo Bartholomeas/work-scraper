@@ -10,6 +10,7 @@ import { PRACUJ_DATA_FILENAME } from "@/components/offers/helpers/offers.constan
 import { isContractTypesArr, isWorkModesArr, isWorkPositionLevelsArr, isWorkSchedulesArr } from "@/components/offers/helpers/offers.utils";
 import { ScrapperBase, type ScrapperBaseProps } from "@/components/offers/scrapper/scrapper-base";
 
+import { ErrorHandlerController } from "@/components/error/error-handler.controller";
 import { PRACUJ_NAME } from "@/misc/constants";
 import type { JobOfferPracuj } from "@/types/offers/pracuj.types";
 
@@ -119,11 +120,7 @@ class ScrapperPracuj extends ScrapperBase {
       return [];
     } catch (err) {
       if (retries > 0) return this.scrapePage<T>(pageNumber, retries - 1);
-      throw new AppErrorController({
-        statusCode: 500,
-        code: ERROR_CODES.internal_error,
-        message: `scrapePage: ${JSON.stringify(err)}`,
-      });
+      throw ErrorHandlerController.handleError(err);
     } finally {
       await page.close();
     }
