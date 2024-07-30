@@ -2,16 +2,14 @@ import { type Browser, type Page } from "puppeteer";
 
 import type { CurrencyCodes, JobOffer, SalaryTypes, ScrappedDataResponse, TimeUnitTypes } from "shared/src/offers/offers.types";
 
-import { AppErrorController } from "@/components/error/app-error.controller";
-import { ERROR_CODES } from "@/misc/error.constants";
+import { PRACUJ_NAME } from "@/misc/constants";
 import { generateId } from "@/utils/generate-id";
 
+import { ErrorHandlerController } from "@/components/error/error-handler.controller";
 import { PRACUJ_DATA_FILENAME } from "@/components/offers/helpers/offers.constants";
 import { isContractTypesArr, isWorkModesArr, isWorkPositionLevelsArr, isWorkSchedulesArr } from "@/components/offers/helpers/offers.utils";
 import { ScrapperBase, type ScrapperBaseProps } from "@/components/offers/scrapper/scrapper-base";
 
-import { ErrorHandlerController } from "@/components/error/error-handler.controller";
-import { PRACUJ_NAME } from "@/misc/constants";
 import type { JobOfferPracuj } from "@/types/offers/pracuj.types";
 
 // const SCRAPPED_PAGE_WIDTH = 1200;
