@@ -1,14 +1,17 @@
-import { ScrapperBase, type ScrapperBaseProps } from "@/components/offers/scrapper/scrapper-base";
+import dayjs from "dayjs";
 import type { Browser, Page } from "puppeteer";
+
+import type { JobOffer, ScrappedDataResponse } from "shared/src/offers/offers.types";
 
 import { generateId } from "@/utils/generate-id";
 
 import { JUSTJOIN_DATA_FILENAME } from "@/components/offers/helpers/offers.constants";
 import { isContractTypesArr } from "@/components/offers/helpers/offers.utils";
 
+import { ErrorHandlerController } from "@/components/error/error-handler.controller";
+import { ScrapperBase, type ScrapperBaseProps } from "@/components/offers/scrapper/scrapper-base";
+
 import type { JobOfferJustjoin } from "@/types/offers/justjoin.types";
-import dayjs from "dayjs";
-import type { JobOffer, ScrappedDataResponse } from "shared/src/offers/offers.types";
 
 const VIEWPORT_WIDTH = 800;
 const VIEWPORT_HEIGHT = 980;
@@ -22,8 +25,6 @@ class ScrapperJustjoin extends ScrapperBase {
   }
 
   public getScrappedData = async (): Promise<ScrappedDataResponse> => {
-    if (!this.page) await this.initializePage();
-
     const data = await this.saveScrappedData<JobOffer>({
       fileName: JUSTJOIN_DATA_FILENAME,
     });
@@ -32,18 +33,21 @@ class ScrapperJustjoin extends ScrapperBase {
   };
 
   protected async scrapePage<T>(pageNumber: number): Promise<T[] | undefined> {
-    const page = this.page ?? (await this.browser?.newPage());
+    let page: Page | undefined;
+    if (this.page) page = this.page;
+    else page = await this.browser?.newPage();
+
     if (!page) return;
 
     try {
-      await page.setViewport({
+      await page?.setViewport({
         width: VIEWPORT_WIDTH,
         height: VIEWPORT_HEIGHT,
       });
 
       const offers: T[] = [];
 
-      page.on("response", async response => {
+      page?.on("response", async response => {
         const url = response.url();
         if (url.includes("https://api.justjoin.it/v2/user-panel/offers?")) {
           try {
@@ -55,44 +59,43 @@ class ScrapperJustjoin extends ScrapperBase {
               offers.push(...res.data);
             }
           } catch (err) {
-            console.error("Error parsing JSON response", err);
+            throw ErrorHandlerController.handleError(err);
           }
         }
       });
 
-      await page.goto(this.url, { waitUntil: "networkidle2" });
+      await page?.goto(this.url, { waitUntil: "networkidle2" });
 
       await page
-        .waitForSelector("#cookiescript_accept", {
+        ?.waitForSelector("#cookiescript_accept", {
           timeout: 5000,
         })
         .then(async () => {
-          await page.click("#cookiescript_accept");
+          await page?.click("#cookiescript_accept");
           console.log("Clicked cookie consent");
         })
         .catch(err => {
           console.log("Cookie consent cannot be clicked", err);
         });
 
-      const content = await page.evaluate(() => {
+      const content = await page?.evaluate(() => {
         const scriptTag = document.querySelector('script[id="__NEXT_DATA__"]');
         return scriptTag ? JSON.parse(scriptTag.innerHTML) : undefined;
       });
 
-      await this.scrollToEndOfPage(page);
+      if (page) await this.scrollToEndOfPage(page);
       return [content?.props?.pageProps?.dehydratedState?.queries?.[0]?.state?.data?.pages?.[0]?.data, ...offers] as T[];
     } catch (err) {
       console.error(`Error processing page ${pageNumber}:`, err);
       return;
     } finally {
-      if (page && !this.page) await page.close();
+      if (page) await page?.close();
     }
   }
 
   private async scrollToEndOfPage(page: Page) {
     if (!page) return null;
 
-    // const footerExist = false;
     let prevScrollHeight = (await page.evaluate(() => document.body.scrollHeight)) as number;
     let currentScrollHeight: number = prevScrollHeight;
 

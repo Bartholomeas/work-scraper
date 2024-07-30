@@ -2,19 +2,19 @@ import { type Browser, type Page } from "puppeteer";
 
 import type { CurrencyCodes, JobOffer, SalaryTypes, ScrappedDataResponse, TimeUnitTypes } from "shared/src/offers/offers.types";
 
-import { generateId } from "@/utils/generate-id";
 import { AppErrorController } from "@/components/error/app-error.controller";
 import { ERROR_CODES } from "@/misc/error.constants";
+import { generateId } from "@/utils/generate-id";
 
-import { ScrapperBase, type ScrapperBaseProps } from "@/components/offers/scrapper/scrapper-base";
-import { isContractTypesArr, isWorkModesArr, isWorkPositionLevelsArr, isWorkSchedulesArr } from "@/components/offers/helpers/offers.utils";
 import { PRACUJ_DATA_FILENAME } from "@/components/offers/helpers/offers.constants";
+import { isContractTypesArr, isWorkModesArr, isWorkPositionLevelsArr, isWorkSchedulesArr } from "@/components/offers/helpers/offers.utils";
+import { ScrapperBase, type ScrapperBaseProps } from "@/components/offers/scrapper/scrapper-base";
 
-import type { JobOfferPracuj } from "@/types/offers/pracuj.types";
 import { PRACUJ_NAME } from "@/misc/constants";
+import type { JobOfferPracuj } from "@/types/offers/pracuj.types";
 
-const SCRAPPED_PAGE_WIDTH = 1200;
-const SCRAPPED_PAGE_HEIGHT = 980;
+// const SCRAPPED_PAGE_WIDTH = 1200;
+// const SCRAPPED_PAGE_HEIGHT = 980;
 
 class ScrapperPracuj extends ScrapperBase {
   protected maxPages: number;
@@ -26,12 +26,12 @@ class ScrapperPracuj extends ScrapperBase {
 
   public getScrappedData = async (): Promise<ScrappedDataResponse> => {
     if (!this.page) await this.initializePage();
-    if (!this.page) return { createdAt: new Date(Date.now()).toISOString(), data: [] };
+    // if (!this.page) return { createdAt: new Date(Date.now()).toISOString(), data: [] };
 
-    await this.page?.setViewport({
-      width: SCRAPPED_PAGE_WIDTH,
-      height: SCRAPPED_PAGE_HEIGHT,
-    });
+    // await this.page?.setViewport({
+    //   width: SCRAPPED_PAGE_WIDTH,
+    //   height: SCRAPPED_PAGE_HEIGHT,
+    // });
 
     const data = await this.saveScrappedData<JobOffer>({
       fileName: PRACUJ_DATA_FILENAME,
@@ -138,6 +138,7 @@ class ScrapperPracuj extends ScrapperBase {
       const textContent = await this.page.evaluate(el => el?.textContent, maxPagesElement);
       if (textContent) maxPagesValue = textContent ?? "1";
     }
+    await this.closePage();
     return parseInt(maxPagesValue);
     // return 2;
   }

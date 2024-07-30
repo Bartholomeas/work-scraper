@@ -1,19 +1,14 @@
-import dayjs from "dayjs";
 import { PrismaClient } from "@prisma/client";
+import dayjs from "dayjs";
 
 import type { JobOffer, JobOffersResponse, OffersQueryParams, OffersWorkplaceListItem } from "shared/src/offers/offers.types";
 
-import { AppErrorController } from "@/components/error/app-error.controller";
-
 import { OFFERS_METADATA_ID } from "@/misc/constants";
-import { ERROR_CODES } from "@/misc/error.constants";
 
+import { AppErrorController } from "@/components/error/app-error.controller";
+import { ErrorHandlerController } from "@/components/error/error-handler.controller";
 import { PrismaInstance } from "@/components/libs/prisma.instance";
 import { OfferHelper } from "@/components/offers/helpers/offer-helper";
-
-interface SetOffersMetadataProps {
-  total: number;
-}
 
 interface IOffersService {
   getAllWorkplaces(): Promise<OffersWorkplaceListItem[] | undefined>;
@@ -96,11 +91,7 @@ class OffersService implements IOffersService {
 
       return this.prisma.$transaction(transaction);
     } catch (err) {
-      throw new AppErrorController({
-        statusCode: 500,
-        code: ERROR_CODES.internal_error,
-        message: JSON.stringify(err),
-      });
+      throw ErrorHandlerController.handleError(err);
     }
   }
 
@@ -130,11 +121,7 @@ class OffersService implements IOffersService {
     try {
       return await this.prisma.offersMetadata.findUnique({ where: { id: OFFERS_METADATA_ID } });
     } catch (err) {
-      throw new AppErrorController({
-        statusCode: 400,
-        code: ERROR_CODES.invalid_type,
-        message: JSON.stringify(err),
-      });
+      throw ErrorHandlerController.handleError(err);
     }
   }
 
@@ -245,11 +232,7 @@ class OffersService implements IOffersService {
         data: OfferHelper.parsePrismaToJobOffer(data as never[]),
       } satisfies JobOffersResponse;
     } catch (err) {
-      throw new AppErrorController({
-        statusCode: 400,
-        code: ERROR_CODES.internal_error,
-        message: JSON.stringify(err),
-      });
+      throw ErrorHandlerController.handleError(err);
     }
   }
 
@@ -260,6 +243,7 @@ class OffersService implements IOffersService {
   public async saveJobOffers(offers: JobOffer[]) {
     try {
       if (!offers.length) return;
+      console.log("Saving scrapped data..");
 
       const upsertOfferPromises = offers
         ?.filter(offer => offer?.positionName)
@@ -271,40 +255,28 @@ class OffersService implements IOffersService {
             update: { ...parsedOffer, updatedAt: new Date() } as never,
           });
         });
-
       await this.prisma.$transaction(upsertOfferPromises);
-
-      const totalCount = await this.prisma.jobOffer.count({});
-      await this.setOffersMetadata({ total: totalCount ?? 0 });
       return;
     } catch (err) {
-      throw new AppErrorController({
-        statusCode: 400,
-        code: ERROR_CODES.internal_error,
-        message: JSON.stringify(err),
-      });
+      throw ErrorHandlerController.handleError(err);
     }
   }
 
-  private async setOffersMetadata({ total }: SetOffersMetadataProps) {
-    try {
-      await this.prisma.offersMetadata.upsert({
-        where: { id: OFFERS_METADATA_ID },
-        create: {
-          total,
-        },
-        update: {
-          total,
-        },
-      });
-    } catch (err) {
-      throw new AppErrorController({
-        statusCode: 400,
-        code: ERROR_CODES.invalid_data,
-        message: JSON.stringify(err),
-      });
-    }
-  }
+  // private async setOffersMetadata({ total }: SetOffersMetadataProps) {
+  //   try {
+  //     await this.prisma.offersMetadata.upsert({
+  //       where: { id: OFFERS_METADATA_ID },
+  //       create: {
+  //         total,
+  //       },
+  //       update: {
+  //         total,
+  //       },
+  //     });
+  //   } catch (err) {
+  //     throw ErrorHandlerController.handleError(err);
+  //   }
+  // }
 
   public async checkDataIsOutdated(hoursAmount = 4) {
     try {
@@ -319,17 +291,13 @@ class OffersService implements IOffersService {
       if (!metadata) return true;
       return dayjs().diff(dayjs(metadata?.updatedAt), "hours") > hoursAmount;
     } catch (err) {
-      throw new AppErrorController({
-        statusCode: 400,
-        code: ERROR_CODES.invalid_data,
-        message: JSON.stringify(err),
-      });
+      throw ErrorHandlerController.handleError(err);
     }
   }
 
   public async deleteOutdatedRecords() {
     try {
-      const today = dayjs().startOf("day").toISOString();
+      const today = dayjs(Date.now()).toISOString();
 
       const res = await this.prisma.jobOffer.deleteMany({
         where: {
@@ -341,11 +309,7 @@ class OffersService implements IOffersService {
       console.log(`Deleted ${res.count} outdated records`);
       return res.count;
     } catch (err) {
-      throw new AppErrorController({
-        statusCode: 400,
-        code: ERROR_CODES.invalid_type,
-        message: JSON.stringify(err),
-      });
+      throw ErrorHandlerController.handleError(err);
     }
   }
 }

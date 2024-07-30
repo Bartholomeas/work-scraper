@@ -8,6 +8,7 @@ import { AppErrorController } from "@/components/error/app-error.controller";
 import { FilesManagerController } from "@/components/files-manager/files-manager.controller";
 import { MINUTES_TO_OUTDATE } from "@/components/offers/helpers/offers.constants";
 
+import { ErrorHandlerController } from "@/components/error/error-handler.controller";
 import type { JobOffer, ScrappedDataResponse } from "shared/src/offers/offers.types";
 
 interface SaveScrappedDataToFileProps<T> {
@@ -35,15 +36,15 @@ abstract class ScrapperBase {
     this.filesManager = new FilesManagerController(path.resolve(__dirname, "../../../../public/scrapped-data"));
   }
 
-  public async initializePage() {
+  public initializePage = async () => {
     if (!this.page) this.page = await this.browser?.newPage();
     if (this.page) await this.page.goto(this.url);
-  }
+  };
 
-  public async closePage() {
+  public closePage = async () => {
     if (this.page) await this.page.close();
     this.page = undefined;
-  }
+  };
 
   protected isFileOutdated = async (fileName: string): Promise<boolean> => {
     const fileStat = await this.filesManager.getFileUpdatedDate({
@@ -61,7 +62,6 @@ abstract class ScrapperBase {
 
   protected saveScrappedData = async <T extends object>({ fileName }: SaveScrappedDataToFileProps<T>): Promise<JobOffer[] | null> => {
     try {
-      // const results: Promise<T[] | undefined>[] = [];
       const results: T[][] = [];
       this.maxPages = await this.getMaxPages();
 
@@ -76,14 +76,9 @@ abstract class ScrapperBase {
       //   fileName,
       //   ext: "json",
       // });
-
       return this.standardizeData(aggregatedData);
     } catch (err) {
-      throw new AppErrorController({
-        statusCode: 400,
-        code: ERROR_CODES.invalid_data,
-        message: `SaveScrappedData: ${JSON.stringify(err)}`,
-      });
+      throw ErrorHandlerController.handleError(err);
     }
   };
 

@@ -1,10 +1,8 @@
-import type { JobOffer, OffersWorkplaceListItem } from "shared/src/offers/offers.types";
-
-import { AppErrorController } from "@/components/error/app-error.controller";
-import { ERROR_CODES } from "@/misc/error.constants";
+import type { OffersWorkplaceListItem } from "shared/src/offers/offers.types";
 
 import { JUSTJOIN_URL, PRACUJ_URL, SOLID_URL } from "@/components/offers/helpers/offers.constants";
 
+import { ErrorHandlerController } from "@/components/error/error-handler.controller";
 import { BrowserManager } from "@/components/libs/browser-manager";
 
 import { ScrapperCron } from "@/components/offers/scrapper/scrapper-cron";
@@ -25,7 +23,7 @@ interface IScrapperController {
 
   deleteOutdatedRecords(): Promise<void>;
 
-  scrapeOffersData(): Promise<JobOffer[]>;
+  scrapeOffersData(): Promise<void>;
 }
 
 class ScrapperController implements IScrapperController {
@@ -42,11 +40,7 @@ class ScrapperController implements IScrapperController {
     try {
       return await this.offersService.updateCategoriesCounts();
     } catch (err) {
-      throw new AppErrorController({
-        statusCode: 404,
-        code: ERROR_CODES.invalid_data,
-        message: JSON.stringify(err),
-      });
+      throw ErrorHandlerController.handleError(err);
     }
   }
 
@@ -54,11 +48,7 @@ class ScrapperController implements IScrapperController {
     try {
       return await this.offersService.updateWorkplacesCounts();
     } catch (err) {
-      throw new AppErrorController({
-        statusCode: 404,
-        code: ERROR_CODES.invalid_data,
-        message: JSON.stringify(err),
-      });
+      throw ErrorHandlerController.handleError(err);
     }
   }
 
@@ -99,24 +89,13 @@ class ScrapperController implements IScrapperController {
       ];
 
       for (const scrapper of scrappers) {
-        await scrapper.initializePage();
         const scrappedData = await scrapper.getScrappedData();
-        console.log("Saving scrapped data..");
         await this.offersService.saveJobOffers(scrappedData.data);
         await scrapper.closePage();
       }
-
-      // await this.offersService.saveJobOffers(data);
-
-      return [];
+      return;
     } catch (err) {
-      if (err instanceof AppErrorController) throw err;
-      else
-        throw new AppErrorController({
-          statusCode: 500,
-          code: ERROR_CODES.internal_error,
-          message: JSON.stringify(err),
-        });
+      throw ErrorHandlerController.handleError(err);
     } finally {
       await this.browserManager.closeBrowserInstance();
     }

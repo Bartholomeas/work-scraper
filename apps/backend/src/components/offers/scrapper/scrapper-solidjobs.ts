@@ -10,6 +10,7 @@ import { generateId } from "@/utils/generate-id";
 import { SOLID_DATA_FILENAME } from "@/components/offers/helpers/offers.constants";
 import { ScrapperBase, ScrapperBaseProps } from "@/components/offers/scrapper/scrapper-base";
 
+import { ErrorHandlerController } from "@/components/error/error-handler.controller";
 import { type JobOfferSolidJobs } from "@/types/offers/solidjobs.types";
 
 class ScrapperSolidJobs extends ScrapperBase {
@@ -19,8 +20,9 @@ class ScrapperSolidJobs extends ScrapperBase {
   }
 
   public getScrappedData = async (): Promise<ScrappedDataResponse> => {
-    if (!this.page) await this.initializePage();
+    if (!this.page) this.page = await this.browser?.newPage();
     if (!this.page) return { createdAt: new Date(Date.now()).toISOString(), data: [] };
+
     console.log("Scrapping SOLID.jobs");
     const data = await this.saveScrappedData<JobOffer>({
       fileName: SOLID_DATA_FILENAME,
@@ -30,7 +32,9 @@ class ScrapperSolidJobs extends ScrapperBase {
   };
 
   protected scrapePage = async <T = unknown>(): Promise<T[] | undefined> => {
-    if (!this.page) return;
+    if (!this.page) {
+      return;
+    }
 
     try {
       let offers: T[] = [];
@@ -39,7 +43,6 @@ class ScrapperSolidJobs extends ScrapperBase {
         if (response.url().includes("https://solid.jobs/api/offers")) {
           try {
             offers = await response.json();
-            console.log("Gut gut", offers.length);
           } catch (err) {
             offers = [];
           }
@@ -48,11 +51,13 @@ class ScrapperSolidJobs extends ScrapperBase {
 
       await this.page.goto(this.url, {
         waitUntil: "networkidle2",
+        // timeout: 60000,
       });
-
       return offers;
     } catch (err) {
-      return;
+      throw ErrorHandlerController.handleError(err);
+    } finally {
+      await this.closePage();
     }
   };
 
