@@ -1,8 +1,7 @@
 import { Browser, executablePath } from "puppeteer";
 import puppeteer from "puppeteer-extra";
 
-import { AppErrorController } from "@/components/error/app-error.controller";
-import { ERROR_CODES } from "@/misc/error.constants";
+import { ErrorHandlerController } from "@/components/error/error-handler.controller";
 
 class BrowserManager {
   private browser: Browser | undefined;
@@ -27,10 +26,8 @@ class BrowserManager {
         this.browser = undefined;
       }
     } catch (err) {
-      console.log("Closing browser instance", err);
-      return;
+      throw ErrorHandlerController.handleError(err);
     }
-    return;
   };
 
   public async checkScrapperIsUndetectable() {
@@ -49,12 +46,7 @@ class BrowserManager {
         optimizeForSpeed: true,
       });
     } catch (err) {
-      console.log("Scrapper is easily detectable", err);
-      throw new AppErrorController({
-        statusCode: 500,
-        code: ERROR_CODES.internal_error,
-        message: JSON.stringify(err),
-      });
+      throw ErrorHandlerController.handleError(err);
     } finally {
       await this.closeBrowserInstance();
     }

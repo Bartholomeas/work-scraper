@@ -1,8 +1,8 @@
-import { ZodError } from "zod";
 import { Prisma } from "@prisma/client";
+import { ZodError } from "zod";
 
-import { ERROR_CODES, ERROR_MESSAGES } from "@/misc/error.constants";
 import { AppErrorController } from "@/components/error/app-error.controller";
+import { ERROR_CODES, ERROR_MESSAGES } from "@/misc/error.constants";
 
 import type { ErrorCodes } from "@/types/error.types";
 
@@ -14,6 +14,7 @@ interface HandleErrorParams {
 
 class ErrorHandlerController {
   public static handleError(err: unknown, params: HandleErrorParams = {}): AppErrorController {
+    console.log("Error in handler: ", err);
     if (err instanceof AppErrorController) return err;
     if (err instanceof Prisma.PrismaClientValidationError) {
       return this.handlePrismaValidationError(err, params);

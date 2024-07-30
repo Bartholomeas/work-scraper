@@ -1,5 +1,6 @@
-import type { IScrapperController } from "@/components/offers/scrapper/scrapper.controller";
 import { BaseCron } from "@/components/cron-jobs/base-cron";
+import { ErrorHandlerController } from "@/components/error/error-handler.controller";
+import type { IScrapperController } from "@/components/offers/scrapper/scrapper.controller";
 
 class ScrapperCron extends BaseCron {
   private scrapperController: IScrapperController;
@@ -28,7 +29,7 @@ class ScrapperCron extends BaseCron {
       // this.logTimestampWithMessage("Updating statistics");
       // await this.scrapperController.updateStatistics();
     } catch (err) {
-      console.log("Error in handleScrapingSequence: ", err);
+      throw ErrorHandlerController.handleError(err);
     }
   }
 }

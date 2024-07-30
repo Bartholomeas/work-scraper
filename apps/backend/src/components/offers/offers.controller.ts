@@ -66,7 +66,7 @@ class OffersController {
       const statsService = new StatisticsService();
       await statsService.generateGeneralStatistics();
 
-      res.status(204);
+      res.status(204).json(data);
     } catch (err) {
       next(ErrorHandlerController.handleError(err));
     }
