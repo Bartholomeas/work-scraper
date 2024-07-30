@@ -86,29 +86,6 @@ class ScrapperController implements IScrapperController {
     try {
       const browser = await this.browserManager.getBrowserInstance();
 
-      // const pracujScrapper = new ScrapperPracuj(browser, {
-      //   url: PRACUJ_URL,
-      // });
-      // const justjoinScrapper = new ScrapperJustjoin(browser, {
-      //   url: JUSTJOIN_URL,
-      // });
-      // const solidScrapper = new ScrapperSolidJobs(browser, {
-      //   url: SOLID_URL,
-      // });
-      // await Promise.all([justjoinScrapper.initializePage(), solidScrapper.initializePage()]);
-
-      // // const isOutdated = await this.offersService.checkDataIsOutdated();
-      // // if (isOutdated) {
-
-      // const data = await Promise.all([
-      //   // justjoinScrapper.getScrappedData(),
-      //   // pracujScrapper.getScrappedData(),
-      //   solidScrapper.getScrappedData(),
-      // ]).then(res => res.flatMap(el => el.data));
-      // // const data: JobOffer[] = await Promise.all([solidScrapper.getScrappedData()]).then(res => res.flatMap(el => el.data));
-
-      // let data: JobOffer[] = [];
-
       const scrappers = [
         new ScrapperPracuj(browser, {
           url: PRACUJ_URL,
