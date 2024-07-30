@@ -62,7 +62,7 @@ class ScrapperSolidJobs extends ScrapperBase {
       const allSalaries = offer?.secondarySalaryRange
         ? [offer?.salaryRange, offer?.secondarySalaryRange, offer?.normalizedSalaryRange]
         : [offer?.salaryRange, offer?.normalizedSalaryRange];
-      const allCategories = [...offer?.requiredSkills, ...offer?.requiredLanguages];
+      const allCategories = [...(offer?.requiredSkills || []), ...(offer?.requiredLanguages || [])];
 
       const positionLevels = this.standardizePositionLevels(offer?.experienceLevel);
       const contractTypes = this.standardizeContractTypes(allSalaries);
@@ -102,7 +102,7 @@ class ScrapperSolidJobs extends ScrapperBase {
 
   private standardizePositionLevels(positionLevel: JobOfferSolidJobs["experienceLevel"] | undefined): JobOffer["positionLevels"] {
     switch (positionLevel?.toLowerCase()) {
-      case "staż" || positionLevel?.toLowerCase().includes("staż"):
+      case "staż":
         return ["intern"];
       case "junior":
         return ["junior"];
