@@ -1,5 +1,6 @@
 import { Browser, executablePath } from "puppeteer";
 import puppeteer from "puppeteer-extra";
+
 import { AppErrorController } from "@/components/error/app-error.controller";
 import { ERROR_CODES } from "@/misc/error.constants";
 

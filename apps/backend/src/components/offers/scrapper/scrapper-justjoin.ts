@@ -3,12 +3,12 @@ import type { Browser, Page } from "puppeteer";
 
 import { generateId } from "@/utils/generate-id";
 
-import { isContractTypesArr } from "@/components/offers/helpers/offers.utils";
 import { JUSTJOIN_DATA_FILENAME } from "@/components/offers/helpers/offers.constants";
+import { isContractTypesArr } from "@/components/offers/helpers/offers.utils";
 
-import type { JobOffer, ScrappedDataResponse } from "shared/src/offers/offers.types";
 import type { JobOfferJustjoin } from "@/types/offers/justjoin.types";
 import dayjs from "dayjs";
+import type { JobOffer, ScrappedDataResponse } from "shared/src/offers/offers.types";
 
 const VIEWPORT_WIDTH = 800;
 const VIEWPORT_HEIGHT = 980;
@@ -151,6 +151,8 @@ class ScrapperJustjoin extends ScrapperBase {
         id: generateId(idHash),
         dataSourceCode: "justjoin",
         slug: offer?.slug,
+        createdAt: offer?.publishedAt,
+        expirationDate,
         positionName: offer?.title,
         company: {
           name: offer?.companyName,
@@ -163,8 +165,6 @@ class ScrapperJustjoin extends ScrapperBase {
         salaryRange,
         technologies: offer?.requiredSkills,
         description: undefined,
-        createdAt: offer?.publishedAt,
-        expirationDate,
         offerUrls: offer?.multilocation?.map(loc => `https://justjoin.it/offers/${loc?.slug}`),
         workplaces: offer?.multilocation?.map(place => {
           const workPlace = { city: "", address: null } as JobOffer["workplaces"][0];
