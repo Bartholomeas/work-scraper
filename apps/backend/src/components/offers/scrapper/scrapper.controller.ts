@@ -6,10 +6,12 @@ import { ERROR_CODES } from "@/misc/error.constants";
 import { JUSTJOIN_URL, PRACUJ_URL, SOLID_URL } from "@/components/offers/helpers/offers.constants";
 
 import { BrowserManager } from "@/components/libs/browser-manager";
+
 import { ScrapperCron } from "@/components/offers/scrapper/scrapper-cron";
 import { ScrapperJustjoin } from "@/components/offers/scrapper/scrapper-justjoin";
-
+import { ScrapperPracuj } from "@/components/offers/scrapper/scrapper-pracuj";
 import { ScrapperSolidJobs } from "@/components/offers/scrapper/scrapper-solidjobs";
+
 import type { OffersService } from "@/components/offers/service/offers.service";
 
 interface IScrapperController {
@@ -90,25 +92,46 @@ class ScrapperController implements IScrapperController {
       // const justjoinScrapper = new ScrapperJustjoin(browser, {
       //   url: JUSTJOIN_URL,
       // });
-      const solidScrapper = new ScrapperSolidJobs(browser, {
-        url: SOLID_URL,
-      });
-      // await Promise.all([pracujScrapper.initializePage(), justjoinScrapper.initializePage()]);
-      await Promise.all([solidScrapper.initializePage()]);
+      // const solidScrapper = new ScrapperSolidJobs(browser, {
+      //   url: SOLID_URL,
+      // });
+      // await Promise.all([justjoinScrapper.initializePage(), solidScrapper.initializePage()]);
 
-      // const isOutdated = await this.offersService.checkDataIsOutdated();
-      // if (isOutdated) {
+      // // const isOutdated = await this.offersService.checkDataIsOutdated();
+      // // if (isOutdated) {
 
-      // data = await Promise.all([justjoinScrapper.getScrappedData(), pracujScrapper.getScrappedData()]).then(res =>
-      //   res.flatMap(el => el.data),
-      // );
-      const data: JobOffer[] = await Promise.all([solidScrapper.getScrappedData()]).then(res => res.flatMap(el => el.data));
-      console.log("SCrapped DATA: ", data);
+      // const data = await Promise.all([
+      //   // justjoinScrapper.getScrappedData(),
+      //   // pracujScrapper.getScrappedData(),
+      //   solidScrapper.getScrappedData(),
+      // ]).then(res => res.flatMap(el => el.data));
+      // // const data: JobOffer[] = await Promise.all([solidScrapper.getScrappedData()]).then(res => res.flatMap(el => el.data));
+
+      // let data: JobOffer[] = [];
+
+      const scrappers = [
+        new ScrapperPracuj(browser, {
+          url: PRACUJ_URL,
+        }),
+        new ScrapperJustjoin(browser, {
+          url: JUSTJOIN_URL,
+        }),
+        new ScrapperSolidJobs(browser, {
+          url: SOLID_URL,
+        }),
+      ];
+
+      for (const scrapper of scrappers) {
+        await scrapper.initializePage();
+        const scrappedData = await scrapper.getScrappedData();
+        console.log("Saving scrapped data..");
+        await this.offersService.saveJobOffers(scrappedData.data);
+        await scrapper.closePage();
+      }
+
       // await this.offersService.saveJobOffers(data);
-      // }
-      await this.browserManager.closeBrowserInstance();
 
-      return data;
+      return [];
     } catch (err) {
       if (err instanceof AppErrorController) throw err;
       else

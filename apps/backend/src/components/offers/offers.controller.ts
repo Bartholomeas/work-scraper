@@ -5,8 +5,8 @@ import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { offersQueryParamsSchema } from "shared/src/offers/offers.schemas";
 
 import { ErrorHandlerController } from "@/components/error/error-handler.controller";
-import { OffersCategoriesService } from "@/components/offers/service/offers-categories.service";
 import { ScrapperController } from "@/components/offers/scrapper/scrapper.controller";
+import { OffersCategoriesService } from "@/components/offers/service/offers-categories.service";
 import { StatisticsService } from "@/components/statistics/statistics.service";
 
 import type { OffersService } from "@/components/offers/service/offers.service";
@@ -66,10 +66,7 @@ class OffersController {
       const statsService = new StatisticsService();
       await statsService.generateGeneralStatistics();
 
-      res.status(200).json({
-        createdAt: new Date(Date.now()),
-        data,
-      });
+      res.status(204);
     } catch (err) {
       next(ErrorHandlerController.handleError(err));
     }

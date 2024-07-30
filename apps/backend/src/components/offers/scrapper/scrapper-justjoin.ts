@@ -238,19 +238,6 @@ class ScrapperJustjoin extends ScrapperBase {
     else return [];
   }
 
-  private standardizeWorkModes(mode: JobOfferJustjoin["workplaceType"]): JobOffer["workModes"] {
-    switch (mode) {
-      case "remote":
-        return ["remote"];
-      case "hybrid":
-        return ["hybrid"];
-      case "office":
-        return ["stationary"];
-      default:
-        return [];
-    }
-  }
-
   private standardizePositionLevels(level: JobOfferJustjoin["experienceLevel"] | undefined): JobOffer["positionLevels"] {
     switch (level) {
       case "junior":
@@ -278,6 +265,19 @@ class ScrapperJustjoin extends ScrapperBase {
         return ["freelance"];
       default:
         return ["full-time"];
+    }
+  }
+
+  private standardizeWorkModes(mode: JobOfferJustjoin["workplaceType"]): JobOffer["workModes"] {
+    switch (mode) {
+      case "remote":
+        return ["remote"];
+      case "hybrid":
+        return ["hybrid"];
+      case "office":
+        return ["stationary"];
+      default:
+        return [];
     }
   }
 

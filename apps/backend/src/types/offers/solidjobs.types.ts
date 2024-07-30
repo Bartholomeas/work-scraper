@@ -30,6 +30,7 @@ const jobOfferSolidJobsSchema = z.object({
   experienceLevel: z.string(),
   minimalExperienceInField: z.number(),
   salaryRange: salaryRangeSchema,
+  secondarySalaryRange: salaryRangeSchema.optional(),
   normalizedSalaryRange: salaryRangeSchema,
   isSalaryNormalized: z.boolean(),
   workload: z.string(),
