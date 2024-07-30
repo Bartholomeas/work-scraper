@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { defineAsyncComponent } from "vue";
 import { useTitle } from "@vueuse/core";
+
 import { PAGE_NAME } from "@/constants";
+
 import Title from "@/components/common/title/Title.vue";
 import StatsDailyChartSkeleton from "@/components/views/statistics/charts/StatsDailyChartSkeleton.vue";
 

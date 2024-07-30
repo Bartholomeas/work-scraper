@@ -5,3 +5,6 @@ export const PRACUJ_DATA_FILENAME = "pracuj";
 
 export const JUSTJOIN_URL = "https://justjoin.it";
 export const JUSTJOIN_DATA_FILENAME = "justjoin";
+
+export const SOLID_URL = "https://solid.jobs/offers/it";
+export const SOLID_DATA_FILENAME = "solidjobs";

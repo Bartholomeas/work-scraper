@@ -3,13 +3,14 @@ import type { JobOffer, OffersWorkplaceListItem } from "shared/src/offers/offers
 import { AppErrorController } from "@/components/error/app-error.controller";
 import { ERROR_CODES } from "@/misc/error.constants";
 
+import { JUSTJOIN_URL, PRACUJ_URL, SOLID_URL } from "@/components/offers/helpers/offers.constants";
+
 import { BrowserManager } from "@/components/libs/browser-manager";
 
-import { JUSTJOIN_URL, PRACUJ_URL } from "@/components/offers/helpers/offers.constants";
-
-import { ScrapperPracuj } from "@/components/offers/scrapper/scrapper-pracuj";
-import { ScrapperJustjoin } from "@/components/offers/scrapper/scrapper-justjoin";
 import { ScrapperCron } from "@/components/offers/scrapper/scrapper-cron";
+import { ScrapperJustjoin } from "@/components/offers/scrapper/scrapper-justjoin";
+import { ScrapperPracuj } from "@/components/offers/scrapper/scrapper-pracuj";
+import { ScrapperSolidJobs } from "@/components/offers/scrapper/scrapper-solidjobs";
 
 import type { OffersService } from "@/components/offers/service/offers.service";
 
@@ -85,26 +86,29 @@ class ScrapperController implements IScrapperController {
     try {
       const browser = await this.browserManager.getBrowserInstance();
 
-      const pracujScrapper = new ScrapperPracuj(browser, {
-        url: PRACUJ_URL,
-      });
-      const justjoinScrapper = new ScrapperJustjoin(browser, {
-        url: JUSTJOIN_URL,
-      });
-      await Promise.all([pracujScrapper.initializePage(), justjoinScrapper.initializePage()]);
+      const scrappers = [
+        new ScrapperPracuj(browser, {
+          url: PRACUJ_URL,
+        }),
+        new ScrapperJustjoin(browser, {
+          url: JUSTJOIN_URL,
+        }),
+        new ScrapperSolidJobs(browser, {
+          url: SOLID_URL,
+        }),
+      ];
 
-      let data: JobOffer[] = [];
+      for (const scrapper of scrappers) {
+        await scrapper.initializePage();
+        const scrappedData = await scrapper.getScrappedData();
+        console.log("Saving scrapped data..");
+        await this.offersService.saveJobOffers(scrappedData.data);
+        await scrapper.closePage();
+      }
 
-      // const isOutdated = await this.offersService.checkDataIsOutdated();
-      // if (isOutdated) {
-      data = await Promise.all([justjoinScrapper.getScrappedData(), pracujScrapper.getScrappedData()]).then(res =>
-        res.flatMap(el => el.data),
-      );
-      await this.offersService.saveJobOffers(data);
-      // }
-      await this.browserManager.closeBrowserInstance();
+      // await this.offersService.saveJobOffers(data);
 
-      return data;
+      return [];
     } catch (err) {
       if (err instanceof AppErrorController) throw err;
       else

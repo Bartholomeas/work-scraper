@@ -1,14 +1,14 @@
+import dayjs from "dayjs";
 import path from "node:path";
 import { type Browser, type Page } from "puppeteer";
-import dayjs from "dayjs";
 
-import { AppErrorController } from "@/components/error/app-error.controller";
 import { ERROR_CODES } from "@/misc/error.constants";
 
-import { MINUTES_TO_OUTDATE } from "@/components/offers/helpers/offers.constants";
+import { AppErrorController } from "@/components/error/app-error.controller";
 import { FilesManagerController } from "@/components/files-manager/files-manager.controller";
+import { MINUTES_TO_OUTDATE } from "@/components/offers/helpers/offers.constants";
 
-import type { JobOffer, JobQueryParams, ScrappedDataResponse } from "shared/src/offers/offers.types";
+import type { JobOffer, ScrappedDataResponse } from "shared/src/offers/offers.types";
 
 interface SaveScrappedDataToFileProps<T> {
   fileName: string;
@@ -70,11 +70,13 @@ abstract class ScrapperBase {
         if (scrappedPage) results.push(scrappedPage);
       }
       const aggregatedData = results.flat() as T[];
-      await this.filesManager.writeToFile({
-        data: aggregatedData,
-        fileName,
-        ext: "json",
-      });
+
+      // await this.filesManager.writeToFile({
+      //   data: aggregatedData,
+      //   fileName,
+      //   ext: "json",
+      // });
+
       return this.standardizeData(aggregatedData);
     } catch (err) {
       throw new AppErrorController({
@@ -85,7 +87,7 @@ abstract class ScrapperBase {
     }
   };
 
-  public abstract getScrappedData(query?: JobQueryParams): Promise<ScrappedDataResponse>;
+  public abstract getScrappedData(): Promise<ScrappedDataResponse>;
 
   protected abstract standardizeData(offers: unknown[]): JobOffer[];
 
