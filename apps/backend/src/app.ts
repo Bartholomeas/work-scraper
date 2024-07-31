@@ -1,10 +1,10 @@
-import express, { Express, type NextFunction, type Request, type Response } from "express";
-import cors, { type CorsOptions } from "cors";
-import morgan from "morgan";
-import helmet from "helmet";
-import rateLimit from "express-rate-limit";
 import compression from "compression";
 import cookieParser from "cookie-parser";
+import cors, { type CorsOptions } from "cors";
+import express, { Express, type NextFunction, type Request, type Response } from "express";
+import rateLimit from "express-rate-limit";
+import helmet from "helmet";
+import morgan from "morgan";
 
 import { BASE_URL } from "@/misc/constants";
 import { ERROR_CODES } from "@/misc/error.constants";
@@ -14,8 +14,8 @@ import { AppErrorController, type AppErrorInterface } from "@/components/error/a
 import { errorHandler } from "@/middleware/error-handler";
 
 import { authModule } from "@/components/auth/auth.module";
-import { offersModule } from "@/components/offers/offers.module";
 import { ErrorController } from "@/components/error/error.controller";
+import { offersModule } from "@/components/offers/offers.module";
 import { statisticsModule } from "@/components/statistics/statistics.module";
 
 // For some reason imported in tsconfig doesnt work :(
@@ -43,7 +43,7 @@ const limiter = rateLimit({
   message: "Too many requests from this IP, please try again in an minute!",
 });
 
-app.get("/", (req, res) => res.send("Express server"));
+app.get("/", (_req, res) => res.send("Express server"));
 app.use("/api", limiter);
 
 app.use(express.json());
@@ -52,7 +52,7 @@ app.use(cookieParser());
 
 if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
 
-app.use((req: Request, res: Response, next: NextFunction) => {
+app.use((req: Request, _res: Response, next: NextFunction) => {
   req.requestTime = new Date().toISOString();
   next();
 });
@@ -61,7 +61,7 @@ app.use(BASE_URL + "/auth", authModule.router);
 app.use(BASE_URL + "/offers", offersModule.router);
 app.use(BASE_URL + "/statistics", statisticsModule.router);
 
-app.all("*", (req: Request, res: Response, next: NextFunction) => {
+app.all("*", (req: Request, _res: Response, next: NextFunction) => {
   next(
     new AppErrorController({
       statusCode: 404,

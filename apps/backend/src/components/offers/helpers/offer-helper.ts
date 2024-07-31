@@ -243,7 +243,7 @@ class OfferHelper {
             value: place?.city?.toLowerCase() ?? "polska",
           },
           create: {
-            value: place?.city.toLowerCase() ?? "polska",
+            value: place?.city?.toLowerCase() ?? "polska",
             city: place?.city,
             address: place?.address ?? null,
           },

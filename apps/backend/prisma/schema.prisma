@@ -174,7 +174,7 @@ model CategorySingleStatistic {
 model CategoriesStatistics {
   id          String                    @id @default(uuid())
   createdAt   DateTime?                 @default(now())
-  baseFilters CategorySingleStatistic[]
+  categories CategorySingleStatistic[]
 }
 
 model WorkplaceSingleStatistic {

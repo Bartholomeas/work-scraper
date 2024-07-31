@@ -6,9 +6,7 @@
     "module": "CommonJS",
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "src/*"
-      ]
+      "@/*": ["src/*"]
     },
     "moduleResolution": "Node",
     "allowJs": true,
@@ -16,31 +14,15 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "noImplicitAny": true,
-    "lib": [
-      "ES6",
-      "DOM"
-    ],
+    "lib": ["ES6", "DOM"],
     "outDir": "./dist",
     "rootDir": "./",
     "forceConsistentCasingInFileNames": true,
-    "typeRoots": [
-      "types",
-      "node_modules/@types",
-      "node_modules/types"
-    ]
+    "typeRoots": ["types", "node_modules/@types", "node_modules/types"]
   },
   "ts-node": {
-    "require": [
-      "tsconfig-paths/register"
-    ]
+    "require": ["tsconfig-paths/register"]
   },
-  "include": [
-    "prisma/*",
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules/**/*",
-    "**/dist/**/*",
-    "public/**/*"
-  ]
+  "include": ["prisma/*", "src/**/*", "tests/**/*"],
+  "exclude": ["node_modules/**/*", "**/dist/**/*", "public/**/*"]
 }
