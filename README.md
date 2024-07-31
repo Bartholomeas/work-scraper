@@ -13,8 +13,6 @@
 [![LinkedIn][linkedin-shield]][linkedin-url]
 [![Moja strona][me-shield]][website-url]
 
-
-
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
@@ -92,6 +90,14 @@ Aby uruchomić aplikację `work-scrapper`, wykonaj poniższe kroki:
 4. **Wystartuj produkcyjną aplikację**
     ```sh
     pnpm run start
+
+## Galeria
+![Oferty pracy z IT _ ITotyle](https://github.com/user-attachments/assets/cb59cd6b-f7a5-4f26-96fc-e62891f3c22a)
+![Oferty pracy z IT _ ITotyle · 12 32pm · 07-31](https://github.com/user-attachments/assets/6d4b4299-acdc-4885-848b-eaad8ec76d3b)
+![Oferty pracy z IT _ ITotyle · 12 32pm · 07-31 (1)](https://github.com/user-attachments/assets/f8943395-359f-4e93-a10d-b0564a421e60)
+![Statystyki 31 lip 2024](https://github.com/user-attachments/assets/64c94006-2a54-4ecf-83bd-662fc4a8ba8a)
+![Polityka Jul 31 2024](https://github.com/user-attachments/assets/6330567d-5393-4f48-9c11-1f61aabcf1eb)
+
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
