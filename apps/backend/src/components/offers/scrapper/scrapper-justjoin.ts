@@ -33,9 +33,10 @@ class ScrapperJustjoin extends ScrapperBase {
   };
 
   protected async scrapePage<T>(pageNumber: number): Promise<T[] | undefined> {
-    let page: Page | undefined;
-    if (this.page) page = this.page;
-    else page = await this.browser?.newPage();
+    let { page } = this;
+    if (!page) {
+      page = await this.browser?.newPage();
+    }
 
     if (!page) return;
 
