@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import { DATABASE_URL } from "./src/misc/constants";
 import { seedDb } from "./prisma/seed";
+import { DATABASE_URL } from "./src/misc/constants";
 
 export const testPrisma = new PrismaClient({
   datasources: {
@@ -29,5 +29,5 @@ export const testPrisma = new PrismaClient({
 module.exports = async () => {
   // jest.useFakeTimers();
   console.log("Seeding test.db", process.env.DATABASE_URL);
-  await seedDb(testPrisma);
+  // await seedDb(testPrisma);
 };
