@@ -1,4 +1,4 @@
-import { OffersService } from "src/components/offers/service/offers.service";
+import { OffersService } from "@/components/offers/service/offers.service";
 import { OffersController } from "./offers.controller";
 import { OffersRouter } from "./offers.router";
 
