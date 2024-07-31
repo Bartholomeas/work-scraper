@@ -148,7 +148,7 @@ importers:
         specifier: ^4.15.7
         version: 4.16.2
       typescript:
-        specifier: ^5.4.5
+        specifier: ^5.5.4
         version: 5.5.4
 
   apps/frontend:
@@ -233,7 +233,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/tsconfig
       typescript:
-        specifier: ^5.2.2
+        specifier: ^5.5.4
         version: 5.5.4
       vite:
         specifier: ^5.2.0
