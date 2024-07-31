@@ -6,6 +6,7 @@
 *** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
+
 [linkedin-url]: https://www.linkedin.com/in/bartosz-stefaniak-a82727222/
 [website-url]: https://bstefaniak.pl/
 
@@ -29,78 +30,86 @@
 </div>
 
 <!-- ABOUT THE PROJECT -->
+
 ## O projekcie
-Projekt nie jest konkurencją dla popularnych stron z branży IT, jest ich **wsparciem**. Aplikacja `ITotyle` przekierowuje chętnych użytkowników na strony 
-docelowe. 
+
+Projekt nie jest konkurencją dla popularnych stron z branży IT, jest ich **wsparciem**. Aplikacja `ITotyle` przekierowuje chętnych użytkowników na strony
+docelowe.
 
 W jednym miejscu zbiera informacje o ofertach z ustandaryzowanymi danymi, a także pozwala śledzić statystyki dzienne dające większy pogląd na obecny stan rynku.
 
 Ale dlaczego z tego korzystać?:
-* Cenię Twój czas, a więc zamiast wertowania po wielu stronach możesz zebrać informacje z nich w jednym miejscu, a gdy jakaś oferta Cię zainteresuje, to i tak jednym kliknięciem przechodzisz do docelowej oferty.
-* Statystyki i analizy dające wgląd na obecny stan rynku (oraz jak zachowywał się w przeszłości)
-* (W niedalekiej przyszłości) Możliwość zapisywania ofert do ulubionych
+
+- Cenię Twój czas, a więc zamiast wertowania po wielu stronach możesz zebrać informacje z nich w jednym miejscu, a gdy jakaś oferta Cię zainteresuje, to i tak jednym kliknięciem przechodzisz do docelowej oferty.
+- Statystyki i analizy dające wgląd na obecny stan rynku (oraz jak zachowywał się w przeszłości)
+- (W niedalekiej przyszłości) Możliwość zapisywania ofert do ulubionych
 
 ### Użyte technologie
 
 Takie technologie są używane w tym projekcie!
 
-* [![TypeScript][typescript-shield]][typescript-url]
-* [![Node.js][nodejs-shield]][nodejs-url]
-* [![Vue][Vue.js]][Vue-url]
-* [![Express.js][expressjs-shield]][expressjs-url]
-* [![Puppeteer][puppeteer-shield]][puppeteer-url]
-* [![SQLite][sqlite-shield]][sqlite-url] (SQLite na ten moment w celu lekkości implementacji; w przyszłości migracja na Postgres)
-* [![Prisma][prisma-shield]][prisma-url]
-* [![Zod][zod-shield]][zod-url]
-* [![Tailwind CSS][tailwind-shield]][tailwind-url]
-* [![Turborepo][turborepo-shield]][turborepo-url]
-* [![Jest][jest-shield]][jest-url]
-* 
+- [![TypeScript][typescript-shield]][typescript-url]
+- [![Node.js][nodejs-shield]][nodejs-url]
+- [![Vue][Vue.js]][Vue-url]
+- [![Express.js][expressjs-shield]][expressjs-url]
+- [![Puppeteer][puppeteer-shield]][puppeteer-url]
+- [![SQLite][sqlite-shield]][sqlite-url] (SQLite na ten moment w celu lekkości implementacji; w przyszłości migracja na Postgres)
+- [![Prisma][prisma-shield]][prisma-url]
+- [![Zod][zod-shield]][zod-url]
+- [![Tailwind CSS][tailwind-shield]][tailwind-url]
+- [![Turborepo][turborepo-shield]][turborepo-url]
+- [![Jest][jest-shield]][jest-url]
+-
+
 ### Wersje narzędzi
 
-| Narzędzie         | Wersja  |
-|-------------------|---------|
-| Node.js           | 20.14.2 |
-| pnpm              | 9.1.4   |
-| TypeScript        | 5.4.5   |
-| Prisma            | 5.17.0  |
-| Jest              | 29.7.0  |
-| Puppeteer         | 22.9.0  |
-| Vue.js            | 3.4.21  |
-| Express.js        | 4.19.2  |
-| Tailwind CSS      | 3.4.3   |
-
+| Narzędzie    | Wersja  |
+| ------------ | ------- |
+| Node.js      | 20.14.2 |
+| pnpm         | 9.1.4   |
+| TypeScript   | 5.4.5   |
+| Prisma       | 5.17.0  |
+| Jest         | 29.7.0  |
+| Puppeteer    | 22.9.0  |
+| Vue.js       | 3.4.21  |
+| Express.js   | 4.19.2  |
+| Tailwind CSS | 3.4.3   |
 
 ### Uruchomienie Aplikacji
 
 Aby uruchomić aplikację `work-scrapper`, wykonaj poniższe kroki:
 
 1. **Zainstaluj Node.js i pnpm**
-    - Wersja Node.js: `>=20.0.0`
-    - Wersja pnpm: `>=9.1.4`
+   - Wersja Node.js: `>=20.0.0`
+   - Wersja pnpm: `>=9.1.4`
 2. **Zainstaluj zależności**
    ```sh
    pnpm install
+   ```
 3. **Wystartuj aplikację w trybie developerskim**
    ```sh
     pnpm run dev
+   ```
 4. **Zbuduj aplikację**
    ```sh
     pnpm run build
-4. **Wystartuj produkcyjną aplikację**
-    ```sh
-    pnpm run start
+   ```
+5. **Wystartuj produkcyjną aplikację**
+   ```sh
+   pnpm run start
+   ```
 
 ## Galeria
+
 ![Oferty pracy z IT _ ITotyle](https://github.com/user-attachments/assets/cb59cd6b-f7a5-4f26-96fc-e62891f3c22a)
 ![Oferty pracy z IT _ ITotyle · 12 32pm · 07-31](https://github.com/user-attachments/assets/6d4b4299-acdc-4885-848b-eaad8ec76d3b)
 ![Oferty pracy z IT _ ITotyle · 12 32pm · 07-31 (1)](https://github.com/user-attachments/assets/f8943395-359f-4e93-a10d-b0564a421e60)
 ![Statystyki 31 lip 2024](https://github.com/user-attachments/assets/64c94006-2a54-4ecf-83bd-662fc4a8ba8a)
 ![Polityka Jul 31 2024](https://github.com/user-attachments/assets/6330567d-5393-4f48-9c11-1f61aabcf1eb)
 
-
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+
 [contributors-shield]: https://img.shields.io/github/contributors/othneildrew/Best-README-Template.svg?style=for-the-badge
 [contributors-url]: https://github.com/othneildrew/Best-README-Template/graphs/contributors
 [forks-shield]: https://img.shields.io/github/forks/othneildrew/Best-README-Template.svg?style=for-the-badge

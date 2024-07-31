@@ -12,9 +12,6 @@ import { ScrapperBase, type ScrapperBaseProps } from "@/components/offers/scrapp
 
 import type { JobOfferPracuj } from "@/types/offers/pracuj.types";
 
-// const SCRAPPED_PAGE_WIDTH = 1200;
-// const SCRAPPED_PAGE_HEIGHT = 980;
-
 class ScrapperPracuj extends ScrapperBase {
   protected maxPages: number;
 
@@ -25,12 +22,6 @@ class ScrapperPracuj extends ScrapperBase {
 
   public getScrappedData = async (): Promise<ScrappedDataResponse> => {
     if (!this.page) await this.initializePage();
-    // if (!this.page) return { createdAt: new Date(Date.now()).toISOString(), data: [] };
-
-    // await this.page?.setViewport({
-    //   width: SCRAPPED_PAGE_WIDTH,
-    //   height: SCRAPPED_PAGE_HEIGHT,
-    // });
 
     const data = await this.saveScrappedData<JobOffer>({
       fileName: PRACUJ_DATA_FILENAME,
@@ -47,7 +38,7 @@ class ScrapperPracuj extends ScrapperBase {
       const workModes = this.standardizeWorkModes(offer?.workModes);
       const salaryRange = this.standardizeSalary(offer?.salaryDisplayText);
 
-      const idHash = `${offer?.jobTitle}-${offer?.companyName}-${offer?.lastPublicated}-pracuj`;
+      const idHash = `${offer?.jobTitle}-${offer?.companyName}-pracuj`;
       return {
         id: generateId(idHash),
         dataSourceCode: PRACUJ_NAME,

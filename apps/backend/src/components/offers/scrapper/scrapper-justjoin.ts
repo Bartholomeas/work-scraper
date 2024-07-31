@@ -150,7 +150,7 @@ class ScrapperJustjoin extends ScrapperBase {
       const workSchedules = this.standardizeWorkSchedules(offer?.workingTime);
       const salaryRange = this.standardizeSalary(offer?.employmentTypes);
 
-      const idHash = `${offer?.title}-${offer?.companyName}-${offer?.publishedAt}-justjoin`;
+      const idHash = `${offer?.title}-${offer?.companyName}-justjoin`;
       return {
         id: generateId(idHash),
         dataSourceCode: "justjoin",

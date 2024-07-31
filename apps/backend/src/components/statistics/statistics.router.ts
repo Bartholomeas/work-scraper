@@ -1,8 +1,8 @@
 import express, { type Router } from "express";
 
-import { SECRET_PHRASE } from "@/misc/constants";
 import type { StatisticsController } from "@/components/statistics/statistics.controller";
 import { guardSecret } from "@/middleware/guard-secret";
+import { SECRET_PHRASE } from "@/misc/constants";
 
 class StatisticsRouter {
   private statisticsController: StatisticsController;
