@@ -20,7 +20,7 @@ const res = {
 } as unknown as Response;
 const next = jest.fn() as NextFunction;
 
-const checkPrismaErrorHandling = async (methodKey: keyof IStatisticsController, mockStatisticsService: any) => {
+const checkPrismaErrorHandling = async (methodKey: keyof IStatisticsController, mockStatisticsService: StatisticsService) => {
   const mockErrorValidation = new Prisma.PrismaClientValidationError("Validation error", { clientVersion: "5.17.0" });
   // const mockErrorKnown = new Prisma.PrismaClientKnownRequestError("Known request error", {
   //   clientVersion: "5.17.0",
@@ -30,11 +30,11 @@ const checkPrismaErrorHandling = async (methodKey: keyof IStatisticsController, 
   const statisticsController = new StatisticsController({
     ...mockStatisticsService,
     [methodKey]: jest.fn().mockRejectedValue(mockErrorValidation),
-  });
+  } as StatisticsService);
 
   try {
     // Check method needs 3 params, if it, then pass req,res,next
-    const method = statisticsController[methodKey] as (...args: any[]) => Promise<unknown>;
+    const method = statisticsController[methodKey] as (...args: unknown[]) => Promise<unknown>;
     if (method.length === 3) await method(req as Request, res as Response, next);
     else await method();
   } catch (err) {
@@ -93,7 +93,7 @@ describe("StatisticsController", () => {
         const statisticsController = new StatisticsController({
           ...mockStatisticsService,
           addDailyCategoriesStatistics: jest.fn().mockResolvedValue(mockTopCategories),
-        } as any);
+        } as unknown as StatisticsService);
 
         const result = await statisticsController.generateDailyCategoriesStatistics();
 
