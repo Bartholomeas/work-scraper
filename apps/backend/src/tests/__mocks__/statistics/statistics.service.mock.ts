@@ -1,7 +1,10 @@
 import { IStatisticsService } from "@/components/statistics/statistics.service";
-
-export const mockCreatedAtDate = "2024-08-01T08:06:05.166Z";
-export const mockUUID = "bb2dabf1-d678-42db-bfe6-22abb41ee72f";
+import {
+  mockCreatedAtDate,
+  mockUUID,
+  retrieveallDailyOffersStatisticsMockResponse,
+  retrieveDailyPositionsStatisticsMockResponse,
+} from "@/tests/__mocks__/statistics/statistics.service.constants";
 
 export const StatisticsServiceMock = jest.fn().mockImplementation(
   (): IStatisticsService => ({
@@ -100,10 +103,10 @@ export const StatisticsServiceMock = jest.fn().mockImplementation(
         },
       ],
     }),
-    retrieveAllDailyOffersStatistics: jest.fn().mockResolvedValue("Mock retrieveAllDailyOffersStatistics"),
-    retrieveDailyPositionsStatistics: jest.fn().mockResolvedValue("Mock retrieveDailyPositionsStatistics"),
+    retrieveAllDailyOffersStatistics: jest.fn().mockResolvedValue(retrieveallDailyOffersStatisticsMockResponse),
+    retrieveDailyPositionsStatistics: jest.fn().mockResolvedValue(retrieveDailyPositionsStatisticsMockResponse),
     retrieveDailyCategoryStatistics: jest.fn().mockResolvedValue("Mock retrieveDailyCategoryStatistics"),
-    retrieveDailyWorkplacesStatistics: jest.fn().mockResolvedValue("Mock retrieveDailyWorkplacesStatistics"),
+    retrieveDailyWorkplacesStatistics: jest.fn().mockResolvedValue("mock"),
     getGeneralStatistics: jest.fn().mockResolvedValue("Mock getGeneralStatistics"),
     generateGeneralStatistics: jest.fn().mockResolvedValue({
       id: mockUUID,

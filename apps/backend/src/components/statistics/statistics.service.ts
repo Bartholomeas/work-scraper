@@ -10,23 +10,14 @@ import { PrismaInstance } from "@/components/libs/prisma.instance";
 
 interface IStatisticsService {
   addAllOffersCountStatistics(payload: DailyAllOffersCountPayload): Promise<unknown>;
-
   addDailyPositionsStatistics(payload: DailyPositionsCountPayload): Promise<unknown>;
-
   addDailyCategoriesStatistics(payload: DailyCategoriesCountPayload): Promise<unknown>;
-
   addDailyWorkplacesStatistics(payload: DailyWorkplacesCountPayload): Promise<unknown>;
-
   retrieveAllDailyOffersStatistics(): Promise<unknown>;
-
   retrieveDailyPositionsStatistics(): Promise<unknown>;
-
   retrieveDailyCategoryStatistics(): Promise<unknown>;
-
   retrieveDailyWorkplacesStatistics(): Promise<unknown>;
-
   getGeneralStatistics(): Promise<unknown>;
-
   generateGeneralStatistics(): Promise<unknown>;
 }
 

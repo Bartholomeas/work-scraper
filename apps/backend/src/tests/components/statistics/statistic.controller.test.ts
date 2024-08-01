@@ -2,13 +2,48 @@ import { Prisma } from "@prisma/client";
 import { NextFunction, type Request, type Response } from "express";
 
 jest.mock("@/components/statistics/statistics.service");
-import { StatisticsController } from "@/components/statistics/statistics.controller";
+import { IStatisticsController, StatisticsController } from "@/components/statistics/statistics.controller";
 
-import { StatisticsServiceMock, mockUUID, mockCreatedAtDate } from "@/tests/__mocks__/statistics.controller.mock";
+import { StatisticsServiceMock } from "@/tests/__mocks__/statistics/statistics.service.mock";
 import { ErrorHandlerController } from "@/tests/__mocks__/error-handler.controller";
+import {
+  expectedAllStatsResponse,
+  retrieveallDailyOffersStatisticsMockResponse,
+  retrieveDailyPositionsStatisticsMockResponse,
+} from "@/tests/__mocks__/statistics/statistics.service.constants";
+import { IStatisticsService, StatisticsService } from "@/components/statistics/statistics.service";
+
+const req = {} as Request;
+const res = {
+  status: jest.fn().mockReturnThis(),
+  json: jest.fn(),
+} as unknown as Response;
+const next = jest.fn() as NextFunction;
+
+const checkPrismaErrorHandling = async (methodKey: keyof IStatisticsController, mockStatisticsService: any) => {
+  const mockErrorValidation = new Prisma.PrismaClientValidationError("Validation error", { clientVersion: "5.17.0" });
+  // const mockErrorKnown = new Prisma.PrismaClientKnownRequestError("Known request error", {
+  //   clientVersion: "5.17.0",
+  //   code: "P2025",
+  // });
+
+  const statisticsController = new StatisticsController({
+    ...mockStatisticsService,
+    [methodKey]: jest.fn().mockRejectedValue(mockErrorValidation),
+  });
+
+  try {
+    // Check method needs 3 params, if it, then pass req,res,next
+    const method = statisticsController[methodKey] as (...args: any[]) => Promise<unknown>;
+    if (method.length === 3) await method(req as Request, res as Response, next);
+    else await method();
+  } catch (err) {
+    expect(ErrorHandlerController.handleError).toHaveBeenCalledWith(mockErrorValidation);
+  }
+};
 
 describe("StatisticsController", () => {
-  const mockStatisticsService = new StatisticsServiceMock();
+  const mockStatisticsService: StatisticsService = new StatisticsServiceMock();
   const req = {} as Request;
   const res = {
     status: jest.fn().mockReturnThis(),
@@ -16,20 +51,65 @@ describe("StatisticsController", () => {
   } as unknown as Response;
   const next = jest.fn() as NextFunction;
 
-  describe("generateStatistics", () => {
-    it("should generate all offers count statistics successfully", async () => {
-      const statisticsController = new StatisticsController(mockStatisticsService);
+  describe("Generating statistics", () => {
+    describe("generateAllOffersCountStatistics", () => {
+      it("should generate all offers count statistics successfully", async () => {
+        const statisticsController = new StatisticsController(mockStatisticsService);
 
-      const result = await statisticsController.generateAllOffersCountStatistics();
+        const result = await statisticsController.generateAllOffersCountStatistics();
 
-      expect(mockStatisticsService.addAllOffersCountStatistics).toHaveBeenCalled();
-      expect(result.totalOffers).toEqual(7565);
+        expect(mockStatisticsService.addAllOffersCountStatistics).toHaveBeenCalled();
+        expect(result.totalOffers).toEqual(7565);
+      });
+
+      it("should handle Prisma error when generateAllOffersCountStatistics runs", async () => {
+        await checkPrismaErrorHandling("generateAllOffersCountStatistics", mockStatisticsService);
+      });
+    });
+
+    describe("generateDailyPositionsStatistics", () => {
+      it("should generate daily positions statistics successfully", async () => {
+        const statisticsController = new StatisticsController(mockStatisticsService);
+
+        const result = await statisticsController.generateDailyPositionsStatistics();
+
+        expect(mockStatisticsService.addDailyPositionsStatistics).toHaveBeenCalled();
+
+        expect(result.juniorOffers).toEqual(621);
+        expect(result.midOffers).toEqual(4358);
+        expect(result.seniorOffers).toEqual(3026);
+        expect(result.otherOffers).toEqual(414);
+      });
+
+      it("should handle Prisma error when generateDailyPositionsStatistics runs", async () => {
+        await checkPrismaErrorHandling("generateDailyPositionsStatistics", mockStatisticsService);
+      });
+    });
+
+    describe("generateDailyCategoriesStatistics", () => {
+      it("should generate daily categories statistics successfully", async () => {
+        const mockTopCategories = expectedAllStatsResponse.filter(el => el.categories).flatMap(el => el.categories);
+
+        const statisticsController = new StatisticsController({
+          ...mockStatisticsService,
+          addDailyCategoriesStatistics: jest.fn().mockResolvedValue(mockTopCategories),
+        } as any);
+
+        const result = await statisticsController.generateDailyCategoriesStatistics();
+
+        expect(mockStatisticsService.addDailyPositionsStatistics).toHaveBeenCalled();
+        expect(result).toHaveLength(6);
+        expect(result).toEqual(mockTopCategories);
+      });
+
+      it("should handle Prisma error when generateDailyCategoriesStatistics runs", async () => {
+        await checkPrismaErrorHandling("generateDailyCategoriesStatistics", mockStatisticsService);
+      });
     });
 
     describe("generateAllStatistics", () => {
       it("should run generateAllStatistics and return these stats with status 201", async () => {
         const statisticsController = new StatisticsController(mockStatisticsService);
-
         await statisticsController.generateAllStatistics(req, res, next);
 
         expect(mockStatisticsService.generateGeneralStatistics).toHaveBeenCalled();
@@ -42,190 +122,51 @@ describe("StatisticsController", () => {
       });
 
       it("should handle Prisma error when generateAllStatistics runs", async () => {
-        const mockError = new Prisma.PrismaClientValidationError("Validation error", { clientVersion: "5.17.0" });
-        const statisticsController = new StatisticsController({
-          ...mockStatisticsService,
-          generateAllStatistics: jest.fn().mockRejectedValue(mockError),
-        });
+        await checkPrismaErrorHandling("generateAllStatistics", mockStatisticsService);
+      });
+    });
 
-        try {
-          await statisticsController.generateAllStatistics(req, res, next);
-        } catch (err) {
-          expect(ErrorHandlerController.handleError).toHaveBeenCalledWith(mockError);
-        }
+    describe("getAllDailyOffersCountStatistics", () => {
+      it("should run getAllDailyOffersCountStatistics and return these stats with status 200", async () => {
+        const statisticsController = new StatisticsController(mockStatisticsService);
+        await statisticsController.getAllDailyOffersCountStatistics(req, res, next);
+
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.json).toHaveBeenCalledWith(retrieveallDailyOffersStatisticsMockResponse);
+      });
+
+      it("should handle Prisma error when getAllDailyOffersCountStatistics runs", async () => {
+        await checkPrismaErrorHandling("getAllDailyOffersCountStatistics", mockStatisticsService);
+      });
+    });
+
+    describe("getDailyCategoryStatistics", () => {
+      it("should run getDailyCategoryStatistics and return these stats with status 200", async () => {
+        const statisticsController = new StatisticsController(mockStatisticsService);
+        await statisticsController.getDailyCategoryStatistics(req, res, next);
+
+        expect(mockStatisticsService.retrieveDailyCategoryStatistics).toHaveBeenCalled();
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.json).toHaveBeenCalledWith(retrieveallDailyOffersStatisticsMockResponse);
+      });
+
+      it("should handle Prisma error when getDailyCategoryStatistics runs", async () => {
+        await checkPrismaErrorHandling("getDailyCategoryStatistics", mockStatisticsService);
+      });
+    });
+    describe("getDailyPositionsStatistics", () => {
+      it("should run getDailyPositionsStatistics and return these stats with status 200", async () => {
+        const statisticsController = new StatisticsController(mockStatisticsService);
+        await statisticsController.getDailyPositionsStatistics(req, res, next);
+
+        expect(mockStatisticsService.retrieveDailyPositionsStatistics).toHaveBeenCalled();
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.json).toHaveBeenCalledWith(retrieveDailyPositionsStatisticsMockResponse);
+      });
+
+      it("should handle Prisma error when getDailyPositionsStatistics runs", async () => {
+        await checkPrismaErrorHandling("getDailyPositionsStatistics", mockStatisticsService);
       });
     });
   });
 });
-
-const expectedAllStatsResponse = [
-  {
-    id: mockUUID,
-    updatedAt: "2024-08-01T08:14:09.611Z",
-    totalOffers: 7565,
-    topWorkplaces: [
-      {
-        id: mockUUID,
-        city: "warszawa",
-        count: 4306,
-      },
-      {
-        id: mockUUID,
-        city: "kraków",
-        count: 2061,
-      },
-      {
-        id: mockUUID,
-        city: "wrocław",
-        count: 1476,
-      },
-      {
-        id: mockUUID,
-        city: "poznań",
-        count: 1097,
-      },
-      {
-        id: mockUUID,
-        city: "gdańsk",
-        count: 1095,
-      },
-    ],
-    topCategories: [
-      {
-        id: mockUUID,
-        value: "sql",
-        count: 1297,
-      },
-      {
-        id: mockUUID,
-        value: "python",
-        count: 1114,
-      },
-      {
-        id: mockUUID,
-        value: "angielski",
-        count: 1038,
-      },
-      {
-        id: mockUUID,
-        value: "java",
-        count: 966,
-      },
-      {
-        id: mockUUID,
-        value: "polski",
-        count: 932,
-      },
-      {
-        id: mockUUID,
-        value: "git",
-        count: 674,
-      },
-      {
-        id: mockUUID,
-        value: "javascript",
-        count: 624,
-      },
-      {
-        id: mockUUID,
-        value: "docker",
-        count: 617,
-      },
-    ],
-  },
-  {
-    id: mockUUID,
-    createdAt: mockCreatedAtDate,
-    totalOffers: 7565,
-  },
-  {
-    id: mockUUID,
-    createdAt: mockCreatedAtDate,
-    juniorOffers: 621,
-    midOffers: 4358,
-    seniorOffers: 3026,
-    otherOffers: 414,
-  },
-  {
-    id: mockUUID,
-    createdAt: mockCreatedAtDate,
-    categories: [
-      {
-        id: mockUUID,
-        name: "sql",
-        count: 1297,
-      },
-      {
-        id: mockUUID,
-        name: "python",
-        count: 1114,
-      },
-      {
-        id: mockUUID,
-        name: "angielski",
-        count: 1038,
-      },
-      {
-        id: mockUUID,
-        name: "java",
-        count: 966,
-      },
-      {
-        id: mockUUID,
-        name: "polski",
-        count: 932,
-      },
-      {
-        id: mockUUID,
-        name: "git",
-        count: 674,
-      },
-    ],
-  },
-  {
-    id: mockUUID,
-    createdAt: mockCreatedAtDate,
-    workplaces: [
-      {
-        id: mockUUID,
-        city: "Warszawa",
-        count: 4306,
-      },
-      {
-        id: mockUUID,
-        city: "Kraków",
-        count: 2061,
-      },
-      {
-        id: mockUUID,
-        city: "Wrocław",
-        count: 1476,
-      },
-      {
-        id: mockUUID,
-        city: "Poznań",
-        count: 1097,
-      },
-      {
-        id: mockUUID,
-        city: "Gdańsk",
-        count: 1095,
-      },
-      {
-        id: mockUUID,
-        city: "Katowice",
-        count: 695,
-      },
-      {
-        id: mockUUID,
-        city: "Łódź",
-        count: 662,
-      },
-      {
-        id: mockUUID,
-        city: "Szczecin",
-        count: 332,
-      },
-    ],
-  },
-];
