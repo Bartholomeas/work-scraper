@@ -1,5 +1,4 @@
 import { PrismaClient } from "@prisma/client";
-import { seedDb } from "./prisma/seed";
 import { DATABASE_URL } from "./src/misc/constants";
 
 export const testPrisma = new PrismaClient({
