@@ -1,17 +1,17 @@
-import { IStatisticsController, StatisticsController } from "@/components/statistics/statistics.controller";
-import { Prisma } from "@prisma/client";
 import { NextFunction, type Request, type Response } from "express";
+import { Prisma } from "@prisma/client";
 
 jest.mock("@/components/statistics/statistics.service");
+import { IStatisticsController, StatisticsController } from "@/components/statistics/statistics.controller";
+import { StatisticsService } from "@/components/statistics/statistics.service";
 
-import { ErrorHandlerController } from "@/__tests__/__mocks__/error-handler.controller.mock";
+import { ErrorHandlerControllerMock } from "@/__tests__/__mocks__/error-handler.controller.mock";
 import {
   expectedAllStatsResponse,
   retrieveallDailyOffersStatisticsMockResponse,
   retrieveDailyPositionsStatisticsMockResponse,
 } from "@/__tests__/__mocks__/statistics/statistics.service.constants";
 import { StatisticsServiceMock } from "@/__tests__/__mocks__/statistics/statistics.service.mock";
-import { StatisticsService } from "@/components/statistics/statistics.service";
 
 const req = {} as Request;
 const res = {
@@ -38,7 +38,7 @@ const checkPrismaErrorHandling = async (methodKey: keyof IStatisticsController, 
     if (method.length === 3) await method(req as Request, res as Response, next);
     else await method();
   } catch (err) {
-    expect(ErrorHandlerController.handleError).toHaveBeenCalledWith(mockErrorValidation);
+    expect(ErrorHandlerControllerMock.handleError).toHaveBeenCalledWith(mockErrorValidation);
   }
 };
 

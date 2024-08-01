@@ -1,10 +1,9 @@
 import { IStatisticsService } from "@/components/statistics/statistics.service";
 import {
-  mockCreatedAtDate,
-  mockUUID,
   retrieveallDailyOffersStatisticsMockResponse,
   retrieveDailyPositionsStatisticsMockResponse,
 } from "@/__tests__/__mocks__/statistics/statistics.service.constants";
+import { mockCreatedAtDate, mockUUID } from "@/__tests__/__mocks__/mocks.constants";
 
 export const StatisticsServiceMock = jest.fn().mockImplementation(
   (): IStatisticsService => ({
