@@ -5,25 +5,17 @@ import { ErrorHandlerController } from "@/components/error/error-handler.control
 import { StatisticsCron } from "@/components/statistics/statistics-cron";
 
 export interface IStatisticsController {
+  generateAllStatistics(req: Request, res: Response, next: NextFunction): Promise<unknown>;
   generateAllOffersCountStatistics(): Promise<unknown>;
-
   generateDailyPositionsStatistics(): Promise<unknown>;
-
   generateDailyCategoriesStatistics(): Promise<unknown>;
-
   generateDailyWorkplacesStatistics(): Promise<unknown>;
-
-  getAllDailyOffersCountStatistics(req: Request, res: Response, next: NextFunction): Promise<void>;
-
-  getDailyCategoryStatistics(req: Request, res: Response, next: NextFunction): Promise<void>;
-
-  getDailyPositionsStatistics(req: Request, res: Response, next: NextFunction): Promise<void>;
-
-  getDailyWorkplacesStatistics(req: Request, res: Response, next: NextFunction): Promise<void>;
-
-  getGeneralStatistics(req: Request, res: Response, next: NextFunction): Promise<void>;
-
   generateGeneralStatistics(req: Request, res: Response, next: NextFunction): Promise<void>;
+  getAllDailyOffersCountStatistics(req: Request, res: Response, next: NextFunction): Promise<void>;
+  getDailyCategoryStatistics(req: Request, res: Response, next: NextFunction): Promise<void>;
+  getDailyPositionsStatistics(req: Request, res: Response, next: NextFunction): Promise<void>;
+  getDailyWorkplacesStatistics(req: Request, res: Response, next: NextFunction): Promise<void>;
+  getGeneralStatistics(req: Request, res: Response, next: NextFunction): Promise<void>;
 }
 
 class StatisticsController implements IStatisticsController {
@@ -66,7 +58,7 @@ class StatisticsController implements IStatisticsController {
     }
   };
 
-  public generateEntireStatistics = async (req: Request, res: Response, next: NextFunction) => {
+  public generateAllStatistics = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const stats = await Promise.all([
         this.statisticsService.generateGeneralStatistics(),

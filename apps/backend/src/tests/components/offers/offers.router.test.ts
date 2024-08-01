@@ -32,7 +32,6 @@ describe("GET offers/metadata", () => {
       page: meta?.page.toString(),
       perPage: meta?.perPage.toString(),
     });
-    console.log("XD", meta);
     expect(isCorrectMetadata.success).toBe(true);
     expect(meta?.page).toBe(1);
     expect(meta?.perPage).toBe(48);

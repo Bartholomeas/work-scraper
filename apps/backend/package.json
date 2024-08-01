@@ -23,6 +23,7 @@
     "seed:test": "NODE_ENV=test && dotenv -e .env.test -- ts-node ./prisma/seed.ts",
     "reset:db:test": "NODE_ENV=test && dotenv -e .env.test -- pnpx prisma migrate reset",
     "test": "NODE_ENV=test && dotenv -e .env.test -- jest",
+    "test:watch": "NODE_ENV=test && dotenv -e .env.test -- jest --watch",
     "vercel-build": "NODE_ENV=development && tsup --tsconfig tsconfig.json --format cjs,esm --dts"
   },
   "_moduleAliases": {

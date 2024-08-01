@@ -342,4 +342,4 @@ class StatisticsService implements IStatisticsService {
   }
 }
 
-export { StatisticsService };
+export { StatisticsService, type IStatisticsService };
