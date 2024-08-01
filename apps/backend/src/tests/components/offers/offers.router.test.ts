@@ -1,4 +1,7 @@
 describe("GET offers/metadata", () => {
+  it("TODO offers.router.test", async () => {
+    expect(true).toBe(true);
+  });
   // let response: JobOffersResponse | undefined;
   // beforeAll(async () => {
   //   response = await request(app)
