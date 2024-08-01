@@ -14,7 +14,6 @@ interface HandleErrorParams {
 
 class ErrorHandlerController {
   public static handleError(err: unknown, params: HandleErrorParams = {}): AppErrorController {
-    console.log("Error in handler: ", err);
     if (err instanceof AppErrorController) return err;
     if (err instanceof Prisma.PrismaClientValidationError) {
       return this.handlePrismaValidationError(err, params);
