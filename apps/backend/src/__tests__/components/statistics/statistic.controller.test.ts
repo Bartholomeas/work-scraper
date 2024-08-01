@@ -1,17 +1,17 @@
+import { IStatisticsController, StatisticsController } from "@/components/statistics/statistics.controller";
 import { Prisma } from "@prisma/client";
 import { NextFunction, type Request, type Response } from "express";
 
 jest.mock("@/components/statistics/statistics.service");
-import { IStatisticsController, StatisticsController } from "@/components/statistics/statistics.controller";
 
-import { StatisticsServiceMock } from "@/tests/__mocks__/statistics/statistics.service.mock";
-import { ErrorHandlerController } from "@/tests/__mocks__/error-handler.controller";
+import { ErrorHandlerController } from "@/__tests__/__mocks__/error-handler.controller.mock";
 import {
   expectedAllStatsResponse,
   retrieveallDailyOffersStatisticsMockResponse,
   retrieveDailyPositionsStatisticsMockResponse,
-} from "@/tests/__mocks__/statistics/statistics.service.constants";
-import { IStatisticsService, StatisticsService } from "@/components/statistics/statistics.service";
+} from "@/__tests__/__mocks__/statistics/statistics.service.constants";
+import { StatisticsServiceMock } from "@/__tests__/__mocks__/statistics/statistics.service.mock";
+import { StatisticsService } from "@/components/statistics/statistics.service";
 
 const req = {} as Request;
 const res = {

@@ -4,7 +4,7 @@ import {
   mockUUID,
   retrieveallDailyOffersStatisticsMockResponse,
   retrieveDailyPositionsStatisticsMockResponse,
-} from "@/tests/__mocks__/statistics/statistics.service.constants";
+} from "@/__tests__/__mocks__/statistics/statistics.service.constants";
 
 export const StatisticsServiceMock = jest.fn().mockImplementation(
   (): IStatisticsService => ({
