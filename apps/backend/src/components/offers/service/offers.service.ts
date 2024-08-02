@@ -5,16 +5,14 @@ import type { JobOffer, JobOffersResponse, OffersQueryParams, OffersWorkplaceLis
 
 import { OFFERS_METADATA_ID } from "@/misc/constants";
 
-import { AppErrorController } from "@/components/error/app-error.controller";
-import { ErrorHandlerController } from "@/components/error/error-handler.controller";
 import { PrismaInstance } from "@/components/libs/prisma.instance";
 import { OfferHelper } from "@/components/offers/helpers/offer-helper";
+import { ErrorHandlerController } from "@/components/error/error-handler.controller";
+
 
 interface IOffersService {
   getAllWorkplaces(): Promise<OffersWorkplaceListItem[] | undefined>;
-
   updateWorkplacesCounts(): Promise<unknown>;
-
   updateCategoriesCounts(): Promise<unknown>;
 }
 

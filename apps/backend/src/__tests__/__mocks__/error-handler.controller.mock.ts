@@ -1,3 +1,3 @@
-export const ErrorHandlerController = {
-  handleError: jest.fn().mockImplementation(err => `Handled error: ${err}`),
+export const ErrorHandlerControllerMock = {
+  handleError: jest.fn().mockImplementation((err: unknown) => `Handled error: ${err}`),
 };
