@@ -22,8 +22,8 @@ jest.mock("@/components/offers/scrapper/scrapper.controller");
 jest.mock("@/components/error/error-handler.controller");
 
 describe("OffersController", () => {
-  let mockOffersService = new OffersServiceMock();
-  let offersController: OffersController = new OffersController(mockOffersService);
+  const mockOffersService = new OffersServiceMock();
+  const offersController: OffersController = new OffersController(mockOffersService);
   let req: Request;
   let res: Response;
   let next: NextFunction;
