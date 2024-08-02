@@ -7,12 +7,14 @@ import { StatisticsService } from "@/components/statistics/statistics.service";
 
 import { ErrorHandlerControllerMock } from "@/__tests__/__mocks__/error-handler.controller.mock";
 import {
-  deleteOutdatedRecordsMockResponse,
-  getJobOffersMockResponse,
-  updateCategoriesCountsMockResponse,
-  updateWorkplacesCountsMockResponse,
+    deleteOutdatedRecordsMockResponse,
+    getJobOffersMockResponse,
+    updateCategoriesCountsMockResponse,
+    updateWorkplacesCountsMockResponse,
 } from "@/__tests__/__mocks__/offers/offers.service.constants";
 import { OffersServiceMock } from "@/__tests__/__mocks__/offers/offers.service.mock";
+import { offersQueryParamsSchema } from "shared/src/offers/offers.schemas";
+import { OffersQueryParams } from "shared/src/offers/offers.types";
 
 jest.mock("@/components/statistics/statistics.service");
 jest.mock("@/components/offers/service/offers.service");
@@ -87,7 +89,33 @@ describe("OffersController", () => {
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(getJobOffersMockResponse);
     });
+    it("should handle search params correctly", async () => {
+      req = {
+        query: {
+          search: "java",
+          perPage: 1,
+          workplaces: ["Warszawa"],
+        },
+      } as Request & {
+        query: Partial<OffersQueryParams>;
+      };
 
+      const parsedQueryParams = {
+        page: 1,
+        perPage: 1,
+        workplaces: "warszawa",
+      };
+
+      const safeParse = jest.spyOn(offersQueryParamsSchema, "safeParse").mockReturnValue({
+        data: parsedQueryParams as unknown as OffersQueryParams,
+        success: true,
+      });
+
+      await offersController.getOffers(req, res, next);
+
+      expect(mockOffersService.getJobOffers).toHaveBeenCalled();
+      expect(safeParse).toHaveBeenCalledWith(req.query);
+    });
     it("should handle error properly", async () => {
       const mockErr = new Error();
       const mockOffersService = {
@@ -95,7 +123,7 @@ describe("OffersController", () => {
       } as unknown as OffersService;
 
       const offersController = new OffersController(mockOffersService);
-      
+
       try {
         await offersController.getOffers(req, res, next);
         expect(mockOffersService.getJobOffers).toHaveBeenCalled();
