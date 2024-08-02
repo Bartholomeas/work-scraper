@@ -44,7 +44,7 @@ export const updateCategoriesCountsMockResponse = [
 ];
 
 export const getJobOffersMockResponse = {
-  createdAt: mockCreatedAtDate,
+  createdAt: new Date(Date.now()),
   meta: {
     page: 1,
     perPage: 48,

@@ -18,10 +18,10 @@ class OffersController {
   private offersCategoriesService: OffersCategoriesService;
   private scrapperController: ScrapperController;
 
-  constructor(offersService: OffersService) {
+  constructor(offersService: OffersService, _scrapperController?: ScrapperController) {
     this.offersService = offersService;
     this.offersCategoriesService = new OffersCategoriesService();
-    this.scrapperController = new ScrapperController(offersService);
+    this.scrapperController = _scrapperController || new ScrapperController(offersService);
   }
 
   public updateCategoriesCounts = async (req: Request, res: Response, next: NextFunction) => {
