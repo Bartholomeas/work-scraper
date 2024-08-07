@@ -20,7 +20,7 @@ class BrowserManager {
       return this.browser;
     } catch (err) {
       throw ErrorHandlerController.handleError(err, {
-        message: "Error while getting browser instance",
+        message: `Error while getting browser instance, ${JSON.stringify(err)}`,
       });
     }
   }
