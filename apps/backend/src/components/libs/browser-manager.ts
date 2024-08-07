@@ -15,8 +15,14 @@ class BrowserManager {
   }
 
   public async getBrowserInstance(): Promise<Browser> {
-    if (!this.browser) this.browser = await puppeteer.launch({ headless: true, executablePath: executablePath() });
-    return this.browser;
+    try {
+      if (!this.browser) this.browser = await puppeteer.launch({ headless: true, executablePath: executablePath() });
+      return this.browser;
+    } catch (err) {
+      throw ErrorHandlerController.handleError(err, {
+        message: "Error while getting browser instance",
+      });
+    }
   }
 
   public closeBrowserInstance = async (): Promise<void> => {
