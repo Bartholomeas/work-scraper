@@ -10,6 +10,7 @@ import { ScrapperJustjoin } from "@/components/offers/scrapper/scrapper-justjoin
 import { ScrapperPracuj } from "@/components/offers/scrapper/scrapper-pracuj";
 import { ScrapperSolidJobs } from "@/components/offers/scrapper/scrapper-solidjobs";
 
+import { ScrapperBase } from "@/components/offers/scrapper/scrapper-base";
 import type { OffersService } from "@/components/offers/service/offers.service";
 
 interface IScrapperController {
@@ -54,9 +55,7 @@ class ScrapperController implements IScrapperController {
 
   public scrapeOffersData = async () => {
     try {
-      console.log("LOG: Before broswer init");
       const browser = await this.browserManager.getBrowserInstance();
-      console.log("LOG: Browser exists", browser);
       const scrappers = [
         new ScrapperPracuj(browser, {
           url: PRACUJ_URL,
@@ -68,6 +67,8 @@ class ScrapperController implements IScrapperController {
           url: SOLID_URL,
         }),
       ];
+
+      // async for(const scrapper of scrappers)  {}
 
       for (const scrapper of scrappers) {
         const scrappedData = await scrapper.getScrappedData();
@@ -81,6 +82,19 @@ class ScrapperController implements IScrapperController {
       await this.browserManager.closeBrowserInstance();
     }
   };
+
+  // public scrapeSingleService = async <T extends ScrapperBase>(scrapper: T, url: string) => {
+  //   try {
+  //     const browser = await this.browserManager.getBrowserInstance();
+  //     // const scrapperInstance = new scrapper(browser, url);
+  //     const scrappedData = await scrapper.getScrappedData();
+  //     await this.offersService.saveJobOffers(scrappedData.data);
+  //   } catch (err) {
+  //     throw ErrorHandlerController.handleError(err);
+  //   } finally {
+  //     await this.browserManager.closeBrowserInstance();
+  //   }
+  // };
 }
 
 export { ScrapperController, type IScrapperController };
