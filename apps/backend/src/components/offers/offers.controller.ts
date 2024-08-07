@@ -57,6 +57,7 @@ class OffersController {
 
   public scrapeOffersData = async (req: Request, res: Response, next: NextFunction) => {
     try {
+      console.log("LOG: Before scrapping data");
       const data = await this.scrapperController.scrapeOffersData();
       // Update workplaces counts
       await this.offersService.updateWorkplacesCounts();

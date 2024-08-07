@@ -17,10 +17,6 @@ interface IScrapperController {
 
   updateWorkplacesCounts(): Promise<OffersWorkplaceListItem[] | undefined>;
 
-  updateStatistics(): Promise<void>;
-
-  updateMetadata(): Promise<void>;
-
   deleteOutdatedRecords(): Promise<void>;
 
   scrapeOffersData(): Promise<void>;
@@ -52,30 +48,15 @@ class ScrapperController implements IScrapperController {
     }
   }
 
-  public async updateStatistics() {
-    await new Promise(resolve => {
-      setTimeout(() => {
-        resolve("MOCK updateStatistics");
-      }, 3000);
-    });
-  }
-
-  public async updateMetadata() {
-    await new Promise(resolve => {
-      setTimeout(() => {
-        resolve("MOCK updateMetadata");
-      }, 3000);
-    });
-  }
-
   public async deleteOutdatedRecords() {
     await this.offersService.deleteOutdatedRecords();
   }
 
   public scrapeOffersData = async () => {
     try {
+      console.log("LOG: Before broswer init");
       const browser = await this.browserManager.getBrowserInstance();
-
+      console.log("LOG: Browser exists", browser);
       const scrappers = [
         new ScrapperPracuj(browser, {
           url: PRACUJ_URL,
