@@ -16,9 +16,12 @@ class BrowserManager {
 
   public async getBrowserInstance(): Promise<Browser> {
     try {
+      console.log("Before INIT Browser..");
       if (!this.browser) this.browser = await puppeteer.launch({ headless: true, executablePath: executablePath() });
+      console.log("After INIT Browser..");
       return this.browser;
     } catch (err) {
+      console.log("Error in browser init :/", JSON.stringify(err));
       throw ErrorHandlerController.handleError(err, {
         message: `Error while getting browser instance, ${JSON.stringify(err)}`,
       });
