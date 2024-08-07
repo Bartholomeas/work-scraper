@@ -85,6 +85,8 @@ class ScrapperPracuj extends ScrapperBase {
     const page = await this.browser?.newPage();
     if (!page) return [];
     try {
+      await this.listenAndRestrictRequests(page);
+
       console.log(`Scrapping Pracuj.pl page: ${pageNumber}`);
       await page.goto(`${this.url}?pn=${pageNumber}`, { waitUntil: "networkidle2" });
       await this.acceptCookieConsent(page).catch(err => {
