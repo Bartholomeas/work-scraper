@@ -79,6 +79,15 @@ abstract class ScrapperBase {
     }
   };
 
+  protected listenAndRestrictRequests = async (page: Page) => {
+    await page?.setRequestInterception(true);
+
+    page?.on("request", req => {
+      if (["image", "stylesheet", "font"].includes(req.resourceType())) req.abort();
+      else req.continue();
+    });
+  };
+
   public abstract getScrappedData(): Promise<ScrappedDataResponse>;
 
   protected abstract standardizeData(offers: unknown[]): JobOffer[];

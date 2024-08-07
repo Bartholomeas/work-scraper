@@ -16,7 +16,8 @@ class BrowserManager {
 
   public async getBrowserInstance(): Promise<Browser> {
     try {
-      if (!this.browser) this.browser = await puppeteer.launch({ headless: true, executablePath: executablePath() });
+      if (!this.browser)
+        this.browser = await puppeteer.launch({ headless: true, executablePath: executablePath(), args: ["--disable-gpu"] });
       return this.browser;
     } catch (err) {
       throw ErrorHandlerController.handleError(err, {

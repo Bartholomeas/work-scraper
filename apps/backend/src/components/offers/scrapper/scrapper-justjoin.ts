@@ -47,6 +47,7 @@ class ScrapperJustjoin extends ScrapperBase {
       });
 
       const offers: T[] = [];
+      await this.listenAndRestrictRequests(page);
 
       page?.on("response", async response => {
         const url = response.url();

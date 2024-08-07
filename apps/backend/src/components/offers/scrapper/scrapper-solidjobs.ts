@@ -23,7 +23,6 @@ class ScrapperSolidJobs extends ScrapperBase {
     if (!this.page) this.page = await this.browser?.newPage();
     if (!this.page) return { createdAt: new Date(Date.now()).toISOString(), data: [] };
 
-    console.log("Scrapping SOLID.jobs");
     const data = await this.saveScrappedData<JobOffer>({
       fileName: SOLID_DATA_FILENAME,
     });
@@ -38,7 +37,7 @@ class ScrapperSolidJobs extends ScrapperBase {
 
     try {
       let offers: T[] = [];
-
+      await this.listenAndRestrictRequests(this.page);
       this.page.on("response", async response => {
         if (response.url().includes("https://solid.jobs/api/offers")) {
           try {
