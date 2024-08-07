@@ -56,19 +56,6 @@ class ScrapperController implements IScrapperController {
 
   public scrapeOffersData = async () => {
     try {
-      // const browser = await this.browserManager.getBrowserInstance();
-      // const scrappers = [
-      //   new ScrapperPracuj(browser, {
-      //     url: PRACUJ_URL,
-      //   }),
-      //   new ScrapperJustjoin(browser, {
-      //     url: JUSTJOIN_URL,
-      //   }),
-      //   new ScrapperSolidJobs(browser, {
-      //     url: SOLID_URL,
-      //   }),
-      // ];
-
       const scrappers = [
         {
           scrapper: ScrapperPracuj,
@@ -88,11 +75,6 @@ class ScrapperController implements IScrapperController {
         await this.scrapeSingleService(scrapper, url);
       }
 
-      // for (const scrapper of scrappers) {
-      //   const scrappedData = await scrapper.getScrappedData();
-      //   await this.offersService.saveJobOffers(scrappedData.data);
-      //   await scrapper.closePage();
-      // }
       return;
     } catch (err) {
       throw ErrorHandlerController.handleError(err);
