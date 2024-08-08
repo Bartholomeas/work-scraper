@@ -9,32 +9,16 @@
       "cache": false
     },
     "build": {
-      "env": [
-        "PORT",
-        "JWT_EXPIRES_IN",
-        "JWT_SECRET",
-        "DATABASE_URL",
-        "SECRET_PHRASE",
-        "VITE_API_URL"
-      ],
-      "outputs": [
-        "dist/**",
-        "./vercel/**"
-      ],
-      "dependsOn": [
-        "^build",
-        "clean",
-        "^build"
-      ]
+      "env": ["PORT", "JWT_EXPIRES_IN", "JWT_SECRET", "DATABASE_URL", "SECRET_PHRASE", "VITE_API_URL"],
+      "outputs": ["dist/**", "./vercel/**"],
+      "dependsOn": ["^build", "clean", "^build"]
     },
     "lint": {
       "outputs": []
     },
     "type-check": {
       "outputs": [],
-      "dependsOn": [
-        "^type-check"
-      ]
+      "dependsOn": ["^type-check"]
     },
     "test": {},
     "start": {}

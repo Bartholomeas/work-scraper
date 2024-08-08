@@ -21,7 +21,7 @@ class ScrapperPracuj extends ScrapperBase {
   }
 
   public getScrappedData = async (): Promise<ScrappedDataResponse> => {
-    if (!this.page) await this.initializePage();
+    // if (!this.page) await this.initializePage();
 
     const data = await this.saveScrappedData<JobOffer>({
       fileName: PRACUJ_DATA_FILENAME,
@@ -118,17 +118,23 @@ class ScrapperPracuj extends ScrapperBase {
   };
 
   protected async getMaxPages() {
-    if (!this.page) return 1;
-    // // TODO: Uncomment that, added low pages to prevent overload
-    const maxPagesElement = await this.page.$('span[data-test="top-pagination-max-page-number"]');
-    let maxPagesValue = "1";
-    if (maxPagesElement) {
-      const textContent = await this.page.evaluate(el => el?.textContent, maxPagesElement);
-      if (textContent) maxPagesValue = textContent ?? "1";
+    try {
+      const page = await this.browser?.newPage();
+      if (!page) return 1;
+      if (page) await page.goto(this.url);
+      // // TODO: Uncomment that, added low pages to prevent overload
+      const maxPagesElement = await page.$('span[data-test="top-pagination-max-page-number"]');
+      let maxPagesValue = "1";
+      if (maxPagesElement) {
+        const textContent = await page.evaluate(el => el?.textContent, maxPagesElement);
+        if (textContent) maxPagesValue = textContent ?? "1";
+      }
+      await page.close();
+      return parseInt(maxPagesValue);
+    } catch (err) {
+      console.log("Error while getting max pages");
+      return 1;
     }
-    await this.closePage();
-    return parseInt(maxPagesValue);
-    // return 2;
   }
 
   private transformSalaryTimeUnit = (val: string): TimeUnitTypes => {

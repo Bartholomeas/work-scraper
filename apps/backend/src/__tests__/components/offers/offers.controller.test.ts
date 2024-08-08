@@ -7,10 +7,10 @@ import { StatisticsService } from "@/components/statistics/statistics.service";
 
 import { ErrorHandlerControllerMock } from "@/__tests__/__mocks__/error-handler.controller.mock";
 import {
-    deleteOutdatedRecordsMockResponse,
-    getJobOffersMockResponse,
-    updateCategoriesCountsMockResponse,
-    updateWorkplacesCountsMockResponse,
+  deleteOutdatedRecordsMockResponse,
+  getJobOffersMockResponse,
+  updateCategoriesCountsMockResponse,
+  updateWorkplacesCountsMockResponse,
 } from "@/__tests__/__mocks__/offers/offers.service.constants";
 import { OffersServiceMock } from "@/__tests__/__mocks__/offers/offers.service.mock";
 import { offersQueryParamsSchema } from "shared/src/offers/offers.schemas";
