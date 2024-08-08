@@ -37,6 +37,7 @@ const corsOptions: CorsOptions = {
     "http://itotyle.pl",
     "https://itotyle.pl",
     "https://itotyle.pl",
+    "https://www.itotyle.pl",
     "https://itotyle.pl/*",
   ],
 };
