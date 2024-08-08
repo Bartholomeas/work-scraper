@@ -5,6 +5,7 @@ import { useRoute } from "vue-router";
 import { useGetOffersList } from "@/api/offers/getOffers";
 
 import Title from "@/components/common/title/Title.vue";
+import Text from "@/components/common/text/Text.vue";
 import OffersFiltersTopBar from "@/components/views/offers/filters/top-bar/OffersFiltersTopWrapper.vue";
 import OffersListLayout from "@/components/views/offers/OffersListLayout.vue";
 import OffersItemsList from "@/components/views/offers/list/OffersItemsList.vue";
@@ -23,17 +24,25 @@ const { data, isLoading } = useGetOffersList(params);
   <div class="bg-accent-card flex w-full flex-col gap-6">
     <Title order="h1" size="h1" class="font-bold">Oferty pracy</Title>
     <OffersStatCards />
-    <OffersListLayout>
-      <template #top-bar>
-        <OffersFiltersTopBar />
-      </template>
-      <template #filters class="relative bg-amber-400">
-        <OffersSideFilters />
-      </template>
-      <OffersItemsList :offers="data?.data" :is-loading="isLoading" />
-      <template #pagination>
-        <OffersPagination :meta="data?.meta" />
-      </template>
-    </OffersListLayout>
+    <div class="flex flex-col gap-0">
+      <div class="flex self-end">
+        <Text color="muted" size="sm">
+          Znalezionych ofert: <Text as="span" weight="bold">{{ data?.meta?.total ?? 0 }}</Text></Text
+        >
+      </div>
+      <OffersListLayout>
+        <template #top-bar>
+          <OffersFiltersTopBar />
+        </template>
+        <template #filters class="relative bg-amber-400">
+          <OffersSideFilters />
+        </template>
+        <OffersItemsList :offers="data?.data" :is-loading="isLoading" />
+        <template #pagination>
+          <OffersPagination :meta="data?.meta" />
+        </template>
+      </OffersListLayout>
+    </div>
   </div>
+  class
 </template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, type Ref, watch } from "vue";
+import { inject, type Ref, Text, watch } from "vue";
 
 import { coreSearchParamsSchema } from "shared/src/offers/offers.schemas";
 
