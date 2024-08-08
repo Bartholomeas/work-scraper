@@ -17,7 +17,11 @@ class BrowserManager {
   public async getBrowserInstance(): Promise<Browser> {
     try {
       if (!this.browser)
-        this.browser = await puppeteer.launch({ headless: true, executablePath: executablePath(), args: ["--disable-gpu"] });
+        this.browser = await puppeteer.launch({
+          headless: true,
+          executablePath: executablePath(),
+          args: ["--disable-gpu", "--disable-dev-shm-usage", "--disable-setuid-sandbox"],
+        });
       return this.browser;
     } catch (err) {
       throw ErrorHandlerController.handleError(err, {

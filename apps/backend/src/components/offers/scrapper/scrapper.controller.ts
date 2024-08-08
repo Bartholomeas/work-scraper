@@ -75,6 +75,7 @@ class ScrapperController implements IScrapperController {
         await this.scrapeSingleService(scrapper, url);
       }
 
+      await Promise.all([this.updateCategoriesCounts(), this.updateWorkplacesCounts(), this.deleteOutdatedRecords()]);
       return;
     } catch (err) {
       throw ErrorHandlerController.handleError(err);
