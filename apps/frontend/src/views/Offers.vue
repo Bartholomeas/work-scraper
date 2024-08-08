@@ -25,8 +25,9 @@ const { data, isLoading } = useGetOffersList(params);
     <Title order="h1" size="h1" class="font-bold">Oferty pracy</Title>
     <OffersStatCards />
     <div class="flex flex-col gap-0">
-      <div class="flex self-end">
-        <Text color="muted" size="sm">
+      <div class="my-6 flex flex-col gap-2">
+        <Title order="h2" size="h3" class="font-bold">Znajdź interesujące Cię oferty</Title>
+        <Text color="muted" size="md">
           Znalezionych ofert: <Text as="span" weight="bold">{{ data?.meta?.total ?? 0 }}</Text></Text
         >
       </div>
