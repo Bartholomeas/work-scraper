@@ -5,7 +5,7 @@ class StatisticsCron extends BaseCron {
   private statsController: IStatisticsController;
 
   constructor(statsController: IStatisticsController) {
-    super("0 18 * * *");
+    super("0 19 * * *");
     this.statsController = statsController;
   }
 
