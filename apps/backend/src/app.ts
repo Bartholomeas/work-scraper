@@ -36,6 +36,8 @@ const corsOptions: CorsOptions = {
     "http://itotyle.162.19.153.39.nip.io",
     "http://itotyle.pl",
     "https://itotyle.pl",
+    "https://itotyle.pl",
+    "https://itotyle.pl/*",
   ],
 };
 
