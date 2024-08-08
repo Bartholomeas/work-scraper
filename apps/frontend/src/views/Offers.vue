@@ -44,5 +44,4 @@ const { data, isLoading } = useGetOffersList(params);
       </OffersListLayout>
     </div>
   </div>
-  class
 </template>
