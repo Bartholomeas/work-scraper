@@ -14,8 +14,8 @@ const iconToShow = computed(() => (isDark.value ? Moon : Sun));
 const toggleMode = () => (mode.value = isDark.value ? "light" : "dark");
 </script>
 <template>
-  <Toggle>
-    <component :is="iconToShow" @click="toggleMode" />
+  <Toggle role="button" tabindex="0" aria-label="Zmień motyw strony">
+    <component :aria-label="isDark ? 'Przełącz na jasny motyw' : 'Przełącz na ciemny motyw'" :is="iconToShow" @click="toggleMode" />
   </Toggle>
 </template>
 

@@ -72,12 +72,12 @@ watch(isPopoverOpen, isOpen => {
       <Popover v-model:open="isPopoverOpen">
         <PopoverTrigger as-child>
           <FormControl>
-            <Button size="xl" variant="outline" role="combobox" class="justify-start">
+            <Button size="xl" variant="outline" role="combobox" aria-label="Zmień miejsce wyszukiwania" class="justify-start">
               {{
                 props.items
-                  ? props.items?.find(item => {
+                  ? (props.items?.find(item => {
                       return item.value === values?.[name];
-                    })?.label ?? props.label
+                    })?.label ?? props.label)
                   : props.label
               }}
             </Button>
