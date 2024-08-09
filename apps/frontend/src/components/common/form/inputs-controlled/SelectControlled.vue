@@ -28,7 +28,7 @@ const { meta } = useField(name);
   <FormField v-slot="{ componentField }" :name="name" :validate-on-blur="!meta.dirty">
     <FormItem>
       <FormLabel :class="{ 'sr-only': labelSrOnly }">{{ label }}</FormLabel>
-      <Select v-bind="componentField">
+      <Select :aria-label="label" v-bind="componentField">
         <FormControl>
           <SelectTrigger :class="className">
             <SelectValue :placeholder="placeholder" />
@@ -36,7 +36,13 @@ const { meta } = useField(name);
         </FormControl>
         <SelectContent>
           <SelectGroup>
-            <SelectItem v-for="{ content, ...rest } in items" :key="`selectItem-${rest.textValue}-${rest.value}`" v-bind="rest">
+            <SelectItem
+              v-for="{ content, ...rest } in items"
+              :key="`selectItem-${rest.textValue}-${rest.value}`"
+              v-bind="rest"
+              role="button"
+              :aria-label="`Wybierz wartość: ${label}`"
+            >
               {{ content }}
             </SelectItem>
           </SelectGroup>

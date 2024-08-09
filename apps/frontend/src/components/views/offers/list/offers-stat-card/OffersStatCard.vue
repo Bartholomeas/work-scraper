@@ -26,7 +26,7 @@ const props = defineProps<OffersStatCardProps>();
 <template>
   <Card>
     <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-      <CardTitle class="mb-2 text-xl"> {{ props.title }}</CardTitle>
+      <Text weight="bold" size="h6" class="mb-2"> {{ props.title }}</Text>
       <component v-if="Boolean(props.icon)" :is="props.icon" class="text-muted-foreground h-6 w-6" />
     </CardHeader>
     <CardContent>

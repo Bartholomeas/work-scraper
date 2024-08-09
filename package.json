@@ -12,7 +12,7 @@
   ],
   "scripts": {
     "dev": "turbo run dev",
-    "dev:front": "turbo run dev --filter=frontend...",
+    "dev:front": "turbo run dev --filter=frontend",
     "dev:back": "turbo run dev --filter=backend",
     "start": "turbo run start",
     "start:frontend": "turbo run start --filter=frontend",
