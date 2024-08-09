@@ -30,7 +30,7 @@ const { meta } = useField(name);
       <FormLabel :class="{ 'sr-only': labelSrOnly }">{{ label }}</FormLabel>
       <Select :aria-label="label" v-bind="componentField">
         <FormControl>
-          <SelectTrigger :class="className">
+          <SelectTrigger :aria-label="label" role="button" :class="className">
             <SelectValue :placeholder="placeholder" />
           </SelectTrigger>
         </FormControl>
