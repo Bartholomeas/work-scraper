@@ -99,7 +99,13 @@ class AuthController {
   signIn = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { email, password } = req.body;
-      if (!email || !password) next(new AppErrorController({ message: "Provide email and password.", statusCode: 400 }));
+      if (!email || !password)
+        next(
+          new AppErrorController({
+            message: "Provide email and password.",
+            statusCode: 400,
+          }),
+        );
 
       const { password: userPassword, user } = await this.authService.getUser({ email });
       if (!userPassword || !(await this.comparePasswords(password, userPassword)))

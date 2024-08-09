@@ -16,34 +16,31 @@ const { name, label, description, items } = defineProps<CheckboxControlledProps>
   <FormField v-if="name && items?.length > 0" :name="name">
     <FormItem>
       <div class="mb-2 flex flex-col gap-1">
-        <FormLabel :for="name" class="text-md font-bold">{{ label }}</FormLabel>
+        <FormLabel class="text-md font-bold">{{ label }}</FormLabel>
         <FormDescription v-if="description">{{ description }}</FormDescription>
       </div>
 
-      <div class="mb-2 flex flex-col gap-2 pl-3" role="group">
+      <div class="mb-2 flex flex-col gap-2 pl-3">
         <FormField
           :name="name"
           v-if="Array.isArray(items) && items.length > 0"
           v-for="item in items"
           v-slot="{ value, handleChange }"
           :key="item.id"
-          type="checkbox"
           :value="item.value"
           :unchecked-value="false"
-          :aria-labelledby="name"
+          type="checkbox"
         >
           <FormItem class="flex items-center gap-2">
             <FormControl>
               <Checkbox
-                :id="`${name}-${item.label}`"
+                :id="`${name}-${item.id}`"
                 :checked="value?.includes(item.value)"
-                @update:checked="handleChange"
                 :aria-label="item.label"
-                :aria-labelledby="`label-${name}-${item.label}`"
-                role="button"
+                @update:checked="handleChange"
               />
             </FormControl>
-            <FormLabel :id="`label-${name}-${item.label}`" :for="`${name}-${item.label}`" class="!mt-0">
+            <FormLabel class="!mt-0">
               {{ item.label }}
             </FormLabel>
           </FormItem>

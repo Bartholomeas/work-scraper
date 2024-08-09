@@ -34,8 +34,9 @@ const { data, isLoading } = useGetOffersList(params);
       <div class="my-6 flex flex-col gap-2">
         <Title order="h2" size="h3" class="font-bold">Znajdź interesujące Cię oferty</Title>
         <Text color="muted" size="md">
-          Znalezionych ofert: <Text as="span" weight="bold">{{ data?.meta?.total ?? 0 }}</Text></Text
-        >
+          Znalezionych ofert:
+          <Text as="span" weight="bold">{{ data?.meta?.total ?? 0 }}</Text>
+        </Text>
       </div>
       <OffersListLayout>
         <template #top-bar>
