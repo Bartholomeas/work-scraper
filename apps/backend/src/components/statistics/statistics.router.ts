@@ -2,7 +2,7 @@ import express, { type Router } from "express";
 
 import type { StatisticsController } from "@/components/statistics/statistics.controller";
 import { guardSecret } from "@/middleware/guard-secret";
-import { SECRET_PHRASE } from "@/misc/constants";
+import { SECRET_DELETE_PHRASE, SECRET_PHRASE } from "@/misc/constants";
 
 class StatisticsRouter {
   private statisticsController: StatisticsController;
@@ -23,6 +23,8 @@ class StatisticsRouter {
     router.get("/daily/position-offers", this.statisticsController.getDailyPositionsStatistics);
     router.get("/daily/categories", this.statisticsController.getDailyCategoryStatistics);
     router.get("/daily/workplaces", this.statisticsController.getDailyWorkplacesStatistics);
+    // !! DELETE
+    router.delete("/daily/stats", guardSecret(SECRET_DELETE_PHRASE), this.statisticsController.deleteAllDailyStats);
     // POST
     // router.post("/daily/position-offers", guardSecret(SECRET_PHRASE), this.statisticsController.daily);
     // router.post("/daily/categories", guardSecret(SECRET_PHRASE), this.statisticsController.postDailyCategoriesStatistics);

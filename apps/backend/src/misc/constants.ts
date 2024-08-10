@@ -1,6 +1,6 @@
 export const BASE_URL = "/api/v1";
 export const DATABASE_URL = process.env.DATABASE_URL ?? ("file:./dev.db?mode=memory&cache=shared" as string);
-export const { SECRET_PHRASE } = process.env;
+export const { SECRET_PHRASE, SECRET_DELETE_PHRASE } = process.env;
 export const { PORT } = process.env;
 export const JWT_EXPIRES_IN = parseInt(process.env.JWT_EXPIRES_IN as string);
 export const JWT_SECRET = process.env.JWT_SECRET as string;

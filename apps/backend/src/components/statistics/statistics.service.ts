@@ -1,4 +1,8 @@
+import dayjs from "dayjs";
+
+import { Prisma } from "@prisma/client/extension";
 import { PrismaClient } from "@prisma/client";
+
 import type {
   DailyAllOffersCountPayload,
   DailyCategoriesCountPayload,
@@ -7,17 +11,27 @@ import type {
 } from "shared/src/statistics/statistics.types";
 
 import { PrismaInstance } from "@/components/libs/prisma.instance";
+import PrismaPromise = Prisma.PrismaPromise;
 
 interface IStatisticsService {
   addAllOffersCountStatistics(payload: DailyAllOffersCountPayload): Promise<unknown>;
+
   addDailyPositionsStatistics(payload: DailyPositionsCountPayload): Promise<unknown>;
+
   addDailyCategoriesStatistics(payload: DailyCategoriesCountPayload): Promise<unknown>;
+
   addDailyWorkplacesStatistics(payload: DailyWorkplacesCountPayload): Promise<unknown>;
+
   retrieveAllDailyOffersStatistics(): Promise<unknown>;
+
   retrieveDailyPositionsStatistics(): Promise<unknown>;
+
   retrieveDailyCategoryStatistics(): Promise<unknown>;
+
   retrieveDailyWorkplacesStatistics(): Promise<unknown>;
+
   getGeneralStatistics(): Promise<unknown>;
+
   generateGeneralStatistics(): Promise<unknown>;
 }
 
@@ -28,7 +42,27 @@ class StatisticsService implements IStatisticsService {
     this.prisma = PrismaInstance.getInstance();
   }
 
+  public async checkTodayWasCounted<T extends PrismaPromise<number>>(countFn: T): Promise<boolean> {
+    try {
+      const statCount = (await countFn) ?? 0;
+
+      return statCount > 0;
+    } catch (err) {
+      return true;
+    }
+  }
+
   public async addAllOffersCountStatistics() {
+    const countPromise = this.prisma.allOffersCountStatistics.count({
+      where: {
+        createdAt: {
+          gte: dayjs(Date.now()).startOf("day").toISOString(),
+        },
+      },
+    });
+    const alreadyCounted = await this.checkTodayWasCounted(countPromise);
+    if (alreadyCounted) return;
+
     const offersCount = await this.prisma.jobOffer.count();
 
     return this.prisma.allOffersCountStatistics.create({
@@ -39,6 +73,16 @@ class StatisticsService implements IStatisticsService {
   }
 
   public async addDailyPositionsStatistics() {
+    const countPromise = this.prisma.offersCountStatistics.count({
+      where: {
+        createdAt: {
+          gte: dayjs(Date.now()).startOf("day").toISOString(),
+        },
+      },
+    });
+    const alreadyCounted = await this.checkTodayWasCounted(countPromise);
+    if (alreadyCounted) return;
+
     const juniorOffers = await this.prisma.jobOffer.count({
       where: {
         positionLevels: {
@@ -96,6 +140,16 @@ class StatisticsService implements IStatisticsService {
   }
 
   public async addDailyCategoriesStatistics() {
+    const countPromise = this.prisma.categoriesStatistics.count({
+      where: {
+        createdAt: {
+          gte: dayjs(Date.now()).startOf("day").toISOString(),
+        },
+      },
+    });
+    const alreadyCounted = await this.checkTodayWasCounted(countPromise);
+    if (alreadyCounted) return;
+
     const topCategories = await this.prisma.technology.findMany({
       take: 6,
       select: {
@@ -131,6 +185,16 @@ class StatisticsService implements IStatisticsService {
   }
 
   public async addDailyWorkplacesStatistics() {
+    const countPromise = this.prisma.workplacesStatistics.count({
+      where: {
+        createdAt: {
+          gte: dayjs(Date.now()).startOf("day").toISOString(),
+        },
+      },
+    });
+    const alreadyCounted = await this.checkTodayWasCounted(countPromise);
+    if (alreadyCounted) return;
+
     const topWorkplaces = await this.prisma.workplace.findMany({
       take: 8,
       orderBy: {
@@ -330,6 +394,16 @@ class StatisticsService implements IStatisticsService {
         totalOffers,
       },
     });
+  }
+
+  public async deleteAllDailyStats(): Promise<void> {
+    const deleteDailyOffers = this.prisma.allOffersCountStatistics.deleteMany();
+    const deleteOffersCount = this.prisma.offersCountStatistics.deleteMany();
+    const deleteWorkplacesStats = this.prisma.workplacesStatistics.deleteMany();
+    const deleteCategoriesStats = this.prisma.categoriesStatistics.deleteMany();
+
+    await Promise.all([deleteDailyOffers, deleteOffersCount, deleteWorkplacesStats, deleteCategoriesStats]);
+    return;
   }
 }
 
