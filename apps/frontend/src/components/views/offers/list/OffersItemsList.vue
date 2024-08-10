@@ -16,7 +16,7 @@ const props = withDefaults(defineProps<OffersItemsListProps>(), {
   isLoading: false,
 });
 
-const skeletonArray = computed(() => Array.from({ length: 24 }));
+const skeletonArray = computed(() => Array.from({ length: 48 }));
 </script>
 
 <template>
