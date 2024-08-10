@@ -10,6 +10,7 @@ import { OffersCategoriesService } from "@/components/offers/service/offers-cate
 import { StatisticsService } from "@/components/statistics/statistics.service";
 
 import type { OffersService } from "@/components/offers/service/offers.service";
+import { StatisticsController } from "@/components/statistics/statistics.controller";
 
 puppeteer.use(StealthPlugin());
 
@@ -59,12 +60,21 @@ class OffersController {
     try {
       const data = await this.scrapperController.scrapeOffersData();
       // Update workplaces counts
-      await this.offersService.updateWorkplacesCounts();
-      await this.offersService.updateCategoriesCounts();
 
       // Generate general stats from stats controller // Not 100% sure its best way to invoke another controller here because of SOLID principles
       const statsService = new StatisticsService();
-      await statsService.generateGeneralStatistics();
+      const statsController = new StatisticsController(statsService);
+
+      await Promise.all([
+        this.offersService.updateWorkplacesCounts(),
+        this.offersService.updateCategoriesCounts(),
+        this.offersService.deleteOutdatedRecords(),
+        statsController.generateAllOffersCountStatistics(),
+        statsController.generateDailyPositionsStatistics(),
+        statsController.generateDailyCategoriesStatistics(),
+        statsController.generateDailyWorkplacesStatistics(),
+        statsService.generateGeneralStatistics(),
+      ]);
 
       res.status(204).json(data);
     } catch (err) {
