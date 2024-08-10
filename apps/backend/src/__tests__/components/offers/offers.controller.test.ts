@@ -15,8 +15,10 @@ import {
 import { OffersServiceMock } from "@/__tests__/__mocks__/offers/offers.service.mock";
 import { offersQueryParamsSchema } from "shared/src/offers/offers.schemas";
 import { OffersQueryParams } from "shared/src/offers/offers.types";
+import { StatisticsController } from "@/components/statistics/statistics.controller";
 
 jest.mock("@/components/statistics/statistics.service");
+jest.mock("@/components/statistics/statistics.controller");
 jest.mock("@/components/offers/service/offers.service");
 jest.mock("@/components/offers/scrapper/scrapper.controller");
 jest.mock("@/components/error/error-handler.controller");
@@ -140,8 +142,16 @@ describe("OffersController", () => {
       const mockStatsService = {
         generateGeneralStatistics: jest.fn().mockResolvedValue(undefined),
       };
+      const mockStatsController = {
+        generateAllOffersCountStatistics: jest.fn().mockResolvedValue(undefined),
+        generateDailyPositionsStatistics: jest.fn().mockResolvedValue(undefined),
+        generateDailyCategoriesStatistics: jest.fn().mockResolvedValue(undefined),
+        generateDailyWorkplacesStatistics: jest.fn().mockResolvedValue(undefined),
+      };
 
       (StatisticsService as jest.Mock).mockImplementation(() => mockStatsService);
+      (StatisticsController as jest.Mock).mockImplementation(() => mockStatsController);
+
       const mockOffersController = new OffersController(mockOffersService, mockScrapperController as unknown as ScrapperController);
       await mockOffersController.scrapeOffersData(req, res, next);
 

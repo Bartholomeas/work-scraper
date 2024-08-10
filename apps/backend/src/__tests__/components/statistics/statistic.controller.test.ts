@@ -1,7 +1,5 @@
 import { NextFunction, type Request, type Response } from "express";
 import { Prisma } from "@prisma/client";
-
-jest.mock("@/components/statistics/statistics.service");
 import { IStatisticsController, StatisticsController } from "@/components/statistics/statistics.controller";
 import { StatisticsService } from "@/components/statistics/statistics.service";
 
@@ -12,6 +10,8 @@ import {
   retrieveDailyPositionsStatisticsMockResponse,
 } from "@/__tests__/__mocks__/statistics/statistics.service.constants";
 import { StatisticsServiceMock } from "@/__tests__/__mocks__/statistics/statistics.service.mock";
+
+jest.mock("@/components/statistics/statistics.service");
 
 const req = {} as Request;
 const res = {
@@ -59,7 +59,7 @@ describe("StatisticsController", () => {
         const result = await statisticsController.generateAllOffersCountStatistics();
 
         expect(mockStatisticsService.addAllOffersCountStatistics).toHaveBeenCalled();
-        expect(result.totalOffers).toEqual(7565);
+        expect(result?.totalOffers).toEqual(7565);
       });
 
       it("should handle Prisma error when generateAllOffersCountStatistics runs", async () => {
@@ -75,10 +75,10 @@ describe("StatisticsController", () => {
 
         expect(mockStatisticsService.addDailyPositionsStatistics).toHaveBeenCalled();
 
-        expect(result.juniorOffers).toEqual(621);
-        expect(result.midOffers).toEqual(4358);
-        expect(result.seniorOffers).toEqual(3026);
-        expect(result.otherOffers).toEqual(414);
+        expect(result?.juniorOffers).toEqual(621);
+        expect(result?.midOffers).toEqual(4358);
+        expect(result?.seniorOffers).toEqual(3026);
+        expect(result?.otherOffers).toEqual(414);
       });
 
       it("should handle Prisma error when generateDailyPositionsStatistics runs", async () => {
