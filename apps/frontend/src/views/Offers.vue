@@ -8,9 +8,11 @@ import Title from "@/components/common/title/Title.vue";
 import Text from "@/components/common/text/Text.vue";
 import OffersFiltersTopBar from "@/components/views/offers/filters/top-bar/OffersFiltersTopWrapper.vue";
 import OffersListLayout from "@/components/views/offers/OffersListLayout.vue";
-import OffersItemsList from "@/components/views/offers/list/OffersItemsList.vue";
 import OffersStatCardsSkeleton from "@/components/views/offers/list/OffersStatCardsSkeleton.vue";
+import OffersSideFiltersContentSkeleton from "@/components/views/offers/filters/side-bar/OffersSideFiltersContentSkeleton.vue";
+import OffersItemsListSkeleton from "@/components/views/offers/list/OffersItemsListSkeleton.vue";
 
+const OffersItemsList = defineAsyncComponent(() => import("@/components/views/offers/list/OffersItemsList.vue"));
 const OffersStatCards = defineAsyncComponent(() => import("@/components/views/offers/list/OffersStatCards.vue"));
 const OffersSideFilters = defineAsyncComponent(() => import("@/components/views/offers/filters/side-bar/OffersSideFilters.vue"));
 const OffersPagination = defineAsyncComponent(() => import("@/components/views/offers/filters/OffersPagination.vue"));
@@ -42,10 +44,20 @@ const { data, isLoading } = useGetOffersList(params);
         <template #top-bar>
           <OffersFiltersTopBar />
         </template>
-        <template #filters class="relative bg-amber-400">
-          <OffersSideFilters />
+        <template #filters class="relative">
+          <Suspense>
+            <OffersSideFilters />
+            <template #fallback>
+              <OffersSideFiltersContentSkeleton />
+            </template>
+          </Suspense>
         </template>
-        <OffersItemsList :offers="data?.data" :is-loading="isLoading" />
+        <Suspense>
+          <OffersItemsList :offers="data?.data" :is-loading="isLoading" />
+          <template #fallback>
+            <OffersItemsListSkeleton />
+          </template>
+        </Suspense>
         <template #pagination>
           <OffersPagination :meta="data?.meta" />
         </template>

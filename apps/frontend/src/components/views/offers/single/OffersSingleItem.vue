@@ -16,6 +16,7 @@ import OffersIconValueBox from "@/components/views/offers/single/OffersIconValue
 import OfferBadges from "@/components/views/offers/single/OfferBadges.vue";
 
 import { ArrowRight, Building2, Calendar, HardDrive, Info, MapPin } from "lucide-vue-next";
+import Title from "@/components/common/title/Title.vue";
 
 const OffersDetailsDialog = defineAsyncComponent(() => import("@/components/views/offers/single/OffersDetailsDialog.vue"));
 
@@ -36,13 +37,12 @@ const salaryRangeString = computed(() =>
       (offer?.salaryRange[0]?.timeUnit ? ` / ${transformTimeUnitType(offer?.salaryRange[0]?.timeUnit)}` : ""),
 );
 
-const workCities = computed(() => createStringFromArr(offer?.workplaces?.map(place => place.city)));
+const workCities = computed(() => createStringFromArr(offer?.workplaces?.slice(0, 6).map(place => place.city)));
 const formattedExpirationDate = computed(() => formatDate(offer?.expirationDate));
 const formattedCreationDate = computed(() => formatDate(offer?.createdAt));
 </script>
 
 <template>
-
   <Card
     class="flex flex-col gap-2 p-3 transition-shadow transition-transform hover:z-30 hover:translate-y-[-2px] hover:shadow-xl"
     :aria-label="`Otwórz szczegóły ogłoszenia: ${offer?.positionName ?? ''}`"
@@ -59,7 +59,7 @@ const formattedCreationDate = computed(() => formatDate(offer?.createdAt));
         <!--        />-->
 
         <div class="flex flex-col">
-          <h3 class="text-foreground text-lg font-bold">{{ offer?.positionName }}</h3>
+          <Title order="h3" class="text-foreground line-clamp-1 text-lg font-bold lg:max-w-[100%]"> {{ offer?.positionName }}</Title>
           <OffersIconValueBox :icon="Building2" :value="offer?.company?.name" />
           <OffersIconValueBox :icon="MapPin" :value="workCities" />
           <OffersIconValueBox :icon="Calendar" :value="`Dodano: ${formattedCreationDate}`" />
@@ -70,7 +70,7 @@ const formattedCreationDate = computed(() => formatDate(offer?.createdAt));
       <div class="flex flex-col justify-between gap-2 max-md:mt-2 md:items-end">
         <div class="flex flex-col flex-nowrap items-end justify-between gap-2">
           <OfferBadges
-            class-name="flex-row w-full flex-wrap justify-end"
+            class-name="flex-row w-full max-md:flex-wrap justify-end"
             :position-levels="offer?.positionLevels"
             :work-modes="offer?.workModes"
             :contract-types="offer?.contractTypes"
