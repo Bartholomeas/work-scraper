@@ -1,4 +1,4 @@
-<!-- PROJECT SHIELDS -->
+
 <!--
 *** I'm using markdown "reference style" links for readability.
 *** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
@@ -14,14 +14,13 @@
 [![LinkedIn][linkedin-shield]][linkedin-url]
 [![Moja strona][me-shield]][website-url]
 
-## [Produkcyjna aplikacja](https://itotyle.pl/)
+## [Link do aplikacji](https://itotyle.pl/)
 
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/othneildrew/Best-README-Template">
-    <img src="apps/frontend/public/logo.svg" alt="Logo" width="80" height="80">
-  </a>
+
+![Logo](https://github.com/user-attachments/assets/291b0314-37d1-4720-96b5-4cccefada445)
 
 <h3 align="center">ITotyle (z pracy)</h3>
 
