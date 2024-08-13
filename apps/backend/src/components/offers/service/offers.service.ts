@@ -11,7 +11,9 @@ import { ErrorHandlerController } from "@/components/error/error-handler.control
 
 interface IOffersService {
   getAllWorkplaces(): Promise<OffersWorkplaceListItem[] | undefined>;
+
   updateWorkplacesCounts(): Promise<unknown>;
+
   updateCategoriesCounts(): Promise<unknown>;
 }
 
@@ -138,6 +140,15 @@ class OffersService implements IOffersService {
       const data = await this.prisma.jobOffer.findMany({
         ...OfferHelper.getDefaultParams({ ...params, ...defaultParams } as OffersQueryParams),
         where: OfferHelper.getJobOffersConditions({ ...params, ...defaultParams } as OffersQueryParams),
+        // where: {
+        //   positionLevels: {
+        //     some: {
+        //       value: {
+        //         in: ["junior", "senior"],
+        //       },
+        //     },
+        //   },
+        // },
         select: {
           id: true,
           createdAt: true,
@@ -258,22 +269,6 @@ class OffersService implements IOffersService {
       throw ErrorHandlerController.handleError(err);
     }
   }
-
-  // private async setOffersMetadata({ total }: SetOffersMetadataProps) {
-  //   try {
-  //     await this.prisma.offersMetadata.upsert({
-  //       where: { id: OFFERS_METADATA_ID },
-  //       create: {
-  //         total,
-  //       },
-  //       update: {
-  //         total,
-  //       },
-  //     });
-  //   } catch (err) {
-  //     throw ErrorHandlerController.handleError(err);
-  //   }
-  // }
 
   public async checkDataIsOutdated(hoursAmount = 4) {
     try {

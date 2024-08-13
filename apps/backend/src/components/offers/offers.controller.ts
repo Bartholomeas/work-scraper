@@ -117,6 +117,7 @@ class OffersController {
   public getOffersBaseFilters = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data = await this.offersCategoriesService.retrieveBaseFilters();
+
       res.status(200).json(data);
     } catch (err) {
       next(ErrorHandlerController.handleError(err));

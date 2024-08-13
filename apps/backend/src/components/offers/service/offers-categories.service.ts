@@ -6,7 +6,7 @@ import { ERROR_CODES } from "@/misc/error.constants";
 import { AppErrorController } from "@/components/error/app-error.controller";
 import { PrismaInstance } from "@/components/libs/prisma.instance";
 
-import type { OffersBaseCategories } from "shared/src/offers/offers.types";
+import type { OffersBaseCategories, PositionLevelsCodes } from "shared/src/offers/offers.types";
 
 interface IOffersCategoriesService {
   retrieveBaseFilters(): Promise<OffersBaseCategories>;
@@ -19,6 +19,20 @@ class OffersCategoriesService implements IOffersCategoriesService {
     this.prisma = PrismaInstance.getInstance();
   }
 
+  private async getSortedPositionLevels() {
+    const sortingArray: PositionLevelsCodes[] = ["intern", "junior", "mid", "senior", "manager"];
+    return await this.prisma.positionLevel
+      .findMany()
+      .then(res =>
+        res
+          .slice()
+          .sort(
+            (a, b) =>
+              (sortingArray.indexOf(a?.value as PositionLevelsCodes) ?? 0) - (sortingArray.indexOf(b?.value as PositionLevelsCodes) ?? 1),
+          ),
+      );
+  }
+
   public async retrieveBaseFilters(): Promise<OffersBaseCategories> {
     try {
       const contractTypes = {
@@ -27,7 +41,7 @@ class OffersCategoriesService implements IOffersCategoriesService {
       } as OffersBaseCategories["contractTypes"];
       const positionLevels = {
         name: "Poziom stanowiska",
-        items: await this.prisma.positionLevel.findMany(),
+        items: await this.getSortedPositionLevels(),
       } as OffersBaseCategories["positionLevels"];
       const workModes = {
         name: "Tryb pracy",

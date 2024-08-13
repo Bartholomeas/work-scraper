@@ -123,15 +123,27 @@ class OfferHelper {
   }
 
   public static getPositionLevelsConditions(positionLevels?: OffersQueryParams["positionLevels"]) {
-    return Array.isArray(positionLevels) && positionLevels.length > 0
-      ? positionLevels.map(value => ({
-          positionLevels: {
-            some: {
-              value,
+    return [
+      {
+        positionLevels: {
+          some: {
+            value: {
+              in: positionLevels,
             },
           },
-        }))
-      : [];
+        },
+      },
+    ];
+    // All positionLevels must match (idk which approach is better)
+    // return Array.isArray(positionLevels) && positionLevels.length > 0
+    //   ? positionLevels.map(value => ({
+    //       positionLevels: {
+    //         some: {
+    //           value,
+    //         },
+    //       },
+    //     }))
+    //   : [];
   }
 
   public static getContractTypesConditions(contractTypes?: OffersQueryParams["contractTypes"]) {
