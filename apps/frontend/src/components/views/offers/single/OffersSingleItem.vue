@@ -49,15 +49,6 @@ const formattedCreationDate = computed(() => formatDate(offer?.createdAt));
   >
     <div class="flex flex-col justify-between self-stretch md:flex-row">
       <div class="flex gap-2 self-stretch">
-        <!--        <img-->
-        <!--          :src="offer?.company?.logoUrl ?? ''"-->
-        <!--          :alt="`Logo firmy ${offer?.company?.name}`"-->
-        <!--          loading="lazy"-->
-        <!--          height="96"-->
-        <!--          width="96"-->
-        <!--          class="aspect-square max-h-[96px] rounded-md bg-white object-contain p-2"-->
-        <!--        />-->
-
         <div class="flex flex-col">
           <Title order="h3" class="text-foreground line-clamp-1 text-lg font-bold lg:max-w-[100%]"> {{ offer?.positionName }}</Title>
           <OffersIconValueBox :icon="Building2" :value="offer?.company?.name" />

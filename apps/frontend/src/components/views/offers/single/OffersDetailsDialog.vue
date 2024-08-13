@@ -37,14 +37,6 @@ const formattedCreationDate = computed(() => formatDate(offer?.createdAt));
     <DialogContent class="z-[500] flex max-h-[90dvh] flex-col gap-4 overflow-y-auto">
       <DialogHeader class="flex flex-col">
         <div class="flex gap-4">
-          <!--          <img-->
-          <!--            :src="offer?.company?.logoUrl ?? ''"-->
-          <!--            :alt="`Logo firmy ${offer?.company?.name}`"-->
-          <!--            loading="lazy"-->
-          <!--            height="120"-->
-          <!--            width="120"-->
-          <!--            class="aspect-square max-h-[120px] rounded-md bg-white object-contain p-2"-->
-          <!--          />-->
           <div class="flex flex-col justify-center gap-1">
             <DialogTitle class="text-left text-[24px]">{{ offer?.positionName }}</DialogTitle>
             <p class="text-primary text-left text-lg font-bold md:mb-2">{{ salaryText }}</p>
@@ -76,7 +68,6 @@ const formattedCreationDate = computed(() => formatDate(offer?.createdAt));
           </Badge>
         </div>
       </div>
-      <!--      <DialogDescription>{{ offer?.description }}</DialogDescription>-->
 
       <Separator />
       <DialogFooter class="flex flex-nowrap gap-2">

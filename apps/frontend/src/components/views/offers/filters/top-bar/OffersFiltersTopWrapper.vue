@@ -11,8 +11,8 @@ import OffersFiltersTopBar from "@/components/views/offers/filters/top-bar/Offer
   <FiltersWrapper
     :filters-schema="coreSearchParamsSchema"
     :debounce-time="300"
-    class-name="sticky bg-background z-50 pt-4 lg:pt-3"
-    :style="{ top: `calc(${HEADER_HEIGHT - 2}px)` }"
+    class-name="sticky bg-background z-50 lg:pt-4"
+    :style="{ top: `calc(${HEADER_HEIGHT}px)` }"
   >
     <OffersFiltersTopBar />
   </FiltersWrapper>
