@@ -26,7 +26,7 @@ const { meta } = useField(name);
 
 <template>
   <FormField v-slot="{ componentField }" :name="name" :validate-on-blur="!meta.dirty">
-    <FormItem>
+    <FormItem class="space-y-0">
       <FormLabel :class="{ 'sr-only': labelSrOnly }">{{ label }}</FormLabel>
       <Select :aria-label="label" v-bind="componentField">
         <FormControl>

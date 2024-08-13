@@ -20,7 +20,7 @@ const { meta } = useField(name);
 
 <template>
   <FormField :name="name" v-slot="{ componentField }" :validate-on-blur="!meta.dirty">
-    <FormItem :class="cn({ 'w-full': fullWidth })">
+    <FormItem :class="cn('space-y-0', { 'w-full': fullWidth })">
       <FormLabel :class="{ 'sr-only': labelSrOnly }">{{ label }}</FormLabel>
       <FormControl>
         <Input v-bind="{ ...componentField, ...props }" />
