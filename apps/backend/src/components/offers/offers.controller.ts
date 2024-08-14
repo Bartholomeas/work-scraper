@@ -59,21 +59,9 @@ class OffersController {
   public scrapeOffersData = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data = await this.scrapperController.scrapeOffersData();
-      // Update workplaces counts
 
-      // Generate general stats from stats controller // Not 100% sure its best way to invoke another controller here because of SOLID principles
-      const statsService = new StatisticsService();
-      const statsController = new StatisticsController(statsService);
+      await this.generateScrappedStatistics();
 
-      // Without Promise.all as it needs to be called in this order
-      await this.offersService.updateWorkplacesCounts();
-      await this.offersService.updateCategoriesCounts();
-      await this.offersService.deleteOutdatedRecords();
-      await statsController.generateAllOffersCountStatistics();
-      await statsController.generateDailyPositionsStatistics();
-      await statsController.generateDailyCategoriesStatistics();
-      await statsController.generateDailyWorkplacesStatistics();
-      await statsService.generateGeneralStatistics();
       res.status(204).json(data);
     } catch (err) {
       next(ErrorHandlerController.handleError(err));
@@ -122,6 +110,22 @@ class OffersController {
     } catch (err) {
       next(ErrorHandlerController.handleError(err));
     }
+  };
+
+  private generateScrappedStatistics = async (): Promise<void> => {
+    // Generate general stats from stats controller // Not 100% sure its best way to invoke another controller here because of SOLID principles
+    const statsService = new StatisticsService();
+    const statsController = new StatisticsController(statsService);
+
+    // Without Promise.all as it needs to be called in this order
+    await this.offersService.updateWorkplacesCounts();
+    await this.offersService.updateCategoriesCounts();
+    await this.offersService.deleteOutdatedRecords();
+    await statsController.generateAllOffersCountStatistics();
+    await statsController.generateDailyPositionsStatistics();
+    await statsController.generateDailyCategoriesStatistics();
+    await statsController.generateDailyWorkplacesStatistics();
+    await statsService.generateGeneralStatistics();
   };
 }
 
