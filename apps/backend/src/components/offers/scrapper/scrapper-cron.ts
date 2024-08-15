@@ -23,11 +23,6 @@ class ScrapperCron extends BaseCron {
 
       this.logTimestampWithMessage("Updating categories counts");
       await this.scrapperController.updateCategoriesCounts();
-
-      // this.logTimestampWithMessage("Updating metadata");
-      // await this.scrapperController.updateMetadata();
-      // this.logTimestampWithMessage("Updating statistics");
-      // await this.scrapperController.updateStatistics();
     } catch (err) {
       throw ErrorHandlerController.handleError(err);
     }

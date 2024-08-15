@@ -58,11 +58,11 @@ class OffersController {
 
   public scrapeOffersData = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const data = await this.scrapperController.scrapeOffersData();
+      this.scrapperController.scrapeOffersData().then(async () => {
+        await this.generateScrappedStatistics();
+      });
 
-      await this.generateScrappedStatistics();
-
-      res.status(204).json(data);
+      res.status(204).json();
     } catch (err) {
       next(ErrorHandlerController.handleError(err));
     }
