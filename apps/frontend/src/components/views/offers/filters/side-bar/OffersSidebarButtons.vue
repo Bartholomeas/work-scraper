@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Button } from "@/components/ui/button/Button.variants";
 import { useForm } from "vee-validate";
+import { Button } from "@/components/ui/button/Button.variants";
 
 interface OffersSidebarButtonsProps {
   clearFilters: () => void;

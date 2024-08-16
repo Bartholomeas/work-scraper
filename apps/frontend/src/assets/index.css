@@ -18,7 +18,7 @@
         --card: #ffffff;
         --card-foreground: 222.2 84% 4.9%;
 
-        --border: 214.3 31.8% 91.4%;
+        --border: #dcdcdc;
         --input: 214.3 31.8% 91.4%;
 
         --primary: #38d798;
@@ -57,7 +57,7 @@
 
     .dark {
         /*Base variables*/
-        --background: #0c111c;
+        --background: #050d18;
         --background-lighter: #161b29;
         --foreground: 210 40% 98%;
 
@@ -67,10 +67,10 @@
         --popover: 222.2 84% 4.9%;
         --popover-foreground: 210 40% 98%;
 
-        --card: #020817;
+        --card: #050910;
         --card-foreground: 210 40% 98%;
 
-        --border: 217.2 32.6% 17.5%;
+        --border: #20273a;
         --input: 217.2 32.6% 17.5%;
 
         --primary: #46c995;

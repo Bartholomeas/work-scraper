@@ -29,7 +29,7 @@ watch(
   [values],
   debounce(() => {
     if (onSubmit) onSubmit(values);
-  }),
+  }, 600),
 );
 </script>
 <template>

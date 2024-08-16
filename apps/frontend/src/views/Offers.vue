@@ -33,7 +33,7 @@ const { data, isLoading } = useGetOffersList(params);
       </template>
     </Suspense>
     <div class="flex flex-col gap-0">
-      <div class="my-6 flex flex-col gap-2">
+      <div id="top-filters-bar" class="my-6 flex flex-col gap-2">
         <Title order="h2" size="h3" class="font-bold">Znajdź interesujące Cię oferty</Title>
         <Text color="muted" size="md">
           Znalezionych ofert:
