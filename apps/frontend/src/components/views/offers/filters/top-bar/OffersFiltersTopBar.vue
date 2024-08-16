@@ -33,7 +33,7 @@ watch(
 );
 </script>
 <template>
-  <div class="bg-card flex w-full flex-row gap-2">
+  <div class="bg-card flex w-full flex-row gap-2 max-lg:pt-2">
     <InputControlled :name="inputNames.search" label="Szukaj" placeholder="Szukaj.." type="search" label-sr-only full-width />
     <SelectControlled name="orderBy" label="Sortuj" label-sr-only :items="sortItems" class-name="w-min sm:w-[200px]" />
   </div>
