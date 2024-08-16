@@ -31,9 +31,8 @@ const { meta } = defineProps<OffersPaginationProps>();
 const { submitFilters } = useFilters({
   filterKeys: ["page", "perPage"],
 });
-
 const handlePageChange = (page: number = 1) => {
-  y.value = 0;
+  y.value = (document.querySelector("#top-filters-bar")?.getBoundingClientRect().top ?? 0) + window.scrollY - 72;
   submitFilters({ page });
 };
 </script>

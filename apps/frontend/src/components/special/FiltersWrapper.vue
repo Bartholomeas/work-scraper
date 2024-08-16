@@ -38,7 +38,6 @@ const clearFilters = () => {
 
 const onSubmit = handleSubmit(values => {
   submitFilters(values);
-  y.value = 0;
 });
 
 provide("formValues", values);
