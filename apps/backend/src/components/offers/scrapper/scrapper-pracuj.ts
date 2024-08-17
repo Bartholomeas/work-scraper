@@ -6,7 +6,6 @@ import { PRACUJ_NAME } from "@/misc/constants";
 import { generateId } from "@/utils/generate-id";
 
 import { ErrorHandlerController } from "@/components/error/error-handler.controller";
-import { PRACUJ_DATA_FILENAME } from "@/components/offers/helpers/offers.constants";
 import { isContractTypesArr, isWorkModesArr, isWorkPositionLevelsArr, isWorkSchedulesArr } from "@/components/offers/helpers/offers.utils";
 import { ScrapperBase, type ScrapperBaseProps } from "@/components/offers/scrapper/scrapper-base";
 
@@ -23,9 +22,7 @@ class ScrapperPracuj extends ScrapperBase {
   public getScrappedData = async (): Promise<ScrappedDataResponse> => {
     // if (!this.page) await this.initializePage();
 
-    const data = await this.saveScrappedData<JobOffer>({
-      fileName: PRACUJ_DATA_FILENAME,
-    });
+    const data = await this.saveScrappedData<JobOffer>();
     return { createdAt: new Date(Date.now()).toISOString(), data: data || [] };
   };
 

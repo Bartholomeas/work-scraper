@@ -8,3 +8,6 @@ export const JUSTJOIN_DATA_FILENAME = "justjoin";
 
 export const SOLID_URL = "https://solid.jobs/offers/it";
 export const SOLID_DATA_FILENAME = "solidjobs";
+
+export const NOFLUFFJOBS_URL = "https://nofluffjobs.com/pl";
+export const NOFLUFFJOBS_DATA_FILENAME = "nofluffjobs";

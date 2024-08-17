@@ -1,18 +1,20 @@
 import type { OffersWorkplaceListItem } from "shared/src/offers/offers.types";
 
-import { JUSTJOIN_URL, PRACUJ_URL, SOLID_URL } from "@/components/offers/helpers/offers.constants";
+import { NOFLUFFJOBS_URL } from "@/components/offers/helpers/offers.constants";
 
 import { ErrorHandlerController } from "@/components/error/error-handler.controller";
 import { BrowserManager } from "@/components/libs/browser-manager";
 
 import { ScrapperCron } from "@/components/offers/scrapper/scrapper-cron";
+
 import { ScrapperJustjoin } from "@/components/offers/scrapper/scrapper-justjoin";
 import { ScrapperPracuj } from "@/components/offers/scrapper/scrapper-pracuj";
 import { ScrapperSolidJobs } from "@/components/offers/scrapper/scrapper-solidjobs";
+import { ScrapperNofluffjobs } from "@/components/offers/scrapper/scrapper-nofluffjobs";
 
 import type { OffersService } from "@/components/offers/service/offers.service";
 
-type ScrapperInstances = typeof ScrapperPracuj | typeof ScrapperJustjoin | typeof ScrapperSolidJobs;
+type ScrapperInstances = typeof ScrapperPracuj | typeof ScrapperJustjoin | typeof ScrapperSolidJobs | typeof ScrapperNofluffjobs;
 
 interface IScrapperController {
   updateCategoriesCounts(): Promise<OffersWorkplaceListItem[] | undefined>;
@@ -58,17 +60,21 @@ class ScrapperController implements IScrapperController {
     try {
       const scrappers = [
         {
-          scrapper: ScrapperPracuj,
-          url: PRACUJ_URL,
+          scrapper: ScrapperNofluffjobs,
+          url: NOFLUFFJOBS_URL,
         },
-        {
-          scrapper: ScrapperJustjoin,
-          url: JUSTJOIN_URL,
-        },
-        {
-          scrapper: ScrapperSolidJobs,
-          url: SOLID_URL,
-        },
+        // {
+        //   scrapper: ScrapperPracuj,
+        //   url: PRACUJ_URL,
+        // },
+        // {
+        //   scrapper: ScrapperJustjoin,
+        //   url: JUSTJOIN_URL,
+        // },
+        // {
+        //   scrapper: ScrapperSolidJobs,
+        //   url: SOLID_URL,
+        // },
       ];
 
       for (const { scrapper, url } of scrappers) {
@@ -80,7 +86,7 @@ class ScrapperController implements IScrapperController {
     } catch (err) {
       throw ErrorHandlerController.handleError(err);
     } finally {
-      await this.browserManager.closeBrowserInstance();
+      // await this.browserManager.closeBrowserInstance();
     }
   };
 
@@ -90,12 +96,12 @@ class ScrapperController implements IScrapperController {
 
       const scrapperInstance = new scrapper(browser, { url });
       const scrappedData = await scrapperInstance.getScrappedData();
-      await this.browserManager.closeBrowserInstance();
+      // await this.browserManager.closeBrowserInstance();
       await this.offersService.saveJobOffers(scrappedData.data);
     } catch (err) {
       throw ErrorHandlerController.handleError(err);
     } finally {
-      await this.browserManager.closeBrowserInstance();
+      // await this.browserManager.closeBrowserInstance();
     }
   };
 }

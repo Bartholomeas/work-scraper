@@ -6,8 +6,6 @@ import { CurrencyCodes, JobOffer, ScrappedDataResponse, TimeUnitTypes } from "sh
 
 import { SLUGIFY_CONFIG } from "@/lib/slugify";
 import { generateId } from "@/utils/generate-id";
-
-import { SOLID_DATA_FILENAME } from "@/components/offers/helpers/offers.constants";
 import { ScrapperBase, ScrapperBaseProps } from "@/components/offers/scrapper/scrapper-base";
 
 import { ErrorHandlerController } from "@/components/error/error-handler.controller";
@@ -23,9 +21,7 @@ class ScrapperSolidJobs extends ScrapperBase {
     if (!this.page) this.page = await this.browser?.newPage();
     if (!this.page) return { createdAt: new Date(Date.now()).toISOString(), data: [] };
 
-    const data = await this.saveScrappedData<JobOffer>({
-      fileName: SOLID_DATA_FILENAME,
-    });
+    const data = await this.saveScrappedData<JobOffer>();
 
     return { createdAt: new Date(Date.now()).toISOString(), data: data || [] };
   };
@@ -118,6 +114,7 @@ class ScrapperSolidJobs extends ScrapperBase {
         return ["junior"];
     }
   }
+
   protected standardizeContractTypes(types: JobOfferSolidJobs["salaryRange"][] | undefined): JobOffer["contractTypes"] {
     if (!types || !types.length) return [];
     return types?.reduce(

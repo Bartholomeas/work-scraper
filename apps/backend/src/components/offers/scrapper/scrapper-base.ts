@@ -8,10 +8,6 @@ import { MINUTES_TO_OUTDATE } from "@/components/offers/helpers/offers.constants
 import { ErrorHandlerController } from "@/components/error/error-handler.controller";
 import type { JobOffer, ScrappedDataResponse } from "shared/src/offers/offers.types";
 
-interface SaveScrappedDataToFileProps<T> {
-  fileName: string;
-}
-
 export interface ScrapperBaseProps {
   url: string;
   categories?: string[];
@@ -57,7 +53,7 @@ abstract class ScrapperBase {
     return timeDiff > MINUTES_TO_OUTDATE;
   };
 
-  protected saveScrappedData = async <T extends object>({ fileName }: SaveScrappedDataToFileProps<T>): Promise<JobOffer[] | null> => {
+  protected saveScrappedData = async <T extends object>(): Promise<JobOffer[] | null> => {
     try {
       const results: T[][] = [];
       this.maxPages = await this.getMaxPages();
@@ -96,7 +92,7 @@ abstract class ScrapperBase {
 
   protected abstract getMaxPages(): Promise<number>;
 
-  protected abstract standardizeContractTypes(data: unknown): JobOffer["contractTypes"];
+  // protected abstract standardizeContractTypes(data: unknown): JobOffer["contractTypes"];
 }
 
 export { ScrapperBase };
