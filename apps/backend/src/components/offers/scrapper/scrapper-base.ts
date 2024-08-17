@@ -79,7 +79,7 @@ abstract class ScrapperBase {
     await page?.setRequestInterception(true);
 
     page?.on("request", req => {
-      if (["image", "stylesheet", "font"].includes(req.resourceType())) req.abort();
+      if (["image", "stylesheet", "media", "font"].includes(req.resourceType())) req.abort();
       else req.continue();
     });
   };
