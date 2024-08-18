@@ -5,6 +5,7 @@ import { DATE_FORMAT } from "@/misc/constants";
 abstract class BaseCron {
   protected constructor(schedule: string = "0 7,18 * * *") {
     cron.schedule(schedule, async () => {
+      console.log("krą", schedule);
       await this.handleCronJob();
     });
   }

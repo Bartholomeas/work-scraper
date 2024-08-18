@@ -31,26 +31,21 @@ export class ScrapperNofluffjobs extends ScrapperBase {
   }
 
   protected async scrapePage<T>(pageNumber: number): Promise<T[] | undefined> {
-    let { page } = this;
-    if (!page) {
-      page = await this.browser?.newPage();
-    }
-    if (!page) return;
-
+    await this.initializePage();
     const wait = (duration = 100) => new Promise(resolve => setTimeout(resolve, duration));
 
-    await this.listenAndRestrictRequests(page);
+    await this.listenAndRestrictRequests(this.page);
 
     const data: T[] = [];
 
     return new Promise<T[] | undefined>((resolve, reject) => {
       let keepLoading = true;
 
-      page.on("response", response => {
+      this.page?.on("response", response => {
         const url = response.url();
 
         if (url.includes("https://nofluffjobs.com/api/joboffers/main")) {
-          console.log("Gicik :))", url);
+          console.log("Nofluffjobs scrapping: ", url);
           response
             .json()
             .then(res => {
@@ -59,25 +54,23 @@ export class ScrapperNofluffjobs extends ScrapperBase {
                 if (res?.postings) data.push(...res.postings);
               }
 
-              page
-                .evaluateHandle(() => {
-                  const buttons = Array.from(document.querySelectorAll("button"));
-                  const targetBtn = buttons.find(btn => btn.textContent?.includes("Pokaż kolejne"));
-                  return targetBtn || null;
-                })
+              this.page
+                ?.evaluateHandle(this.getLoadMoreButton)
                 .then(loadMoreBtn => {
-                  if (loadMoreBtn && loadMoreBtn.asElement()) {
-                    const element = loadMoreBtn.asElement() as ElementHandle<Element>;
-                    wait().then(() => element?.click());
+                  const element = loadMoreBtn?.asElement() as ElementHandle<Element>;
+                  if (element) {
+                    wait(50).then(() => {
+                      element?.click();
+                      element?.dispose();
+                    });
 
-                    // Wait until the button changes back to "Pokaż kolejne" or a timeout
-                    page
-                      .waitForFunction(el => el.textContent?.includes("Pokaż kolejne"), {}, element)
+                    this.page
+                      ?.waitForFunction(el => el.textContent?.includes("Pokaż kolejne"), {}, element)
                       .catch(() => {
-                        keepLoading = false; // Stop if button is no longer available or changed
+                        keepLoading = false;
                       });
                   } else {
-                    keepLoading = false; // No more buttons found, stop loading
+                    keepLoading = false;
                   }
                 })
                 .catch(err => {
@@ -92,29 +85,22 @@ export class ScrapperNofluffjobs extends ScrapperBase {
         }
       });
 
-      // Initial page load
-      page
-        .goto(this.url, { waitUntil: "networkidle2" })
-        .then(() => this.pressCookieConsent(page))
+      this.page
+        ?.goto(this.url, { waitUntil: "networkidle2" })
+        .then(() => this.pressCookieConsent(this.page))
         .then(() => {
-          // Start the scraping process with the first click on "Pokaż kolejne"
-          return page.evaluateHandle(() => {
-            const buttons = Array.from(document.querySelectorAll("button"));
-            const targetBtn = buttons.find(btn => btn.textContent?.includes("Pokaż kolejne"));
-            return targetBtn || null;
-          });
+          return this.page?.evaluateHandle(this.getLoadMoreButton);
         })
         .then(loadMoreBtn => {
           if (loadMoreBtn && loadMoreBtn.asElement()) {
             const element = loadMoreBtn.asElement() as ElementHandle<Element>;
             element?.click();
           } else {
-            keepLoading = false; // No button to click initially, so stop loading
+            keepLoading = false;
           }
         })
         .catch(reject);
 
-      // Wait until scraping is done
       const waitUntilFinished = () =>
         new Promise<void>(resolveWait => {
           const interval = setInterval(() => {
@@ -122,12 +108,18 @@ export class ScrapperNofluffjobs extends ScrapperBase {
               clearInterval(interval);
               resolveWait();
             }
-          }, 100); // Check every 100ms if scraping is finished
+          }, 100);
         });
 
       waitUntilFinished().then(() => resolve(data));
     });
   }
+
+  private getLoadMoreButton = () => {
+    const buttons = Array.from(document.querySelectorAll("button"));
+    const targetBtn = buttons.find(btn => btn.textContent?.includes("Pokaż kolejne"));
+    return targetBtn || null;
+  };
 
   private async pressCookieConsent(page: Page | undefined): Promise<void> {
     const cookieBtn = await page

@@ -29,9 +29,13 @@ abstract class ScrapperBase {
     this.filesManager = new FilesManagerController(path.resolve(__dirname, "../../../../public/scrapped-data"));
   }
 
-  public initializePage = async () => {
-    if (!this.page) this.page = await this.browser?.newPage();
-    if (this.page) await this.page.goto(this.url);
+  public initializePage = async (): Promise<Page | undefined> => {
+    let { page } = this;
+    if (!page && this.browser) {
+      page = await this.browser.newPage();
+      this.page = page;
+    }
+    return page;
   };
 
   public closePage = async () => {
@@ -69,13 +73,14 @@ abstract class ScrapperBase {
       //   fileName,
       //   ext: "json",
       // });
+
       return this.standardizeData(aggregatedData);
     } catch (err) {
       throw ErrorHandlerController.handleError(err);
     }
   };
 
-  protected listenAndRestrictRequests = async (page: Page) => {
+  protected listenAndRestrictRequests = async (page: Page | undefined) => {
     await page?.setRequestInterception(true);
 
     page?.on("request", req => {

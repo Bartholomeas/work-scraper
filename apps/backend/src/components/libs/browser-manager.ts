@@ -18,7 +18,7 @@ class BrowserManager {
     try {
       if (!this.browser)
         this.browser = await puppeteer.launch({
-          headless: false,
+          headless: true,
           executablePath: executablePath(),
           args: ["--disable-gpu", "--disable-dev-shm-usage", "--disable-setuid-sandbox"],
         });

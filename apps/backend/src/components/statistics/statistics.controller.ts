@@ -5,6 +5,8 @@ import { ErrorHandlerController } from "@/components/error/error-handler.control
 import { StatisticsCron } from "@/components/statistics/statistics-cron";
 
 export interface IStatisticsController {
+  generateGeneralStatisticsCommand(): Promise<unknown>;
+
   generateAllOffersCountStatistics(): Promise<unknown>;
 
   generateDailyPositionsStatistics(): Promise<unknown>;
@@ -35,6 +37,14 @@ class StatisticsController implements IStatisticsController {
     this.statisticsService = statisticsService;
     new StatisticsCron(this);
   }
+
+  public generateGeneralStatisticsCommand = async () => {
+    try {
+      return await this.statisticsService.generateGeneralStatistics();
+    } catch (err) {
+      throw ErrorHandlerController.handleError(err);
+    }
+  };
 
   public generateAllOffersCountStatistics = async () => {
     try {
