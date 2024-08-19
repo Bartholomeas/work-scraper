@@ -38,7 +38,8 @@ export class ScrapperNofluffjobs extends ScrapperBase {
         const url = response.url();
 
         if (url.includes("https://nofluffjobs.com/api/joboffers/main") || url.includes("https://nofluffjobs.com/api/search/posting")) {
-          console.log("Nofluffjobs scrapping: ", url);
+          console.log("Nofluffjobs url: ", url);
+
           response
             .json()
             .then(res => {
@@ -140,7 +141,13 @@ export class ScrapperNofluffjobs extends ScrapperBase {
       const salaryRange = this.standardizeSalary(offer?.salary);
       const technologies = this.standardizeTechnologies(offer?.tiles?.values);
       const workplaces = this.standardizeWorkplaces(offer?.location?.places);
-      const expirationDate = dayjs(new Date(offer?.renewed)).add(1, "month").toISOString();
+
+      const todayDate = dayjs(new Date());
+
+      const expirationDate = offer?.renewed
+        ? dayjs(new Date(offer?.renewed)).add(1, "month").toISOString()
+        : todayDate.add(1, "month").toISOString();
+      const createdAt = offer?.posted ? dayjs(new Date(offer?.posted)).toISOString() : todayDate.toISOString();
 
       return {
         id: generateId(offer?.id),
@@ -151,14 +158,15 @@ export class ScrapperNofluffjobs extends ScrapperBase {
           logoUrl: null,
           name: offer?.name,
         },
+
         positionLevels,
         contractTypes,
         workModes,
         workSchedules,
         salaryRange,
-        description: undefined,
         technologies,
-        createdAt: dayjs(new Date(offer?.posted)).toISOString(),
+        description: undefined,
+        createdAt,
         expirationDate,
         offerUrls: [`https://nofluffjobs.com/pl/job/${offer?.url}`],
         workplaces,
@@ -172,12 +180,12 @@ export class ScrapperNofluffjobs extends ScrapperBase {
 
   private standardizeWorkplaces = (locations: JobOfferNofluffJobs["location"]["places"]): JobOffer["workplaces"] => {
     return locations
-      ?.filter(loc => !loc.provinceOnly)
+      ?.filter(loc => loc.provinceOnly !== true && loc.city !== "Remote")
       ?.map(
         loc =>
           ({
             city: loc?.city ?? "",
-            address: loc?.street ? `${loc?.postalCode ? loc?.postalCode + " " : ""}${loc.street}` : "",
+            address: loc?.street ? `${loc?.postalCode ? loc?.postalCode + " " : ""}${loc.street}` : null,
           }) satisfies JobOffer["workplaces"][0],
       );
   };

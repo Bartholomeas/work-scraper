@@ -52,7 +52,7 @@ class ScrapperJustjoin extends ScrapperBase {
             const contentType = response.headers()["content-type"];
             if (contentType && contentType.includes("application/json")) {
               const res = await response.json();
-              console.log("Response ok", url);
+              console.log("Justjoin url: ", url);
 
               offers.push(...res.data);
             }

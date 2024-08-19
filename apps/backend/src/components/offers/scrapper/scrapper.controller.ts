@@ -1,5 +1,3 @@
-import path from "node:path";
-
 import type { OffersWorkplaceListItem } from "shared/src/offers/offers.types";
 
 import { NOFLUFFJOBS_URL } from "@/components/offers/helpers/offers.constants";
@@ -15,7 +13,6 @@ import { ScrapperSolidJobs } from "@/components/offers/scrapper/scrapper-solidjo
 import { ScrapperNofluffjobs } from "@/components/offers/scrapper/scrapper-nofluffjobs";
 
 import type { OffersService } from "@/components/offers/service/offers.service";
-import { FilesManagerController } from "@/components/files-manager/files-manager.controller";
 
 type ScrapperInstances = typeof ScrapperPracuj | typeof ScrapperJustjoin | typeof ScrapperSolidJobs | typeof ScrapperNofluffjobs;
 
@@ -88,7 +85,7 @@ class ScrapperController implements IScrapperController {
     } catch (err) {
       throw ErrorHandlerController.handleError(err);
     } finally {
-      await this.browserManager.closeBrowserInstance();
+      // await this.browserManager.closeBrowserInstance();
     }
   };
 
@@ -98,10 +95,11 @@ class ScrapperController implements IScrapperController {
 
       const scrapperInstance = new scrapper(browser, { url });
       const scrappedData = await scrapperInstance.getScrappedData();
+      console.log("W SKRAPERZE SINGLE JEST :thinking", scrappedData?.data?.length, scrappedData?.createdAt);
       await this.browserManager.closeBrowserInstance();
       //TODO: To delete
-      const filesManager = new FilesManagerController(path.resolve(__dirname, "../../../../public/scrapped-data"));
-      await filesManager.writeToFile(scrappedData as never);
+      // const filesManager = new FilesManagerController(path.resolve(__dirname, "../../../../public/scrapped-data"));
+      // await filesManager.writeToFile(scrappedData as never);
 
       await this.offersService.saveJobOffers(scrappedData.data);
     } catch (err) {
