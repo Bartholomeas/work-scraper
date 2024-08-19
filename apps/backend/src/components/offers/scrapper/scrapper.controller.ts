@@ -1,6 +1,6 @@
 import type { OffersWorkplaceListItem } from "shared/src/offers/offers.types";
 
-import { NOFLUFFJOBS_URL } from "@/components/offers/helpers/offers.constants";
+import { JUSTJOIN_URL, NOFLUFFJOBS_URL, PRACUJ_URL, SOLID_URL } from "@/components/offers/helpers/offers.constants";
 
 import { ErrorHandlerController } from "@/components/error/error-handler.controller";
 import { BrowserManager } from "@/components/libs/browser-manager";
@@ -63,18 +63,18 @@ class ScrapperController implements IScrapperController {
           scrapper: ScrapperNofluffjobs,
           url: NOFLUFFJOBS_URL,
         },
-        // {
-        //   scrapper: ScrapperPracuj,
-        //   url: PRACUJ_URL,
-        // },
-        // {
-        //   scrapper: ScrapperJustjoin,
-        //   url: JUSTJOIN_URL,
-        // },
-        // {
-        //   scrapper: ScrapperSolidJobs,
-        //   url: SOLID_URL,
-        // },
+        {
+          scrapper: ScrapperPracuj,
+          url: PRACUJ_URL,
+        },
+        {
+          scrapper: ScrapperJustjoin,
+          url: JUSTJOIN_URL,
+        },
+        {
+          scrapper: ScrapperSolidJobs,
+          url: SOLID_URL,
+        },
       ];
       for (const { scrapper, url } of scrappers) {
         await this.scrapeSingleService(scrapper, url);
@@ -85,7 +85,7 @@ class ScrapperController implements IScrapperController {
     } catch (err) {
       throw ErrorHandlerController.handleError(err);
     } finally {
-      // await this.browserManager.closeBrowserInstance();
+      await this.browserManager.closeBrowserInstance();
     }
   };
 
@@ -95,11 +95,7 @@ class ScrapperController implements IScrapperController {
 
       const scrapperInstance = new scrapper(browser, { url });
       const scrappedData = await scrapperInstance.getScrappedData();
-      console.log("W SKRAPERZE SINGLE JEST :thinking", scrappedData?.data?.length, scrappedData?.createdAt);
       await this.browserManager.closeBrowserInstance();
-      //TODO: To delete
-      // const filesManager = new FilesManagerController(path.resolve(__dirname, "../../../../public/scrapped-data"));
-      // await filesManager.writeToFile(scrappedData as never);
 
       await this.offersService.saveJobOffers(scrappedData.data);
     } catch (err) {
