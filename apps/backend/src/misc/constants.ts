@@ -16,3 +16,4 @@ export const DATE_FORMAT = "DD.MM.YYYY";
 export const JUSTJOIN_NAME = "justjoin";
 export const PRACUJ_NAME = "pracuj";
 export const SOLID_NAME = "solid.jobs";
+export const NOFLUFF_NAME = "nofluffjobs";

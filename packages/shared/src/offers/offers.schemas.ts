@@ -6,7 +6,7 @@ export const contractTypeCodesSchema = z.enum(["uz", "uop", "b2b", "uod", "inter
 export const workModesSchema = z.enum(["remote", "hybrid", "stationary"]);
 export const workSchedulesSchema = z.enum(["full-time", "part-time", "internship", "freelance"]);
 
-export const dataSourceCodesSchema = z.enum(["pracuj", "justjoin", "solid.jobs"]);
+export const dataSourceCodesSchema = z.enum(["pracuj", "justjoin", "solid.jobs", "nofluffjobs"]);
 
 export const currenciesSchema = z.enum(["pln", "usd"]);
 export const salaryTypeSchema = z.enum(["brutto", "netto"]);

@@ -8,8 +8,9 @@ import { ErrorHandlerController } from "@/components/error/error-handler.control
 import { ScrapperController } from "@/components/offers/scrapper/scrapper.controller";
 import { OffersCategoriesService } from "@/components/offers/service/offers-categories.service";
 
-import type { OffersService } from "@/components/offers/service/offers.service";
 import { statisticsModule } from "@/components/statistics/statistics.module";
+
+import type { OffersService } from "@/components/offers/service/offers.service";
 
 puppeteer.use(StealthPlugin());
 

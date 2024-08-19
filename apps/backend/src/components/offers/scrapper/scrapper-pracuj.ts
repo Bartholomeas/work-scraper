@@ -63,7 +63,6 @@ class ScrapperPracuj extends ScrapperBase {
           };
         }),
       } satisfies JobOffer;
-      // return { ...parsedOffer, slug: generateJobOfferSlug(parsedOffer) } as JobOffer;
     });
   }
 
