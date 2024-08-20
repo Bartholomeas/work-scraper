@@ -10,7 +10,7 @@ module.exports = {
       script: "pnpm",
       args: "run start:backend",
       cron_restart: "0 */5 * * *",
-      max_memory_restart: "1500M",
+      // max_memory_restart: "1500M",
     },
   ],
 };
