@@ -203,13 +203,18 @@ model WorkplacesStatistics {
   workplaces WorkplaceSingleStatistic[]
 }
 
-// model DataSource {
-//   id    String @id @default(uuid())
-//   name  String
-//   count Int    @default(0)
-// }
-//
-// model DataSourcesStatistics {
-//   id        String    @id @default(uuid())
-//   createdAt DateTime? @default(now())
-// }
+model DataSourceSingleStatistic {
+  id                      String                 @id @default(uuid())
+  name                    String
+  count                   Int                    @default(0)
+  dataSourcesStatisticsId String?
+  dataSourcesStatistics   DataSourcesStatistics? @relation(fields: [dataSourcesStatisticsId], references: [id])
+
+  @@index([dataSourcesStatisticsId])
+}
+
+model DataSourcesStatistics {
+  id          String                      @id @default(uuid())
+  createdAt   DateTime?                   @default(now())
+  dataSources DataSourceSingleStatistic[]
+}
