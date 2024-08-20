@@ -59,18 +59,18 @@ class ScrapperController implements IScrapperController {
   public scrapeOffersData = async () => {
     try {
       const scrappers = [
-        {
-          scrapper: ScrapperNofluffjobs,
-          url: NOFLUFFJOBS_URL,
-        },
-        {
-          scrapper: ScrapperPracuj,
-          url: PRACUJ_URL,
-        },
-        {
-          scrapper: ScrapperJustjoin,
-          url: JUSTJOIN_URL,
-        },
+        // {
+        //   scrapper: ScrapperNofluffjobs,
+        //   url: NOFLUFFJOBS_URL,
+        // },
+        // {
+        //   scrapper: ScrapperPracuj,
+        //   url: PRACUJ_URL,
+        // },
+        // {
+        //   scrapper: ScrapperJustjoin,
+        //   url: JUSTJOIN_URL,
+        // },
         {
           scrapper: ScrapperSolidJobs,
           url: SOLID_URL,
@@ -80,7 +80,7 @@ class ScrapperController implements IScrapperController {
         await this.scrapeSingleService(scrapper, url);
       }
 
-      await Promise.all([this.updateCategoriesCounts(), this.updateWorkplacesCounts(), this.deleteOutdatedRecords()]);
+      await Promise.all([this.deleteOutdatedRecords(), this.updateCategoriesCounts(), this.updateWorkplacesCounts()]);
       return;
     } catch (err) {
       throw ErrorHandlerController.handleError(err);

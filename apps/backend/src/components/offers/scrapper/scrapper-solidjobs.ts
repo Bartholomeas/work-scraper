@@ -6,6 +6,8 @@ import { CurrencyCodes, JobOffer, ScrappedDataResponse, TimeUnitTypes } from "sh
 
 import { SLUGIFY_CONFIG } from "@/lib/slugify";
 import { generateId } from "@/utils/generate-id";
+import { JOB_DATA_SOURCES } from "@/misc/constants";
+
 import { ScrapperBase, ScrapperBaseProps } from "@/components/offers/scrapper/scrapper-base";
 
 import { ErrorHandlerController } from "@/components/error/error-handler.controller";
@@ -74,6 +76,7 @@ class ScrapperSolidJobs extends ScrapperBase {
       return {
         id: generateId(offer?.jobOfferKey),
         dataSourceCode: "solid.jobs",
+        dataSource: JOB_DATA_SOURCES.solid,
         slug: slugify(offer?.jobTitle, SLUGIFY_CONFIG),
         createdAt: offer?.validFrom,
         expirationDate: offer?.validTo,

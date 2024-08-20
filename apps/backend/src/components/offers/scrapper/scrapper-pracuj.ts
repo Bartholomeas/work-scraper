@@ -2,7 +2,7 @@ import { type Browser, type Page } from "puppeteer";
 
 import type { CurrencyCodes, JobOffer, SalaryTypes, ScrappedDataResponse, TimeUnitTypes } from "shared/src/offers/offers.types";
 
-import { PRACUJ_NAME } from "@/misc/constants";
+import { JOB_DATA_SOURCES, PRACUJ_NAME } from "@/misc/constants";
 import { generateId } from "@/utils/generate-id";
 
 import { ErrorHandlerController } from "@/components/error/error-handler.controller";
@@ -39,6 +39,7 @@ class ScrapperPracuj extends ScrapperBase {
       return {
         id: generateId(idHash),
         dataSourceCode: PRACUJ_NAME,
+        dataSource: JOB_DATA_SOURCES.pracuj,
         slug: "",
         positionName: offer?.jobTitle,
         company: {

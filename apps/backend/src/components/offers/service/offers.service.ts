@@ -140,15 +140,7 @@ class OffersService implements IOffersService {
       const data = await this.prisma.jobOffer.findMany({
         ...OfferHelper.getDefaultParams({ ...params, ...defaultParams } as OffersQueryParams),
         where: OfferHelper.getJobOffersConditions({ ...params, ...defaultParams } as OffersQueryParams),
-        // where: {
-        //   positionLevels: {
-        //     some: {
-        //       value: {
-        //         in: ["junior", "senior"],
-        //       },
-        //     },
-        //   },
-        // },
+
         select: {
           id: true,
           createdAt: true,
@@ -156,6 +148,12 @@ class OffersService implements IOffersService {
           positionName: true,
           companyName: true,
           dataSourceCode: true,
+          dataSource: {
+            select: {
+              name: true,
+              value: true,
+            },
+          },
           company: {
             select: {
               name: true,
@@ -259,8 +257,24 @@ class OffersService implements IOffersService {
           const parsedOffer = OfferHelper.parseJobOfferToPrismaModel(offer);
           return this.prisma.jobOffer.upsert({
             where: { id: offer?.id },
-            create: parsedOffer as never,
-            update: { ...parsedOffer, updatedAt: new Date() } as never,
+            create: {
+              ...parsedOffer,
+              dataSource: {
+                connectOrCreate: {
+                  where: {
+                    name: offer?.dataSource?.name,
+                  },
+                  create: {
+                    name: offer?.dataSource?.name,
+                    value: offer?.dataSource?.value,
+                  },
+                },
+              },
+            },
+            update: {
+              ...parsedOffer,
+              updatedAt: new Date(),
+            },
           });
         });
       await this.prisma.$transaction(upsertOfferPromises);

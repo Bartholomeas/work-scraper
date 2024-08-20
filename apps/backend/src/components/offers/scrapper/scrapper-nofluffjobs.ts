@@ -7,7 +7,7 @@ import { ErrorHandlerController } from "@/components/error/error-handler.control
 
 import type { JobOfferNofluffJobs } from "@/types/offers/nofluffjobs.types";
 import { generateId } from "@/utils/generate-id";
-import { NOFLUFF_NAME } from "@/misc/constants";
+import { JOB_DATA_SOURCES, NOFLUFF_NAME } from "@/misc/constants";
 import { isWorkPositionLevelsArr } from "@/components/offers/helpers/offers.utils";
 import { currenciesSchema } from "shared/src/offers/offers.schemas";
 import dayjs from "dayjs";
@@ -237,6 +237,7 @@ export class ScrapperNofluffjobs extends ScrapperBase {
       return {
         id: generateId(offer?.id),
         dataSourceCode: NOFLUFF_NAME,
+        dataSource: JOB_DATA_SOURCES.nofluff,
         slug: "",
         positionName: offer?.title,
         company: {
