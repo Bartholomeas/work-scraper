@@ -52,6 +52,83 @@ class StatisticsService implements IStatisticsService {
     }
   }
 
+  public async addDailyDataSourcesStatistics(): Promise<void> {
+    const todayStats = await this.prisma?.dataSourcesStatistics?.findFirst({
+      where: {
+        createdAt: {
+          gte: dayjs(Date.now()).startOf("day").toISOString(),
+          lt: dayjs(Date.now()).endOf("day").toISOString(),
+        },
+      },
+      include: {
+        dataSources: true,
+      },
+    });
+
+    // Check current DataSources
+    const dataSourcesCounts = await this.prisma?.dataSource?.findMany({
+      select: {
+        id: true,
+        name: true,
+        value: true,
+        _count: true,
+      },
+    });
+
+    // If today stats are already in DB then update records by Average of it. Otherwise create new records
+    if (todayStats) {
+      const dataSourcesUpdates = dataSourcesCounts?.map(dataSrc => {
+        const existingData = todayStats?.dataSources?.find(ds => ds.name === dataSrc.name);
+
+        if (existingData) {
+          const avgCount = dataSrc?._count?.jobOffers
+            ? Math.round(((dataSrc?._count?.jobOffers ?? 0) + existingData?.count) / 2)
+            : (existingData?.count ?? 0);
+
+          return this.prisma.dataSourceSingleStatistic.update({
+            where: {
+              id: existingData.id,
+            },
+            data: {
+              count: avgCount,
+            },
+          });
+        } else {
+          return this.prisma.dataSourcesStatistics.update({
+            where: {
+              id: todayStats.id,
+            },
+            data: {
+              dataSources: {
+                create: {
+                  name: dataSrc?.name,
+                  count: dataSrc?._count?.jobOffers ?? 0,
+                },
+              },
+            },
+          });
+        }
+      });
+
+      await Promise.all(dataSourcesUpdates);
+    } else {
+      await this.prisma?.dataSourcesStatistics?.create({
+        data: {
+          dataSources: {
+            create: dataSourcesCounts?.map(el => {
+              return {
+                name: el?.name,
+                count: el?._count?.jobOffers ?? 0,
+              };
+            }),
+          },
+        },
+      });
+    }
+
+    return;
+  }
+
   public async addAllOffersCountStatistics() {
     const countPromise = this.prisma.allOffersCountStatistics.count({
       where: {

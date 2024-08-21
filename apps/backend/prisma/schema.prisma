@@ -205,10 +205,11 @@ model WorkplacesStatistics {
 
 model DataSourceSingleStatistic {
   id                      String                 @id @default(uuid())
+  createdAt               DateTime?              @default(now())
   name                    String
   count                   Int                    @default(0)
   dataSourcesStatisticsId String?
-  dataSourcesStatistics   DataSourcesStatistics? @relation(fields: [dataSourcesStatisticsId], references: [id])
+  dataSourcesStatistics   DataSourcesStatistics? @relation(fields: [dataSourcesStatisticsId], references: [id], onDelete: Cascade)
 
   @@index([dataSourcesStatisticsId])
 }

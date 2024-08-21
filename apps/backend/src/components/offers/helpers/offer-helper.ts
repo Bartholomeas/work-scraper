@@ -60,51 +60,10 @@ class OfferHelper {
               },
             },
             {
-              description: {
-                contains: search,
-              },
-            },
-            {
               companyName: {
                 contains: search,
               },
             },
-            // {
-            //   workplaces: {
-            //     some: {
-            //       value: {
-            //         contains: search,
-            //       },
-            //     },
-            //   },
-            // },
-            // {
-            //   technologies: {
-            //     some: {
-            //       value: {
-            //         contains: search,
-            //       },
-            //     },
-            //   },
-            // },
-            // {
-            //   workModes: {
-            //     some: {
-            //       value: {
-            //         contains: search,
-            //       },
-            //     },
-            //   },
-            // },
-            // {
-            //   contractTypes: {
-            //     some: {
-            //       value: {
-            //         contains: search,
-            //       },
-            //     },
-            //   },
-            // },
           ],
         }
       : {};
