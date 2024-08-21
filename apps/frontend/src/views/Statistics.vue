@@ -7,6 +7,9 @@ import { PAGE_NAME } from "@/constants";
 import Title from "@/components/common/title/Title.vue";
 import StatsDailyChartSkeleton from "@/components/views/statistics/charts/StatsDailyChartSkeleton.vue";
 
+const StatsDailyDataSourcesCountChart = defineAsyncComponent(
+  () => import("@/components/views/statistics/charts/StatsDailyDataSourcesCountChart.vue"),
+);
 const StatsDailyAllOffersCountChart = defineAsyncComponent(
   () => import("@/components/views/statistics/charts/StatsDailyAllOffersCountChart.vue"),
 );
@@ -48,6 +51,12 @@ title.value = `Statystyki ofert | ${PAGE_NAME}`;
       </Suspense>
       <Suspense>
         <StatsDailyWorkplacesCountChart />
+        <template #fallback>
+          <StatsDailyChartSkeleton />
+        </template>
+      </Suspense>
+      <Suspense>
+        <StatsDailyDataSourcesCountChart />
         <template #fallback>
           <StatsDailyChartSkeleton />
         </template>

@@ -102,6 +102,15 @@ class StatisticsController implements IStatisticsController {
     }
   };
 
+  public getDailyDataSourcesStatistics = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const data = await this.statisticsService.retrieveDailyDataSourcesStatistics();
+      res.status(200).json(data);
+    } catch (err) {
+      next(ErrorHandlerController.handleError(err));
+    }
+  };
+
   public getAllDailyOffersCountStatistics = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data = await this.statisticsService.retrieveAllDailyOffersStatistics();

@@ -23,6 +23,7 @@ class StatisticsRouter {
     router.get("/daily/position-offers", this.statisticsController.getDailyPositionsStatistics);
     router.get("/daily/categories", this.statisticsController.getDailyCategoryStatistics);
     router.get("/daily/workplaces", this.statisticsController.getDailyWorkplacesStatistics);
+    router.get("/daily/data-sources", this.statisticsController.getDailyDataSourcesStatistics);
     // !! DELETE
     router.delete("/daily/stats", guardSecret(SECRET_DELETE_PHRASE), this.statisticsController.deleteAllDailyStats);
     // POST

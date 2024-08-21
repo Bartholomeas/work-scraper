@@ -3,24 +3,19 @@ import dayjs from "dayjs";
 import { Prisma } from "@prisma/client/extension";
 import { PrismaClient } from "@prisma/client";
 
-import type {
-  DailyAllOffersCountPayload,
-  DailyCategoriesCountPayload,
-  DailyPositionsCountPayload,
-  DailyWorkplacesCountPayload,
-} from "shared/src/statistics/statistics.types";
-
 import { PrismaInstance } from "@/components/libs/prisma.instance";
 import PrismaPromise = Prisma.PrismaPromise;
 
 interface IStatisticsService {
-  addAllOffersCountStatistics(payload: DailyAllOffersCountPayload): Promise<unknown>;
+  addDailyDataSourcesStatistics(): Promise<void>;
 
-  addDailyPositionsStatistics(payload: DailyPositionsCountPayload): Promise<unknown>;
+  addAllOffersCountStatistics(): Promise<unknown>;
 
-  addDailyCategoriesStatistics(payload: DailyCategoriesCountPayload): Promise<unknown>;
+  addDailyPositionsStatistics(): Promise<unknown>;
 
-  addDailyWorkplacesStatistics(payload: DailyWorkplacesCountPayload): Promise<unknown>;
+  addDailyCategoriesStatistics(): Promise<unknown>;
+
+  addDailyWorkplacesStatistics(): Promise<unknown>;
 
   retrieveAllDailyOffersStatistics(): Promise<unknown>;
 
@@ -110,7 +105,7 @@ class StatisticsService implements IStatisticsService {
         }
       });
 
-      await Promise.all(dataSourcesUpdates);
+      await this.prisma.$transaction(dataSourcesUpdates);
     } else {
       await this.prisma?.dataSourcesStatistics?.create({
         data: {
@@ -297,6 +292,25 @@ class StatisticsService implements IStatisticsService {
       data: {
         workplaces: {
           create: topWorkplaces,
+        },
+      },
+    });
+  }
+
+  public async retrieveDailyDataSourcesStatistics() {
+    return this.prisma.dataSourcesStatistics.findMany({
+      orderBy: {
+        createdAt: "asc",
+      },
+      select: {
+        id: true,
+        createdAt: true,
+        dataSources: {
+          select: {
+            id: true,
+            name: true,
+            count: true,
+          },
         },
       },
     });
