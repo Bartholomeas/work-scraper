@@ -76,6 +76,7 @@ class ScrapperController implements IScrapperController {
           url: SOLID_URL,
         },
       ];
+
       for (const { scrapper, url } of scrappers) {
         await this.scrapeSingleService(scrapper, url);
       }
@@ -95,9 +96,46 @@ class ScrapperController implements IScrapperController {
 
       const scrapperInstance = new scrapper(browser, { url });
       const scrappedData = await scrapperInstance.getScrappedData();
-      await this.browserManager.closeBrowserInstance();
-
+      // await this.browserManager.closeBrowserInstance();
       await this.offersService.saveJobOffers(scrappedData.data);
+    } catch (err) {
+      throw ErrorHandlerController.handleError(err);
+    }
+    // }} finally {
+    //   await this.browserManager.closeBrowserInstance();
+    // }
+  };
+
+  public scrapePracujData = async () => {
+    try {
+      await this.scrapeSingleService(ScrapperPracuj, PRACUJ_URL);
+    } catch (err) {
+      throw ErrorHandlerController.handleError(err);
+    } finally {
+      await this.browserManager.closeBrowserInstance();
+    }
+  };
+  public scrapeSolidJobsData = async () => {
+    try {
+      await this.scrapeSingleService(ScrapperSolidJobs, SOLID_URL);
+    } catch (err) {
+      throw ErrorHandlerController.handleError(err);
+    } finally {
+      await this.browserManager.closeBrowserInstance();
+    }
+  };
+  public scrapeJustJoinData = async () => {
+    try {
+      await this.scrapeSingleService(ScrapperJustjoin, JUSTJOIN_URL);
+    } catch (err) {
+      throw ErrorHandlerController.handleError(err);
+    } finally {
+      await this.browserManager.closeBrowserInstance();
+    }
+  };
+  public scrapeNoFluffJobsData = async () => {
+    try {
+      await this.scrapeSingleService(ScrapperNofluffjobs, NOFLUFFJOBS_URL);
     } catch (err) {
       throw ErrorHandlerController.handleError(err);
     } finally {

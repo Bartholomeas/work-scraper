@@ -38,6 +38,7 @@ class ScrapperSolidJobs extends ScrapperBase {
       await this.listenAndRestrictRequests(this.page);
       this.page.on("response", async response => {
         if (response.url().includes("https://solid.jobs/api/offers")) {
+          console.log("Scrapping Solid.jobs..");
           try {
             console.log("SolidJobs.it scrapping..");
             offers = await response.json();
