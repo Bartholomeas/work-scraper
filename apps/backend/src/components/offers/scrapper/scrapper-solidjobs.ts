@@ -40,6 +40,7 @@ class ScrapperSolidJobs extends ScrapperBase {
       await this.listenAndRestrictRequests(this.page);
       this.page.on("response", async response => {
         if (response.url().includes("https://solid.jobs/api/offers")) {
+          console.log("Scrapping Solid.jobs..");
           try {
             offers = await response.json();
           } catch (err) {
@@ -118,6 +119,7 @@ class ScrapperSolidJobs extends ScrapperBase {
         return ["junior"];
     }
   }
+
   protected standardizeContractTypes(types: JobOfferSolidJobs["salaryRange"][] | undefined): JobOffer["contractTypes"] {
     if (!types || !types.length) return [];
     return types?.reduce(

@@ -18,11 +18,16 @@ class OffersRouter {
     puppeteer.use(StealthPlugin());
     router.get("/metadata", this.offersController.getOffersMetadata);
     router.get("/base-filters", this.offersController.getOffersBaseFilters);
-    // process.env doesn't work for now, mock secret
+    // Scrappers
     router.post("/scrape", guardSecret(SECRET_PHRASE), this.offersController.scrapeOffersData);
+    router.post("/scrape/pracuj", guardSecret(SECRET_PHRASE), this.offersController.scrapePracujData);
+    router.post("/scrape/solidjobs", guardSecret(SECRET_PHRASE), this.offersController.scrapeSolidJobsData);
+    router.post("/scrape/justjoin", guardSecret(SECRET_PHRASE), this.offersController.scrapeJustJoinData);
+    // ----
     router.delete("/delete-outdated", guardSecret(SECRET_PHRASE), this.offersController.deleteOutdatedOffers);
     router.post("/update-workplaces-count", guardSecret(SECRET_PHRASE), this.offersController.updateWorkplacesCounts);
     router.post("/update-categories-count", guardSecret(SECRET_PHRASE), this.offersController.updateCategoriesCounts);
+
     router.get("/workplaces", this.offersController.getAllWorkplaces);
     router.get("/", this.offersController.getOffers);
     return router;
