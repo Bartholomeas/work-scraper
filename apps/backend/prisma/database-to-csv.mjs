@@ -4,79 +4,9 @@ import { exec } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import * as readline from "node:readline";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const dbPath = path.join(__dirname, "dev.db");
-const csvDir = path.join(__dirname, "csv");
-const csvFile = path.join(csvDir, `offers-${new Date().toISOString().replace(/:/g, "-")}.csv`);
-
-const askQuestion = query => {
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-
-  return new Promise(resolve =>
-    rl.question(query, ans => {
-      rl.close();
-      resolve(ans);
-    }),
-  );
-};
-
-const executeCommand = command => {
-  return new Promise((resolve, reject) => {
-    exec(command, (error, stdout, stderr) => {
-      if (error) {
-        console.error(`Error executing command: ${command}`, error);
-        reject(error);
-        return;
-      }
-      console.log(`Output for command: ${command}`);
-      console.log(stdout);
-      if (stderr) {
-        console.error(stderr);
-      }
-      resolve();
-    });
-  });
-};
-
-const ensureDirExists = async () => {
-  try {
-    await fs.promises.mkdir(csvDir, { recursive: true });
-  } catch (error) {
-    console.error(`Error creating backup directory: ${csvDir}`, error);
-    throw error;
-  }
-};
-
-const createCsv = async () => {
-  const dbFile = await askQuestion("Write SQLite .db filename: ");
-
-  const dbFilePath = path.join(__dirname, `${dbFile}.db`);
-  await ensureDirExists();
-  const command = `sqlite3 ${dbFilePath} <<EOF
-    .headers on
-    .mode column
-    .mode csv
-    .output ${dbFile}.csv
-    ${query}
-    .output stdout
-    .exit`;
-
-  try {
-    await executeCommand(command);
-    console.log(`Backup created at ${csvFile}`);
-  } catch (error) {
-    console.error("Failed to create backup", error);
-  }
-};
-
-createCsv();
 const query = `SELECT
 SELECT 
-  JobOffer.id,   JobOffer.positionName, JobOffer.createdAt, JobOffer.updatedAt, JobOffer.expirationDate, JobOffer.companyName,
+  JobOffer.id, JobOffer.positionName, JobOffer.createdAt, JobOffer.updatedAt, JobOffer.expirationDate, JobOffer.companyName,
   GROUP_CONCAT(DISTINCT PositionLevel.value) AS positionLevels,
   GROUP_CONCAT(DISTINCT ContractType.value) AS contractTypes,
   GROUP_CONCAT(DISTINCT WorkMode.value) AS workModes,
@@ -125,3 +55,74 @@ LEFT JOIN
 GROUP BY 
   JobOffer.id;
 `;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+// const dbPath = path.join(__dirname, "dev.db");
+const csvDir = path.join(__dirname, "csv");
+// const csvFile = path.join(csvDir, `offers-${new Date().toISOString().replace(/:/g, "-")}.csv`);
+
+const askQuestion = query => {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  return new Promise(resolve =>
+    rl.question(query, ans => {
+      rl.close();
+      resolve(ans);
+    }),
+  );
+};
+
+const executeCommand = command => {
+  return new Promise((resolve, reject) => {
+    exec(command, (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Error executing command: `, error);
+        reject(error);
+        return;
+      }
+
+      if (stderr) {
+        console.error(stderr);
+      }
+      resolve();
+    });
+  });
+};
+
+const ensureDirExists = async () => {
+  try {
+    await fs.promises.mkdir(csvDir, { recursive: true });
+  } catch (error) {
+    console.error(`Error creating backup directory: ${csvDir}`, error);
+    throw error;
+  }
+};
+
+const createCsv = async () => {
+  const dbFile = await askQuestion("Write SQLite .db filename: ");
+
+  const dbFilePath = path.join(__dirname, `${dbFile}.db`);
+  await ensureDirExists();
+  const command = `sqlite3 ${dbFilePath} <<EOF
+    .headers on
+    .mode column
+    .mode csv
+    .output ${csvDir}/${dbFile}.csv
+    ${query}
+    .output stdout
+    .exit
+    EOF`;
+
+  try {
+    await executeCommand(command);
+    console.log(`Backup created at ${dbFile}`);
+  } catch (error) {
+    console.error("Failed to create backup", error);
+  }
+};
+
+createCsv();
