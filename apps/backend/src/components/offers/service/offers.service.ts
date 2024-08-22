@@ -273,6 +273,17 @@ class OffersService implements IOffersService {
             },
             update: {
               ...parsedOffer,
+              dataSource: {
+                connectOrCreate: {
+                  where: {
+                    name: offer?.dataSource?.name,
+                  },
+                  create: {
+                    name: offer?.dataSource?.name,
+                    value: offer?.dataSource?.value,
+                  },
+                },
+              },
               updatedAt: new Date(),
             },
           });

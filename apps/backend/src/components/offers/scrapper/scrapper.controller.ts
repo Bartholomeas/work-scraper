@@ -93,17 +93,12 @@ class ScrapperController implements IScrapperController {
   public scrapeSingleService = async <T extends ScrapperInstances>(scrapper: T, url: string) => {
     try {
       const browser = await this.browserManager.getBrowserInstance();
-
       const scrapperInstance = new scrapper(browser, { url });
       const scrappedData = await scrapperInstance.getScrappedData();
-      // await this.browserManager.closeBrowserInstance();
       await this.offersService.saveJobOffers(scrappedData.data);
     } catch (err) {
       throw ErrorHandlerController.handleError(err);
     }
-    // }} finally {
-    //   await this.browserManager.closeBrowserInstance();
-    // }
   };
 
   public scrapePracujData = async () => {
