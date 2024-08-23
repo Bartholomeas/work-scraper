@@ -24,95 +24,77 @@ export class ScrapperNofluffjobs extends ScrapperBase {
   }
 
   protected async scrapePage<T>(pageNumber: number): Promise<T[] | undefined> {
-    await this.initializePage();
-    const wait = (duration = 100) => new Promise(resolve => setTimeout(resolve, duration));
+    try {
+      await this.initializePage();
+      const wait = (duration = 100) => new Promise(resolve => setTimeout(resolve, duration));
 
-    await this.page?.setViewport({
-      width: 1200,
-      height: 1080,
-    });
-    await this.listenAndRestrictRequests(this.page);
+      await this.page?.setViewport({
+        width: 1200,
+        height: 1080,
+      });
+      await this.listenAndRestrictRequests(this.page);
 
-    const data: T[] = [];
-
-    return new Promise<T[] | undefined>((resolve, reject) => {
+      const data: T[] = [];
       let keepLoading = true;
 
-      this.page?.on("response", response => {
+      this.page?.on("response", async response => {
         const url = response.url();
 
-        // if (url.includes("https://nofluffjobs.com/api/joboffers/main") || url.includes("https://nofluffjobs.com/api/search/posting")) {
         if (url.includes("https://nofluffjobs.com/api/search/posting")) {
           console.log("Nofluffjobs url: ", url);
 
-          response
-            .json()
-            .then(res => {
-              const contentType = response.headers()["content-type"];
-              if (contentType && contentType.includes("application/json")) {
-                if (res?.postings) data.push(...res.postings);
-              }
+          try {
+            const res = await response.json();
+            const contentType = response.headers()["content-type"];
+            if (contentType && contentType.includes("application/json")) {
+              if (res?.postings) data.push(...res.postings);
+            }
 
-              this.page
-                ?.evaluateHandle(this.getLoadMoreButton)
-                .then(loadMoreBtn => {
-                  const element = loadMoreBtn?.asElement() as ElementHandle<Element>;
-                  if (element) {
-                    wait(50).then(() => {
-                      element?.click();
-                      element?.dispose();
-                    });
+            const loadMoreBtn = await this.page?.evaluateHandle(this.getLoadMoreButton);
+            const element = loadMoreBtn?.asElement() as ElementHandle<Element>;
+            if (element) {
+              await wait(50);
+              await element?.click();
+              await element?.dispose();
 
-                    this.page
-                      ?.waitForFunction(el => el.textContent?.includes("Pokaż kolejne"), {}, element)
-                      .catch(() => {
-                        keepLoading = false;
-                      });
-                  } else {
-                    keepLoading = false;
-                  }
-                })
-                .catch(err => {
-                  keepLoading = false;
-                  reject(ErrorHandlerController.handleError(err));
-                });
-            })
-            .catch(err => {
+              await this.page
+                ?.waitForFunction(el => el.textContent?.includes("Pokaż kolejne"), { timeout: 10000 }, element)
+                .catch(() => {});
+            } else {
               keepLoading = false;
-              reject(ErrorHandlerController.handleError(err));
-            });
+              console.log("'Element' doesnt exist");
+            }
+          } catch (err) {
+            keepLoading = false;
+            throw ErrorHandlerController.handleError(err);
+          }
         }
       });
 
-      this.page
-        ?.goto(this.url, { waitUntil: "networkidle2" })
-        .then(() => this.pressCookieConsent(this.page))
-        .then(async () => {
-          // await this.setITCategory();
-          return this.page?.evaluateHandle(this.getLoadMoreButton);
-        })
-        .then(loadMoreBtn => {
-          if (loadMoreBtn && loadMoreBtn.asElement()) {
-            const element = loadMoreBtn.asElement() as ElementHandle<Element>;
-            element?.click();
-          } else {
-            keepLoading = false;
+      await this.page?.goto(this.url, { waitUntil: "networkidle2" });
+      await this.pressCookieConsent(this.page);
+      // await this.setITCategory();
+      const loadMoreBtn = await this.page?.evaluateHandle(this.getLoadMoreButton);
+      if (loadMoreBtn && loadMoreBtn.asElement()) {
+        const element = loadMoreBtn.asElement() as ElementHandle<Element>;
+        await element?.click();
+      } else {
+        keepLoading = false;
+      }
+
+      await new Promise<void>(resolveWait => {
+        const interval = setInterval(() => {
+          if (!keepLoading) {
+            clearInterval(interval);
+            resolveWait();
           }
-        })
-        .catch(reject);
+        }, 100);
+      });
 
-      const waitUntilFinished = () =>
-        new Promise<void>(resolveWait => {
-          const interval = setInterval(() => {
-            if (!keepLoading) {
-              clearInterval(interval);
-              resolveWait();
-            }
-          }, 100);
-        });
-
-      waitUntilFinished().then(() => resolve(data));
-    });
+      return data;
+    } catch (error) {
+      throw ErrorHandlerController.handleError(error);
+    }
   }
 
   private getLoadMoreButton() {
