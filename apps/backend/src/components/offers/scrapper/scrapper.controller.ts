@@ -76,11 +76,15 @@ class ScrapperController implements IScrapperController {
           url: SOLID_URL,
         },
       ];
+
       for (const { scrapper, url } of scrappers) {
         await this.scrapeSingleService(scrapper, url);
       }
 
-      await Promise.all([this.updateCategoriesCounts(), this.updateWorkplacesCounts(), this.deleteOutdatedRecords()]);
+      // To prevent race conditions with Promise.all or smth its called one by another
+      await this.deleteOutdatedRecords();
+      await this.updateCategoriesCounts();
+      await this.updateWorkplacesCounts();
       return;
     } catch (err) {
       throw ErrorHandlerController.handleError(err);
@@ -92,12 +96,44 @@ class ScrapperController implements IScrapperController {
   public scrapeSingleService = async <T extends ScrapperInstances>(scrapper: T, url: string) => {
     try {
       const browser = await this.browserManager.getBrowserInstance();
-
       const scrapperInstance = new scrapper(browser, { url });
       const scrappedData = await scrapperInstance.getScrappedData();
-      await this.browserManager.closeBrowserInstance();
-
       await this.offersService.saveJobOffers(scrappedData.data);
+    } catch (err) {
+      throw ErrorHandlerController.handleError(err);
+    }
+  };
+
+  public scrapePracujData = async () => {
+    try {
+      await this.scrapeSingleService(ScrapperPracuj, PRACUJ_URL);
+    } catch (err) {
+      throw ErrorHandlerController.handleError(err);
+    } finally {
+      await this.browserManager.closeBrowserInstance();
+    }
+  };
+  public scrapeSolidJobsData = async () => {
+    try {
+      await this.scrapeSingleService(ScrapperSolidJobs, SOLID_URL);
+    } catch (err) {
+      throw ErrorHandlerController.handleError(err);
+    } finally {
+      await this.browserManager.closeBrowserInstance();
+    }
+  };
+  public scrapeJustJoinData = async () => {
+    try {
+      await this.scrapeSingleService(ScrapperJustjoin, JUSTJOIN_URL);
+    } catch (err) {
+      throw ErrorHandlerController.handleError(err);
+    } finally {
+      await this.browserManager.closeBrowserInstance();
+    }
+  };
+  public scrapeNoFluffJobsData = async () => {
+    try {
+      await this.scrapeSingleService(ScrapperNofluffjobs, NOFLUFFJOBS_URL);
     } catch (err) {
       throw ErrorHandlerController.handleError(err);
     } finally {

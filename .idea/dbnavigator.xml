@@ -21,6 +21,7 @@
     </connection>
     <connection id="69d0c19f-2b87-4adc-a39a-e9a77226d7a8">
       <console name="Connection 1" type="STANDARD" schema="" session="Main" />
+      <console name="DevDB" type="STANDARD" schema="" session="Main" />
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseEditorStateManager">

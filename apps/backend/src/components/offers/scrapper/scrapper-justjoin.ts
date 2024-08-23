@@ -10,6 +10,7 @@ import { ErrorHandlerController } from "@/components/error/error-handler.control
 import { ScrapperBase, type ScrapperBaseProps } from "@/components/offers/scrapper/scrapper-base";
 
 import type { JobOfferJustjoin } from "@/types/offers/justjoin.types";
+import { JOB_DATA_SOURCES } from "@/misc/constants";
 
 const VIEWPORT_WIDTH = 800;
 const VIEWPORT_HEIGHT = 980;
@@ -151,7 +152,8 @@ class ScrapperJustjoin extends ScrapperBase {
       return {
         id: generateId(idHash),
         dataSourceCode: "justjoin",
-        slug: offer?.slug,
+        dataSource: JOB_DATA_SOURCES.justjoin,
+        slug: "",
         createdAt: offer?.publishedAt,
         expirationDate,
         positionName: offer?.title,

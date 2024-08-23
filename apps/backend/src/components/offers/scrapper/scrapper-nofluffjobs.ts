@@ -7,7 +7,7 @@ import { ErrorHandlerController } from "@/components/error/error-handler.control
 
 import type { JobOfferNofluffJobs } from "@/types/offers/nofluffjobs.types";
 import { generateId } from "@/utils/generate-id";
-import { NOFLUFF_NAME } from "@/misc/constants";
+import { JOB_DATA_SOURCES, NOFLUFF_NAME } from "@/misc/constants";
 import { isWorkPositionLevelsArr } from "@/components/offers/helpers/offers.utils";
 import { currenciesSchema } from "shared/src/offers/offers.schemas";
 import dayjs from "dayjs";
@@ -115,90 +115,11 @@ export class ScrapperNofluffjobs extends ScrapperBase {
     });
   }
 
-  // private async setITCategory() {
-  //   try {
-  //     const wait = (duration = 100) => new Promise(resolve => setTimeout(resolve, duration));
-  //     await wait(500);
-  //
-  //     const filtersBtn = await this.page
-  //       ?.evaluateHandle(() => {
-  //         const filtersBtnContainer = document.querySelector('nfj-filter-executor[data-cy="btnFilter-category"]');
-  //         return filtersBtnContainer?.querySelector("button");
-  //       })
-  //       .then(res => res.asElement() as ElementHandle<Element>);
-  //
-  //     await filtersBtn?.click();
-  //     await filtersBtn?.dispose();
-  //
-  //     //TODO: To improve if its because of timeout
-  //     await wait(500);
-  //
-  //     const categoriesSection = await this.page?.waitForSelector('div[data-cy-section="btnFilters-category"]');
-  //
-  //     if (categoriesSection) {
-  //       if (categoriesSection) {
-  //         const firstArticle = await categoriesSection?.evaluateHandle(() => document.querySelector("article"));
-  //         await firstArticle.asElement()?.$$eval('nfj-filter-control[type="checkbox"]', checkboxElements => {
-  //           const inputs = Array.from(checkboxElements).map(el => el.querySelector('input[type="checkbox"]') as HTMLInputElement);
-  //           inputs.forEach(el => {
-  //             el?.click();
-  //           });
-  //         });
-  //
-  //         this.page?.evaluateHandle(this.getSubmitFiltersButton).then(async submitBtn => {
-  //           const btnElement = submitBtn.asElement() as ElementHandle<Element>;
-  //
-  //           if (btnElement) {
-  //             await btnElement?.click();
-  //             await btnElement?.dispose();
-  //           }
-  //         });
-  //       }
-  //     }
-  //   } catch (err) {
-  //     console.log("ERROR IN SETTING IT: ", err);
-  //     return;
-  //   }
-  // }
-
-  private getSubmitFiltersButton() {
-    const buttons = Array.from(document.querySelectorAll("button"));
-    const targetBtn = buttons.find(btn => btn.textContent?.includes("Pokaż wyniki"));
-    return targetBtn || null;
-  }
-
   private getLoadMoreButton() {
     const buttons = Array.from(document.querySelectorAll("button"));
     const targetBtn = buttons.find(btn => btn.textContent?.includes("Pokaż kolejne"));
     return targetBtn || null;
   }
-
-  // private async pressCookieConsent(page: Page | undefined): Promise<void> {
-  //   const cookieBtn = await page
-  //     ?.waitForSelector(".onetrust-accept-btn-handler", {
-  //       timeout: 5000,
-  //     })
-  //     .then(async res => {
-  //       console.log("Cotozaguwno: ", res);
-  //       await res?.click().catch(err => {
-  //         console.log("Pjerszy klik", err);
-  //       });
-  //       return res;
-  //     })
-  //     .catch(() => {
-  //       console.log("Catch na koncu tego syfu");
-  //       return;
-  //     });
-  //
-  //   if (cookieBtn) {
-  //     await new Promise(resolve => setTimeout(resolve, 2000));
-  //     await cookieBtn?.click().catch(async err => {
-  //       console.log("DROOOOOGI klik", err);
-  //       return;
-  //     });
-  //     await cookieBtn?.dispose();
-  //   }
-  // }
 
   private async pressCookieConsent(page: Page | undefined): Promise<void> {
     const cookieBtn = await page
@@ -229,14 +150,20 @@ export class ScrapperNofluffjobs extends ScrapperBase {
 
       const todayDate = dayjs(new Date());
 
+      //TODO: Currently doesnt adding all offerurls as it takes a lot of place in DB relations; to rethink
+      // const offerUrls = [`https://nofluffjobs.com/pl/job/${offer?.url}`].concat(offer?.location?.places?.map(place => `https://nofluffjobs.com/pl/job/${place?.url}`));
+
       const expirationDate = offer?.renewed
         ? dayjs(new Date(offer?.renewed)).add(1, "month").toISOString()
         : todayDate.add(1, "month").toISOString();
       const createdAt = offer?.posted ? dayjs(new Date(offer?.posted)).toISOString() : todayDate.toISOString();
 
+      const idHash = `${offer?.title}-${offer?.name}-nofluffjobs`;
+
       return {
-        id: generateId(offer?.id),
+        id: generateId(idHash),
         dataSourceCode: NOFLUFF_NAME,
+        dataSource: JOB_DATA_SOURCES.nofluff,
         slug: "",
         positionName: offer?.title,
         company: {

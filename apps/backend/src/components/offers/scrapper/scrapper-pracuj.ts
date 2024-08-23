@@ -2,7 +2,7 @@ import { type Browser, type Page } from "puppeteer";
 
 import type { CurrencyCodes, JobOffer, SalaryTypes, ScrappedDataResponse, TimeUnitTypes } from "shared/src/offers/offers.types";
 
-import { PRACUJ_NAME } from "@/misc/constants";
+import { JOB_DATA_SOURCES, PRACUJ_NAME } from "@/misc/constants";
 import { generateId } from "@/utils/generate-id";
 
 import { ErrorHandlerController } from "@/components/error/error-handler.controller";
@@ -39,6 +39,7 @@ class ScrapperPracuj extends ScrapperBase {
       return {
         id: generateId(idHash),
         dataSourceCode: PRACUJ_NAME,
+        dataSource: JOB_DATA_SOURCES.pracuj,
         slug: "",
         positionName: offer?.jobTitle,
         company: {
@@ -69,7 +70,7 @@ class ScrapperPracuj extends ScrapperBase {
   private async acceptCookieConsent(page: Page | undefined): Promise<void> {
     if (!page) return;
     try {
-      await page.waitForSelector('[data-test="button-submitCookie"]', { timeout: 1000 });
+      await page.waitForSelector('[data-test="button-submitCookie"]', { timeout: 500 });
       await page.click('[data-test="button-submitCookie"]');
     } catch (err) {
       console.log("Cannot press cookie consent.");
@@ -156,7 +157,9 @@ class ScrapperPracuj extends ScrapperBase {
     const max = matched?.[2] ? parseInt(matched[2].replace(/\s/g, "")) : 0;
 
     if (!min || !max) return [];
-    const currency = (matched?.[3].trim() ?? "pln") as CurrencyCodes;
+
+    const matchedCurrency = matched?.[3].trim();
+    const currency = (matchedCurrency === "zł" ? "pln" : (matchedCurrency ?? "pln")) as CurrencyCodes;
     const type = (matched?.[4] ? matched[4].trim() : "brutto") as SalaryTypes;
     const timeUnit = matched?.[5] ? this.transformSalaryTimeUnit(matched[5].trim()) : "month";
 

@@ -13,6 +13,7 @@ class ScrapperCron extends BaseCron {
   protected async handleCronJob() {
     try {
       this.logTimestampWithMessage("Scrapping offers records");
+
       await this.scrapperController.scrapeOffersData();
 
       this.logTimestampWithMessage("Deleting outdated records");

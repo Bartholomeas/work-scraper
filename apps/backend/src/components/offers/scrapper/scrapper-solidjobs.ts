@@ -1,14 +1,14 @@
 import { Browser } from "puppeteer";
-import slugify from "slugify";
 
 import { currenciesSchema, timeUnitTypeSchema } from "shared/src/offers/offers.schemas";
 import { CurrencyCodes, JobOffer, ScrappedDataResponse, TimeUnitTypes } from "shared/src/offers/offers.types";
 
-import { SLUGIFY_CONFIG } from "@/lib/slugify";
 import { generateId } from "@/utils/generate-id";
-import { ScrapperBase, ScrapperBaseProps } from "@/components/offers/scrapper/scrapper-base";
+import { JOB_DATA_SOURCES } from "@/misc/constants";
 
+import { ScrapperBase, ScrapperBaseProps } from "@/components/offers/scrapper/scrapper-base";
 import { ErrorHandlerController } from "@/components/error/error-handler.controller";
+
 import { type JobOfferSolidJobs } from "@/types/offers/solidjobs.types";
 
 class ScrapperSolidJobs extends ScrapperBase {
@@ -36,7 +36,9 @@ class ScrapperSolidJobs extends ScrapperBase {
       await this.listenAndRestrictRequests(this.page);
       this.page.on("response", async response => {
         if (response.url().includes("https://solid.jobs/api/offers")) {
+          console.log("Scrapping Solid.jobs..");
           try {
+            console.log("SolidJobs.it scrapping..");
             offers = await response.json();
           } catch (err) {
             offers = [];
@@ -74,13 +76,14 @@ class ScrapperSolidJobs extends ScrapperBase {
       return {
         id: generateId(offer?.jobOfferKey),
         dataSourceCode: "solid.jobs",
-        slug: slugify(offer?.jobTitle, SLUGIFY_CONFIG),
+        dataSource: JOB_DATA_SOURCES.solid,
+        slug: "",
         createdAt: offer?.validFrom,
         expirationDate: offer?.validTo,
         positionName: offer?.jobTitle,
         company: {
           name: offer?.companyName,
-          logoUrl: offer?.companyLogoUrl,
+          logoUrl: null,
         },
         positionLevels,
         contractTypes,
