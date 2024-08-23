@@ -28,7 +28,7 @@ const migrateData = async () => {
   for (const { dataSourceCode } of distinctDataSourceCodes) {
     await prisma.dataSource.upsert({
       where: { name: JOB_DATA_SOURCES[dataSourceCode] },
-      update: {},
+      update: { name: JOB_DATA_SOURCES[dataSourceCode], value: dataSourceCode },
       create: { name: JOB_DATA_SOURCES[dataSourceCode], value: dataSourceCode },
     });
   }

@@ -157,7 +157,9 @@ class ScrapperPracuj extends ScrapperBase {
     const max = matched?.[2] ? parseInt(matched[2].replace(/\s/g, "")) : 0;
 
     if (!min || !max) return [];
-    const currency = (matched?.[3].trim() ?? "pln") as CurrencyCodes;
+
+    const matchedCurrency = matched?.[3].trim();
+    const currency = (matchedCurrency === "zł" ? "pln" : (matchedCurrency ?? "pln")) as CurrencyCodes;
     const type = (matched?.[4] ? matched[4].trim() : "brutto") as SalaryTypes;
     const timeUnit = matched?.[5] ? this.transformSalaryTimeUnit(matched[5].trim()) : "month";
 
