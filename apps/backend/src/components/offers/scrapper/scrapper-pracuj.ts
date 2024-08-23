@@ -2,11 +2,10 @@ import { type Browser, type Page } from "puppeteer";
 
 import type { CurrencyCodes, JobOffer, SalaryTypes, ScrappedDataResponse, TimeUnitTypes } from "shared/src/offers/offers.types";
 
-import { PRACUJ_NAME } from "@/misc/constants";
+import { JOB_DATA_SOURCES, PRACUJ_NAME } from "@/misc/constants";
 import { generateId } from "@/utils/generate-id";
 
 import { ErrorHandlerController } from "@/components/error/error-handler.controller";
-import { PRACUJ_DATA_FILENAME } from "@/components/offers/helpers/offers.constants";
 import { isContractTypesArr, isWorkModesArr, isWorkPositionLevelsArr, isWorkSchedulesArr } from "@/components/offers/helpers/offers.utils";
 import { ScrapperBase, type ScrapperBaseProps } from "@/components/offers/scrapper/scrapper-base";
 
@@ -23,9 +22,7 @@ class ScrapperPracuj extends ScrapperBase {
   public getScrappedData = async (): Promise<ScrappedDataResponse> => {
     // if (!this.page) await this.initializePage();
 
-    const data = await this.saveScrappedData<JobOffer>({
-      fileName: PRACUJ_DATA_FILENAME,
-    });
+    const data = await this.saveScrappedData<JobOffer>();
     return { createdAt: new Date(Date.now()).toISOString(), data: data || [] };
   };
 
@@ -42,6 +39,7 @@ class ScrapperPracuj extends ScrapperBase {
       return {
         id: generateId(idHash),
         dataSourceCode: PRACUJ_NAME,
+        dataSource: JOB_DATA_SOURCES.pracuj,
         slug: "",
         positionName: offer?.jobTitle,
         company: {
@@ -66,7 +64,6 @@ class ScrapperPracuj extends ScrapperBase {
           };
         }),
       } satisfies JobOffer;
-      // return { ...parsedOffer, slug: generateJobOfferSlug(parsedOffer) } as JobOffer;
     });
   }
 
@@ -160,7 +157,9 @@ class ScrapperPracuj extends ScrapperBase {
     const max = matched?.[2] ? parseInt(matched[2].replace(/\s/g, "")) : 0;
 
     if (!min || !max) return [];
-    const currency = (matched?.[3].trim() ?? "pln") as CurrencyCodes;
+
+    const matchedCurrency = matched?.[3].trim();
+    const currency = (matchedCurrency === "zł" ? "pln" : (matchedCurrency ?? "pln")) as CurrencyCodes;
     const type = (matched?.[4] ? matched[4].trim() : "brutto") as SalaryTypes;
     const timeUnit = matched?.[5] ? this.transformSalaryTimeUnit(matched[5].trim()) : "month";
 

@@ -8,10 +8,6 @@ import { MINUTES_TO_OUTDATE } from "@/components/offers/helpers/offers.constants
 import { ErrorHandlerController } from "@/components/error/error-handler.controller";
 import type { JobOffer, ScrappedDataResponse } from "shared/src/offers/offers.types";
 
-interface SaveScrappedDataToFileProps<T> {
-  fileName: string;
-}
-
 export interface ScrapperBaseProps {
   url: string;
   categories?: string[];
@@ -33,9 +29,13 @@ abstract class ScrapperBase {
     this.filesManager = new FilesManagerController(path.resolve(__dirname, "../../../../public/scrapped-data"));
   }
 
-  public initializePage = async () => {
-    if (!this.page) this.page = await this.browser?.newPage();
-    if (this.page) await this.page.goto(this.url);
+  public initializePage = async (): Promise<Page | undefined> => {
+    let { page } = this;
+    if (!page && this.browser) {
+      page = await this.browser.newPage();
+      this.page = page;
+    }
+    return page;
   };
 
   public closePage = async () => {
@@ -57,7 +57,7 @@ abstract class ScrapperBase {
     return timeDiff > MINUTES_TO_OUTDATE;
   };
 
-  protected saveScrappedData = async <T extends object>({ fileName }: SaveScrappedDataToFileProps<T>): Promise<JobOffer[] | null> => {
+  protected saveScrappedData = async <T extends object>(): Promise<JobOffer[] | null> => {
     try {
       const results: T[][] = [];
       this.maxPages = await this.getMaxPages();
@@ -73,17 +73,18 @@ abstract class ScrapperBase {
       //   fileName,
       //   ext: "json",
       // });
+
       return this.standardizeData(aggregatedData);
     } catch (err) {
       throw ErrorHandlerController.handleError(err);
     }
   };
 
-  protected listenAndRestrictRequests = async (page: Page) => {
+  protected listenAndRestrictRequests = async (page: Page | undefined) => {
     await page?.setRequestInterception(true);
 
     page?.on("request", req => {
-      if (["image", "stylesheet", "font"].includes(req.resourceType())) req.abort();
+      if (["image", "stylesheet", "media", "font"].includes(req.resourceType())) req.abort();
       else req.continue();
     });
   };
@@ -96,7 +97,7 @@ abstract class ScrapperBase {
 
   protected abstract getMaxPages(): Promise<number>;
 
-  protected abstract standardizeContractTypes(data: unknown): JobOffer["contractTypes"];
+  // protected abstract standardizeContractTypes(data: unknown): JobOffer["contractTypes"];
 }
 
 export { ScrapperBase };

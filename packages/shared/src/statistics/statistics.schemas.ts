@@ -81,3 +81,16 @@ export const dailyWorkplacesResponseSchema = z.array(
     workplaces: z.array(dailyWorkplaceSchema),
   }),
 );
+
+const dataSourceStatSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  count: z.number().default(0),
+});
+export const dailyDataSourcesResponseSchema = z.array(
+  z.object({
+    id: z.string(),
+    createdAt: z.string().datetime(),
+    dataSources: z.array(dataSourceStatSchema),
+  }),
+);

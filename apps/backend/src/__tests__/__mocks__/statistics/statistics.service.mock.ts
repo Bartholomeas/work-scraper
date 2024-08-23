@@ -181,5 +181,8 @@ export const StatisticsServiceMock = jest.fn().mockImplementation(
         },
       ],
     }),
+    addDailyDataSourcesStatistics: function (): Promise<void> {
+      throw new Error("Function not implemented.");
+    },
   }),
 );

@@ -15,8 +15,9 @@ const { chartData, categoryNames } = useDailyCategoriesChartData(stats);
       class="charts"
       :data="chartData"
       index="createdAt"
+      type="stacked"
       :categories="categoryNames"
-      :colors="['var(--primary)', 'gold', 'orange', 'red', 'purple']"
+      :colors="['var(--primary)', 'gold', 'orange', 'red', 'purple', 'skyblue']"
       :rounded-corners="12"
     />
   </StatsTitleWrapper>
