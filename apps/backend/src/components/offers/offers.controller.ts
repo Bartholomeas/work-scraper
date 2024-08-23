@@ -159,6 +159,32 @@ class OffersController {
       next(ErrorHandlerController.handleError(err));
     }
   };
+
+  //  Scrappers
+  public scrapePracujData = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      this.scrapperController?.scrapePracujData();
+      res.status(204).json({});
+    } catch (err) {
+      next(ErrorHandlerController.handleError(err));
+    }
+  };
+  public scrapeSolidJobsData = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      this.scrapperController?.scrapeSolidJobsData();
+      res.status(204).json({});
+    } catch (err) {
+      next(ErrorHandlerController.handleError(err));
+    }
+  };
+  public scrapeJustJoinData = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      this.scrapperController?.scrapeJustJoinData();
+      res.status(204).json({});
+    } catch (err) {
+      next(ErrorHandlerController.handleError(err));
+    }
+  };
 }
 
 export { OffersController };
