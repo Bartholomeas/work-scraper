@@ -153,7 +153,7 @@ class OffersController {
   };
   public scrapperNoFluffJobsData = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      await this.scrapperController?.scrapeNoFluffJobsData();
+      this.scrapperController?.scrapeNoFluffJobsData();
       res.status(204).json({});
     } catch (err) {
       next(ErrorHandlerController.handleError(err));

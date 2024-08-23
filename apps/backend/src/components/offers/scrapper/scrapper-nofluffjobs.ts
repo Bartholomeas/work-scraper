@@ -150,13 +150,18 @@ export class ScrapperNofluffjobs extends ScrapperBase {
 
       const todayDate = dayjs(new Date());
 
+      //TODO: Currently doesnt adding all offerurls as it takes a lot of place in DB relations; to rethink
+      // const offerUrls = [`https://nofluffjobs.com/pl/job/${offer?.url}`].concat(offer?.location?.places?.map(place => `https://nofluffjobs.com/pl/job/${place?.url}`));
+
       const expirationDate = offer?.renewed
         ? dayjs(new Date(offer?.renewed)).add(1, "month").toISOString()
         : todayDate.add(1, "month").toISOString();
       const createdAt = offer?.posted ? dayjs(new Date(offer?.posted)).toISOString() : todayDate.toISOString();
 
+      const idHash = `${offer?.title}-${offer?.name}-nofluffjobs`;
+
       return {
-        id: generateId(offer?.id),
+        id: generateId(idHash),
         dataSourceCode: NOFLUFF_NAME,
         dataSource: JOB_DATA_SOURCES.nofluff,
         slug: "",
