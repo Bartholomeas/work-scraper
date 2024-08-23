@@ -50,7 +50,6 @@ class OffersController {
       res.status(200).json({
         createdAt: new Date(Date.now()),
         data: `Deleted ${deletedCount} outdated records.`,
-        // data2: deletedCount.length,
       });
     } catch (err) {
       next(ErrorHandlerController.handleError(err));
@@ -130,7 +129,7 @@ class OffersController {
   //  Scrappers
   public scrapePracujData = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      await this.scrapperController?.scrapePracujData();
+      this.scrapperController?.scrapePracujData();
       res.status(204).json({});
     } catch (err) {
       next(ErrorHandlerController.handleError(err));
@@ -138,7 +137,7 @@ class OffersController {
   };
   public scrapeSolidJobsData = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      await this.scrapperController?.scrapeSolidJobsData();
+      this.scrapperController?.scrapeSolidJobsData();
       res.status(204).json({});
     } catch (err) {
       next(ErrorHandlerController.handleError(err));
@@ -146,7 +145,7 @@ class OffersController {
   };
   public scrapeJustJoinData = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      await this.scrapperController?.scrapeJustJoinData();
+      this.scrapperController?.scrapeJustJoinData();
       res.status(204).json({});
     } catch (err) {
       next(ErrorHandlerController.handleError(err));
@@ -154,7 +153,7 @@ class OffersController {
   };
   public scrapperNoFluffJobsData = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      await this.scrapperController?.scrapeNoFluffJobsData();
+      this.scrapperController?.scrapeNoFluffJobsData();
       res.status(204).json({});
     } catch (err) {
       next(ErrorHandlerController.handleError(err));

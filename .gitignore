@@ -8,7 +8,9 @@ apps/backend/prisma/migrations
 apps/backend/prisma/*.db
 apps/backend/**/*.db
 apps/backend/**/**.db
+apps/backend/prisma/csv/** */
 **.db
+**.csv
 
 .env**
 public

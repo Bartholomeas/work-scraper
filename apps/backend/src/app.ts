@@ -17,6 +17,7 @@ import { authModule } from "@/components/auth/auth.module";
 import { ErrorController } from "@/components/error/error.controller";
 import { offersModule } from "@/components/offers/offers.module";
 import { statisticsModule } from "@/components/statistics/statistics.module";
+import { BackupDbCron } from "./components/cron-jobs/backup-cron";
 
 // For some reason imported in tsconfig doesnt work :(
 declare global {
@@ -51,6 +52,7 @@ const limiter = rateLimit({
   limit: 100,
   message: "Too many requests from this IP, please try again in an minute!",
 });
+new BackupDbCron();
 
 app.get("/", (_req, res) => res.send("Express server"));
 app.use("/api", limiter);

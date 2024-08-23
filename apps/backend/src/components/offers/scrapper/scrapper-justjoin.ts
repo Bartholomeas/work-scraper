@@ -153,7 +153,7 @@ class ScrapperJustjoin extends ScrapperBase {
         id: generateId(idHash),
         dataSourceCode: "justjoin",
         dataSource: JOB_DATA_SOURCES.justjoin,
-        slug: offer?.slug,
+        slug: "",
         createdAt: offer?.publishedAt,
         expirationDate,
         positionName: offer?.title,
