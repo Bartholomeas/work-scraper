@@ -85,10 +85,7 @@ class ScrapperController implements IScrapperController {
       await this.deleteOutdatedRecords();
       await this.updateCategoriesCounts();
       await this.updateWorkplacesCounts();
-      // To prevent race conditions with Promise.all or smth its called one by another
-      await this.deleteOutdatedRecords();
-      await this.updateCategoriesCounts();
-      await this.updateWorkplacesCounts();
+
       return;
     } catch (err) {
       throw ErrorHandlerController.handleError(err);
