@@ -241,7 +241,6 @@ class OffersService implements IOffersService {
       throw ErrorHandlerController.handleError(err);
     }
   }
-
   /**
    * @description - Saves passed JobOffer array to database
    * @param {JobOffer[]} offers
@@ -251,11 +250,12 @@ class OffersService implements IOffersService {
       if (!offers.length) return;
       console.log("Saving scrapped data..");
 
-      const batchSize = 100;
+      const batchSize = 50;
       const parsedOffers = offers.filter(offer => offer?.positionName).map(offer => OfferHelper.parseJobOfferToPrismaModel(offer));
 
       for (let i = 0; i < parsedOffers.length; i += batchSize) {
         const batch = parsedOffers.slice(i, i + batchSize);
+
         await this.prisma.$transaction(async prisma => {
           for (const offer of batch) {
             await prisma.jobOffer.upsert({
@@ -273,6 +273,7 @@ class OffersService implements IOffersService {
 
       console.log("All offers saved successfully");
     } catch (err) {
+      console.error("Error saving job offers:", err);
       throw ErrorHandlerController.handleError(err);
     }
   }

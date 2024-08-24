@@ -7,7 +7,7 @@ class BrowserManager {
   private browser: Browser | undefined;
   private static instance: BrowserManager;
 
-  constructor() {}
+  private constructor() {}
 
   public static getInstance(): BrowserManager {
     if (!BrowserManager.instance) BrowserManager.instance = new BrowserManager();
