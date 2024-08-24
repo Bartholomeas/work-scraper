@@ -420,9 +420,10 @@ class StatisticsService implements IStatisticsService {
     const topCategories = await this.getTopCategories();
     const totalOffers = await this.prisma.jobOffer.count();
 
-    console.time("Delete top categories");
+    console.time("Delete top workplaces and categories");
+    await this.prisma.topWorkplace.deleteMany({});
     await this.prisma.topCategory.deleteMany({});
-    console.timeEnd("Delete top categories");
+    console.timeEnd("Delete top workplaces and categories");
 
     const topWorkplacesData = {
       connectOrCreate: topWorkplaces.map(place => ({
