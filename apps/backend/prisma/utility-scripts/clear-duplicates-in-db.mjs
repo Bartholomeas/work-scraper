@@ -4,42 +4,65 @@ const prisma = new PrismaClient();
 
 async function clearDuplicateOfferUrls() {
   try {
-    // Get all job offers
     const jobOffers = await prisma.jobOffer.findMany({
       include: {
         offerUrls: true,
+        salaryRange: true,
       },
     });
 
     for (const jobOffer of jobOffers) {
-      // Get unique offer URLs
       const uniqueUrls = [...new Set(jobOffer.offerUrls.map(url => url.value))];
+      const uniqueSalaryRanges = jobOffer?.salaryRange
+        .map(el => {
+          const { jobOfferId, ...rest } = el;
+          return { ...rest, currency: rest?.currency === "zł" ? "pln" : rest?.currency };
+        })
+        ?.filter(
+          (salary, index, self) =>
+            index ===
+            self.findIndex(
+              t =>
+                t.min === salary.min &&
+                t.max === salary.max &&
+                t.currency === salary.currency &&
+                t.type === salary.type &&
+                t.timeUnit === salary.timeUnit,
+            ),
+        );
 
-      console.log("Job Offer: ", jobOffer?.positionName);
+      console.log("Clearing duplicates at: ", jobOffer?.positionName);
 
-      // Delete all existing offer URLs for this job offer
-      await prisma.offerUrl.deleteMany({
-        where: {
-          jobOfferId: jobOffer.id,
-        },
-      });
-
-      // Create new offer URLs with unique values
-      await prisma.jobOffer.update({
-        where: {
-          id: jobOffer.id,
-        },
-        data: {
-          offerUrls: {
-            create: uniqueUrls.map(url => ({ value: url })),
+      await prisma.$transaction(async prisma => {
+        await prisma.offerUrl.deleteMany({
+          where: {
+            jobOfferId: jobOffer.id,
           },
-        },
+        });
+
+        await prisma.offerUrl.createMany({
+          data: uniqueUrls.map(url => ({ value: url, jobOfferId: jobOffer.id })),
+        });
+
+        await prisma.jobOffer.update({
+          where: {
+            id: jobOffer.id,
+          },
+          data: {
+            salaryRange: {
+              deleteMany: {},
+              createMany: {
+                data: uniqueSalaryRanges,
+              },
+            },
+          },
+        });
       });
     }
 
-    console.log("Duplicate offer URLs have been cleared successfully.");
+    console.log("Duplicate offer URLs and salary ranges have been cleared successfully.");
   } catch (error) {
-    console.error("Error clearing duplicate offer URLs:", error);
+    console.error("Error clearing duplicates:", error);
   } finally {
     await prisma.$disconnect();
   }
