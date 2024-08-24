@@ -1,4 +1,6 @@
+import { JOB_DATA_SOURCES } from "@/misc/constants";
 import { connectOrCreateArray } from "@/utils/prisma";
+import { Prisma } from "@prisma/client";
 import type { JobOffer, OffersQueryParams } from "shared/src/offers/offers.types";
 
 type PrismaJobOffer = JobOffer & {
@@ -177,10 +179,13 @@ class OfferHelper {
     });
   }
 
-  public static parseJobOfferToPrismaModel(offer: JobOffer) {
+  public static parseJobOfferToPrismaModel(offer: JobOffer): Prisma.JobOfferCreateInput {
     const offerUrls = offer?.offerUrls?.map(el => ({
       value: el,
     }));
+
+    const dataSource = Object.values(JOB_DATA_SOURCES)?.find(el => el.value === offer?.dataSourceCode);
+    console.log({ dataSource, XD: offer?.dataSourceCode });
 
     const salaryRange =
       offer?.salaryRange && offer?.salaryRange?.length > 0
@@ -199,6 +204,15 @@ class OfferHelper {
       positionName: offer?.positionName,
       slug: offer?.slug ?? offer?.id,
       dataSourceCode: offer?.dataSourceCode,
+      dataSource: {
+        connectOrCreate: {
+          where: { name: dataSource?.name },
+          create: {
+            name: dataSource?.name ?? "Brak kategorii",
+            value: dataSource?.value ?? "uncategorized",
+          },
+        },
+      },
       description: offer?.description,
       expirationDate: offer?.expirationDate,
       positionLevels: connectOrCreateArray(offer.positionLevels),

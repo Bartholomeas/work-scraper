@@ -23,6 +23,6 @@
   "ts-node": {
     "require": ["tsconfig-paths/register"]
   },
-  "include": ["prisma/*", "src/**/*", "tests/**/*"],
+  "include": ["prisma/*", "src/**/*", "tests/**/*", "prisma/utility-scripts/create-db-backup.mjs", "prisma/utility-scripts/clear-duplicates-in-db.mjs", "prisma/utility-scripts/migrate-datasource.mjs"],
   "exclude": ["node_modules/**/*", "**/dist/**/*", "public/**/*"]
 }
