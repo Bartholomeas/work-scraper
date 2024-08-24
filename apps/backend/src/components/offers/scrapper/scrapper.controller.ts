@@ -86,12 +86,7 @@ class ScrapperController implements IScrapperController {
       }
 
       // To prevent race conditions with Promise.all or smth its called one by another
-      await this.deleteOutdatedRecords();
-      await this.updateCategoriesCounts();
-      await this.updateWorkplacesCounts();
-
-      const statsService = new StatisticsService();
-      await statsService.generateGeneralStatistics();
+      await this.updateAllOffersStats();
 
       return;
     } catch (err) {
@@ -99,6 +94,17 @@ class ScrapperController implements IScrapperController {
     } finally {
       await this.browserManager.closeBrowserInstance();
     }
+  };
+
+  private updateAllOffersStats = async () => {
+    console.time("Update all offers stats");
+    await this.deleteOutdatedRecords();
+    await this.updateCategoriesCounts();
+    await this.updateWorkplacesCounts();
+
+    const statsService = new StatisticsService();
+    await statsService.generateGeneralStatistics();
+    console.timeEnd("Update all offers stats");
   };
 
   public scrapeSingleService = async <T extends ScrapperInstances>(scrapper: T, url: string) => {
@@ -115,6 +121,7 @@ class ScrapperController implements IScrapperController {
   public scrapePracujData = async () => {
     try {
       await this.scrapeSingleService(ScrapperPracuj, PRACUJ_URL);
+      await this.updateAllOffersStats();
     } catch (err) {
       throw ErrorHandlerController.handleError(err);
     } finally {
@@ -124,6 +131,7 @@ class ScrapperController implements IScrapperController {
   public scrapeSolidJobsData = async () => {
     try {
       await this.scrapeSingleService(ScrapperSolidJobs, SOLID_URL);
+      await this.updateAllOffersStats();
     } catch (err) {
       throw ErrorHandlerController.handleError(err);
     } finally {
@@ -133,6 +141,7 @@ class ScrapperController implements IScrapperController {
   public scrapeJustJoinData = async () => {
     try {
       await this.scrapeSingleService(ScrapperJustjoin, JUSTJOIN_URL);
+      await this.updateAllOffersStats();
     } catch (err) {
       throw ErrorHandlerController.handleError(err);
     } finally {
@@ -142,6 +151,7 @@ class ScrapperController implements IScrapperController {
   public scrapeNoFluffJobsData = async () => {
     try {
       await this.scrapeSingleService(ScrapperNofluffjobs, NOFLUFFJOBS_URL);
+      await this.updateAllOffersStats();
     } catch (err) {
       throw ErrorHandlerController.handleError(err);
     } finally {
