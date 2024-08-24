@@ -59,10 +59,10 @@ class ScrapperController implements IScrapperController {
   public scrapeOffersData = async () => {
     try {
       const scrappers = [
-        {
-          scrapper: ScrapperNofluffjobs,
-          url: NOFLUFFJOBS_URL,
-        },
+        // {
+        //   scrapper: ScrapperNofluffjobs,
+        //   url: NOFLUFFJOBS_URL,
+        // },
         {
           scrapper: ScrapperPracuj,
           url: PRACUJ_URL,
