@@ -251,45 +251,27 @@ class OffersService implements IOffersService {
       if (!offers.length) return;
       console.log("Saving scrapped data..");
 
-      const upsertOfferPromises = offers
-        ?.filter(offer => offer?.positionName)
-        ?.map(offer => {
-          const parsedOffer = OfferHelper.parseJobOfferToPrismaModel(offer);
-          return this.prisma.jobOffer.upsert({
-            where: { id: offer?.id },
-            create: {
-              ...parsedOffer,
-              dataSource: {
-                connectOrCreate: {
-                  where: {
-                    name: offer?.dataSource?.name,
-                  },
-                  create: {
-                    name: offer?.dataSource?.name,
-                    value: offer?.dataSource?.value,
-                  },
-                },
+      const batchSize = 100;
+      const parsedOffers = offers.filter(offer => offer?.positionName).map(offer => OfferHelper.parseJobOfferToPrismaModel(offer));
+
+      for (let i = 0; i < parsedOffers.length; i += batchSize) {
+        const batch = parsedOffers.slice(i, i + batchSize);
+        await this.prisma.$transaction(async prisma => {
+          for (const offer of batch) {
+            await prisma.jobOffer.upsert({
+              where: { id: offer.id },
+              create: offer,
+              update: {
+                ...offer,
+                updatedAt: new Date(),
               },
-            },
-            update: {
-              ...parsedOffer,
-              dataSource: {
-                connectOrCreate: {
-                  where: {
-                    name: offer?.dataSource?.name,
-                  },
-                  create: {
-                    name: offer?.dataSource?.name,
-                    value: offer?.dataSource?.value,
-                  },
-                },
-              },
-              updatedAt: new Date(),
-            },
-          });
+            });
+          }
         });
-      await this.prisma.$transaction(upsertOfferPromises);
-      return;
+        console.log(`Processed ${i + batch.length} out of ${parsedOffers.length} offers`);
+      }
+
+      console.log("All offers saved successfully");
     } catch (err) {
       throw ErrorHandlerController.handleError(err);
     }
