@@ -1,16 +1,17 @@
+import dayjs from "dayjs";
 import { type Browser, ElementHandle, type Page } from "puppeteer";
 
+import { currenciesSchema } from "shared/src/offers/offers.schemas";
 import type { JobOffer, ScrappedDataResponse, WorkSchedulesCodes } from "shared/src/offers/offers.types";
 
+import { generateId } from "@/utils/generate-id";
+import { JOB_DATA_SOURCES, NOFLUFF_NAME } from "@/misc/constants";
+
+import { isWorkPositionLevelsArr } from "@/components/offers/helpers/offers.utils";
 import { ScrapperBase, type ScrapperBaseProps } from "@/components/offers/scrapper/scrapper-base";
 import { ErrorHandlerController } from "@/components/error/error-handler.controller";
 
 import type { JobOfferNofluffJobs } from "@/types/offers/nofluffjobs.types";
-import { generateId } from "@/utils/generate-id";
-import { JOB_DATA_SOURCES, NOFLUFF_NAME } from "@/misc/constants";
-import { isWorkPositionLevelsArr } from "@/components/offers/helpers/offers.utils";
-import { currenciesSchema } from "shared/src/offers/offers.schemas";
-import dayjs from "dayjs";
 
 export class ScrapperNofluffjobs extends ScrapperBase {
   constructor(browser: Browser | undefined, props: ScrapperBaseProps) {
@@ -24,77 +25,146 @@ export class ScrapperNofluffjobs extends ScrapperBase {
   }
 
   protected async scrapePage<T>(pageNumber: number): Promise<T[] | undefined> {
-    try {
-      await this.initializePage();
-      const wait = (duration = 100) => new Promise(resolve => setTimeout(resolve, duration));
+    await this.initializePage();
+    const wait = (duration = 100) => new Promise(resolve => setTimeout(resolve, duration));
 
-      await this.page?.setViewport({
-        width: 1200,
-        height: 1080,
-      });
-      await this.listenAndRestrictRequests(this.page);
+    await this.page?.setViewport({
+      width: 1200,
+      height: 1080,
+    });
+    await this.listenAndRestrictRequests(this.page);
 
-      const data: T[] = [];
+    const data: T[] = [];
+
+    return new Promise<T[] | undefined>((resolve, reject) => {
       let keepLoading = true;
 
-      this.page?.on("response", async response => {
+      this.page?.on("response", response => {
         const url = response.url();
 
+        // if (url.includes("https://nofluffjobs.com/api/joboffers/main") || url.includes("https://nofluffjobs.com/api/search/posting")) {
         if (url.includes("https://nofluffjobs.com/api/search/posting")) {
           console.log("Nofluffjobs url: ", url);
 
-          try {
-            const res = await response.json();
-            const contentType = response.headers()["content-type"];
-            if (contentType && contentType.includes("application/json")) {
-              if (res?.postings) data.push(...res.postings);
-            }
+          response
+            .json()
+            .then(res => {
+              const contentType = response.headers()["content-type"];
+              if (contentType && contentType.includes("application/json")) {
+                if (res?.postings) data.push(...res.postings);
+              }
 
-            const loadMoreBtn = await this.page?.evaluateHandle(this.getLoadMoreButton);
-            const element = loadMoreBtn?.asElement() as ElementHandle<Element>;
-            if (element) {
-              await wait(50);
-              await element?.click();
-              await element?.dispose();
+              this.page
+                ?.evaluateHandle(this.getLoadMoreButton)
+                .then(loadMoreBtn => {
+                  const element = loadMoreBtn?.asElement() as ElementHandle<Element>;
+                  if (element) {
+                    wait(50).then(() => {
+                      element?.click();
+                      element?.dispose();
+                    });
 
-              await this.page
-                ?.waitForFunction(el => el.textContent?.includes("Pokaż kolejne"), { timeout: 10000 }, element)
-                .catch(() => {});
-            } else {
+                    this.page
+                      ?.waitForFunction(el => el.textContent?.includes("Pokaż kolejne"), {}, element)
+                      .catch(() => {
+                        keepLoading = false;
+                      });
+                  } else {
+                    keepLoading = false;
+                  }
+                })
+                .catch(err => {
+                  keepLoading = false;
+                  reject(ErrorHandlerController.handleError(err));
+                });
+            })
+            .catch(err => {
               keepLoading = false;
-              console.log("'Element' doesnt exist");
-            }
-          } catch (err) {
-            keepLoading = false;
-            throw ErrorHandlerController.handleError(err);
-          }
+              reject(ErrorHandlerController.handleError(err));
+            });
         }
       });
 
-      await this.page?.goto(this.url, { waitUntil: "networkidle2" });
-      await this.pressCookieConsent(this.page);
-      // await this.setITCategory();
-      const loadMoreBtn = await this.page?.evaluateHandle(this.getLoadMoreButton);
-      if (loadMoreBtn && loadMoreBtn.asElement()) {
-        const element = loadMoreBtn.asElement() as ElementHandle<Element>;
-        await element?.click();
-      } else {
-        keepLoading = false;
-      }
-
-      await new Promise<void>(resolveWait => {
-        const interval = setInterval(() => {
-          if (!keepLoading) {
-            clearInterval(interval);
-            resolveWait();
+      this.page
+        ?.goto(this.url, { waitUntil: "networkidle2" })
+        .then(() => this.pressCookieConsent(this.page))
+        .then(async () => {
+          await this.setITCategory();
+          return this.page?.evaluateHandle(this.getLoadMoreButton);
+        })
+        .then(loadMoreBtn => {
+          if (loadMoreBtn && loadMoreBtn.asElement()) {
+            const element = loadMoreBtn.asElement() as ElementHandle<Element>;
+            element?.click();
+          } else {
+            keepLoading = false;
           }
-        }, 100);
-      });
+        })
+        .catch(reject);
 
-      return data;
-    } catch (error) {
-      throw ErrorHandlerController.handleError(error);
+      const waitUntilFinished = () =>
+        new Promise<void>(resolveWait => {
+          const interval = setInterval(() => {
+            if (!keepLoading) {
+              clearInterval(interval);
+              resolveWait();
+            }
+          }, 500);
+        });
+
+      waitUntilFinished().then(() => resolve(data));
+    });
+  }
+  private async setITCategory() {
+    try {
+      const wait = (duration = 100) => new Promise(resolve => setTimeout(resolve, duration));
+      await wait(500);
+
+      const filtersBtn = await this.page
+        ?.evaluateHandle(() => {
+          const filtersBtnContainer = document.querySelector('nfj-filter-executor[data-cy="btnFilter-category"]');
+          return filtersBtnContainer?.querySelector("button");
+        })
+        .then(res => res.asElement() as ElementHandle<Element>);
+
+      await filtersBtn?.click();
+      await filtersBtn?.dispose();
+
+      //TODO: To improve if its because of timeout
+      await wait(500);
+
+      const categoriesSection = await this.page?.waitForSelector('div[data-cy-section="btnFilters-category"]');
+
+      if (categoriesSection) {
+        if (categoriesSection) {
+          const firstArticle = await categoriesSection?.evaluateHandle(() => document.querySelector("article"));
+          await firstArticle.asElement()?.$$eval('nfj-filter-control[type="checkbox"]', checkboxElements => {
+            const inputs = Array.from(checkboxElements).map(el => el.querySelector('input[type="checkbox"]') as HTMLInputElement);
+            inputs.forEach(el => {
+              el?.click();
+            });
+          });
+
+          this.page?.evaluateHandle(this.getSubmitFiltersButton).then(async submitBtn => {
+            const btnElement = submitBtn.asElement() as ElementHandle<Element>;
+
+            if (btnElement) {
+              await btnElement?.click();
+              await btnElement?.dispose();
+            }
+          });
+        }
+      }
+    } catch (err) {
+      console.log("ERROR IN SETTING IT: ", err);
+      return;
     }
+  }
+
+  private getSubmitFiltersButton() {
+    const buttons = Array.from(document.querySelectorAll("button"));
+    const targetBtn = buttons.find(btn => btn.textContent?.includes("Pokaż wyniki"));
+    return targetBtn || null;
   }
 
   private getLoadMoreButton() {
@@ -132,7 +202,7 @@ export class ScrapperNofluffjobs extends ScrapperBase {
 
       const todayDate = dayjs(new Date());
 
-      //TODO: Currently doesnt adding all offerurls as it takes a lot of place in DB relations; to rethink
+      // Currently doesnt adding all offerurls as it takes a lot of place in DB relations; to rethink
       // const offerUrls = [`https://nofluffjobs.com/pl/job/${offer?.url}`].concat(offer?.location?.places?.map(place => `https://nofluffjobs.com/pl/job/${place?.url}`));
 
       const expirationDate = offer?.renewed
