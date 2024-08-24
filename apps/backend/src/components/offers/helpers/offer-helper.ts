@@ -13,14 +13,16 @@ type PrismaJobOffer = JobOffer & {
 };
 
 class OfferHelper {
-  // private static keysToMap = ["workplaces", "workModes", "contractTypes", "technologies", "workSchedules", "positionLevels"] as const;
-
   public static getJobOffersConditions(params: OffersQueryParams | undefined) {
+    const [mainSearch, categoriesString] = params?.search?.split(";") ?? [params?.search, undefined];
+    const categories = categoriesString?.split(",").filter(Boolean) ?? [];
+    const allCategories = [...new Set([...categories, ...(params?.categories ?? [])])];
+
     try {
       return {
-        ...this.getSearchConditions(params?.search),
+        ...this.getSearchConditions(mainSearch),
         AND: [
-          ...this.getCategoriesConditions(params?.categories),
+          ...this.getCategoriesConditions(allCategories),
           ...this.getDataSourcesConditions(params?.dataSources),
           ...this.getPositionLevelsConditions(params?.positionLevels),
           ...this.getContractTypesConditions(params?.contractTypes),
@@ -51,17 +53,19 @@ class OfferHelper {
   }
 
   public static getSearchConditions(search?: OffersQueryParams["search"]) {
-    return search?.trim()
+    const searchValue = search?.trim();
+
+    return searchValue
       ? {
           OR: [
             {
               positionName: {
-                contains: search,
+                contains: searchValue,
               },
             },
             {
               companyName: {
-                contains: search,
+                contains: searchValue,
               },
             },
           ],
@@ -93,16 +97,6 @@ class OfferHelper {
         },
       },
     ];
-    // All positionLevels must match (idk which approach is better)
-    // return Array.isArray(positionLevels) && positionLevels.length > 0
-    //   ? positionLevels.map(value => ({
-    //       positionLevels: {
-    //         some: {
-    //           value,
-    //         },
-    //       },
-    //     }))
-    //   : [];
   }
 
   public static getContractTypesConditions(contractTypes?: OffersQueryParams["contractTypes"]) {
