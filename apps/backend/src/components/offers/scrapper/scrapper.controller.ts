@@ -13,6 +13,7 @@ import { ScrapperSolidJobs } from "@/components/offers/scrapper/scrapper-solidjo
 import { ScrapperNofluffjobs } from "@/components/offers/scrapper/scrapper-nofluffjobs";
 
 import type { OffersService } from "@/components/offers/service/offers.service";
+import { StatisticsService } from "@/components/statistics/statistics.service";
 
 type ScrapperInstances = typeof ScrapperPracuj | typeof ScrapperJustjoin | typeof ScrapperSolidJobs | typeof ScrapperNofluffjobs;
 
@@ -38,6 +39,7 @@ class ScrapperController implements IScrapperController {
 
   public async updateCategoriesCounts() {
     try {
+      console.log("Update categories counts");
       return await this.offersService.updateCategoriesCounts();
     } catch (err) {
       throw ErrorHandlerController.handleError(err);
@@ -46,6 +48,7 @@ class ScrapperController implements IScrapperController {
 
   public async updateWorkplacesCounts() {
     try {
+      console.log("Update workplaces counts");
       return await this.offersService.updateWorkplacesCounts();
     } catch (err) {
       throw ErrorHandlerController.handleError(err);
@@ -53,6 +56,7 @@ class ScrapperController implements IScrapperController {
   }
 
   public async deleteOutdatedRecords() {
+    console.log("Delete outdated records");
     await this.offersService.deleteOutdatedRecords();
   }
 
@@ -85,6 +89,9 @@ class ScrapperController implements IScrapperController {
       await this.deleteOutdatedRecords();
       await this.updateCategoriesCounts();
       await this.updateWorkplacesCounts();
+
+      const statsService = new StatisticsService();
+      await statsService.generateGeneralStatistics();
 
       return;
     } catch (err) {
