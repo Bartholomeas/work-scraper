@@ -121,41 +121,41 @@ class ScrapperController implements IScrapperController {
   public scrapePracujData = async () => {
     try {
       await this.scrapeSingleService(ScrapperPracuj, PRACUJ_URL);
-      await this.updateAllOffersStats();
     } catch (err) {
       throw ErrorHandlerController.handleError(err);
     } finally {
       await this.browserManager.closeBrowserInstance();
+      await this.updateAllOffersStats();
     }
   };
   public scrapeSolidJobsData = async () => {
     try {
       await this.scrapeSingleService(ScrapperSolidJobs, SOLID_URL);
-      await this.updateAllOffersStats();
     } catch (err) {
       throw ErrorHandlerController.handleError(err);
     } finally {
       await this.browserManager.closeBrowserInstance();
+      await this.updateAllOffersStats();
     }
   };
   public scrapeJustJoinData = async () => {
     try {
       await this.scrapeSingleService(ScrapperJustjoin, JUSTJOIN_URL);
-      await this.updateAllOffersStats();
     } catch (err) {
       throw ErrorHandlerController.handleError(err);
     } finally {
       await this.browserManager.closeBrowserInstance();
+      await this.updateAllOffersStats();
     }
   };
   public scrapeNoFluffJobsData = async () => {
     try {
       await this.scrapeSingleService(ScrapperNofluffjobs, NOFLUFFJOBS_URL);
-      await this.updateAllOffersStats();
     } catch (err) {
       throw ErrorHandlerController.handleError(err);
     } finally {
       await this.browserManager.closeBrowserInstance();
+      await this.updateAllOffersStats();
     }
   };
 }
