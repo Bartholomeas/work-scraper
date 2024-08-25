@@ -25,7 +25,7 @@ import { Info } from "lucide-vue-next";
           >java developer;java,javascript,sql,spring</Text
         >
         Dzięki temu zapytaniu wyszukasz oferty zawierające w tytule
-        <Text weight="bold" as="span" class="bg-background-lighter rounded-md p-1">java developer</Text> oraz z posiadające wszystkie
+        <Text weight="bold" as="span" class="bg-background-lighter rounded-md p-1">java developer</Text> oraz posiadające wszystkie
         wymienione kategorie
         <Text weight="bold" as="span" class="bg-background-lighter rounded-md p-1">java,javascript,sql,spring</Text>
       </Text>
