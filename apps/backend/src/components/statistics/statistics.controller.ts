@@ -6,18 +6,27 @@ import { StatisticsCron } from "@/components/statistics/statistics-cron";
 
 export interface IStatisticsController {
   generateGeneralStatisticsCommand(): Promise<unknown>;
+
   generateAllOffersCountStatistics(): Promise<unknown>;
+
   generateDailyPositionsStatistics(): Promise<unknown>;
+
   generateDailyCategoriesStatistics(): Promise<unknown>;
+
   generateDailyWorkplacesStatistics(): Promise<unknown>;
-  generateDailyDataSourcesStatistics(): Promise<unknown>;
 
   generateAllStatistics(req: Request, res: Response, next: NextFunction): Promise<unknown>;
+
   generateGeneralStatistics(req: Request, res: Response, next: NextFunction): Promise<void>;
+
   getAllDailyOffersCountStatistics(req: Request, res: Response, next: NextFunction): Promise<void>;
+
   getDailyCategoryStatistics(req: Request, res: Response, next: NextFunction): Promise<void>;
+
   getDailyPositionsStatistics(req: Request, res: Response, next: NextFunction): Promise<void>;
+
   getDailyWorkplacesStatistics(req: Request, res: Response, next: NextFunction): Promise<void>;
+
   getGeneralStatistics(req: Request, res: Response, next: NextFunction): Promise<void>;
 }
 

@@ -21,9 +21,6 @@ class StatisticsCron extends BaseCron {
 
     this.logTimestampWithMessage("Generate workplaces stats");
     await this.statsController.generateDailyWorkplacesStatistics();
-
-    this.logTimestampWithMessage("Generate workplaces stats");
-    await this.statsController.generateDailyDataSourcesStatistics();
   }
 }
 
