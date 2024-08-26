@@ -9,6 +9,7 @@ apps/backend/prisma/*.db
 apps/backend/**/*.db
 apps/backend/**/**.db
 apps/backend/prisma/csv/** */
+apps/backend/undefined
 **.db
 **.csv
 
