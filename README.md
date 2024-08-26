@@ -10,9 +10,20 @@
 [linkedin-url]: https://www.linkedin.com/in/bartosz-stefaniak-a82727222/
 [website-url]: https://bstefaniak.pl/
 
+[gbura-gh-url]: https://github.com/gbura
+[gbura-linkedin-url]: https://www.linkedin.com/in/dawid-gburczyk-9024b7264/
+
+Moje linki: 
+
 [![MIT License][license-shield]][license-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
 [![Moja strona][me-shield]][website-url]
+
+Współpracuję z Dawidem:
+
+[![LinkedIn][linkedin-shield]][gbura-linkedin-url]
+[![Github Dawida][me-shield]][gbura-gh-url]
+
 
 ## [Link do aplikacji](https://itotyle.pl/)
 
