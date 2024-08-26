@@ -74,10 +74,10 @@ class ScrapperController implements IScrapperController {
         //   scrapper: ScrapperNofluffjobs,
         //   url: NOFLUFFJOBS_URL,
         // },
-        {
-          scrapper: ScrapperTheProtocol,
-          url: THEPROTOCOL_URL,
-        },
+        // {
+        //   scrapper: ScrapperTheProtocol,
+        //   url: THEPROTOCOL_URL,
+        // },
         {
           scrapper: ScrapperPracuj,
           url: PRACUJ_URL,
