@@ -94,12 +94,21 @@ class ScrapperTheProtocol extends ScrapperBase {
       const page = await this.browser?.newPage();
       if (!page) return 1;
       await page?.goto(this.url);
-      const paginationElements = await page.$$('a[data-test="anchor-pageNumber"]');
+      const paginationElements = await page.$$('a[data-test="anchor-pageNumber"]').catch(err => {
+        console.log("Pagination elements err: ", err);
+        return [];
+      });
       const lastPaginationElement = paginationElements[paginationElements.length - 1];
-      const maxPagesValue = await page.evaluate(el => el.textContent, lastPaginationElement);
+      console.log("Error lastPaginationElement: ", lastPaginationElement);
+      const maxPagesValue = await page
+        .evaluate(el => el.textContent, lastPaginationElement)
+        .catch(err => {
+          console.log("Error evaluating page textContent");
+          return "5";
+        });
       return parseInt(maxPagesValue ?? "1", 10);
     } catch (err) {
-      console.log("Error while getting max pages");
+      console.log("Error while getting max pages", err);
       return 1;
     }
   }
