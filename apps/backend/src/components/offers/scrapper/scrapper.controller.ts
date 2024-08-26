@@ -1,6 +1,6 @@
 import type { OffersWorkplaceListItem } from "shared/src/offers/offers.types";
 
-import { JUSTJOIN_URL, NOFLUFFJOBS_URL, PRACUJ_URL, SOLID_URL } from "@/components/offers/helpers/offers.constants";
+import { JUSTJOIN_URL, NOFLUFFJOBS_URL, PRACUJ_URL, SOLID_URL, THEPROTOCOL_URL } from "@/components/offers/helpers/offers.constants";
 
 import { ErrorHandlerController } from "@/components/error/error-handler.controller";
 import { BrowserManager } from "@/components/libs/browser-manager";
@@ -14,8 +14,14 @@ import { ScrapperNofluffjobs } from "@/components/offers/scrapper/scrapper-noflu
 
 import type { OffersService } from "@/components/offers/service/offers.service";
 import { StatisticsService } from "@/components/statistics/statistics.service";
+import { ScrapperTheProtocol } from "./scrapper-theprotocol";
 
-type ScrapperInstances = typeof ScrapperPracuj | typeof ScrapperJustjoin | typeof ScrapperSolidJobs | typeof ScrapperNofluffjobs;
+type ScrapperInstances =
+  | typeof ScrapperPracuj
+  | typeof ScrapperJustjoin
+  | typeof ScrapperSolidJobs
+  | typeof ScrapperNofluffjobs
+  | typeof ScrapperTheProtocol;
 
 interface IScrapperController {
   updateCategoriesCounts(): Promise<OffersWorkplaceListItem[] | undefined>;
@@ -68,17 +74,21 @@ class ScrapperController implements IScrapperController {
         //   url: NOFLUFFJOBS_URL,
         // },
         {
-          scrapper: ScrapperPracuj,
-          url: PRACUJ_URL,
+          scrapper: ScrapperTheProtocol,
+          url: THEPROTOCOL_URL,
         },
-        {
-          scrapper: ScrapperJustjoin,
-          url: JUSTJOIN_URL,
-        },
-        {
-          scrapper: ScrapperSolidJobs,
-          url: SOLID_URL,
-        },
+        // {
+        //   scrapper: ScrapperPracuj,
+        //   url: PRACUJ_URL,
+        // },
+        // {
+        //   scrapper: ScrapperJustjoin,
+        //   url: JUSTJOIN_URL,
+        // },
+        // {
+        //   scrapper: ScrapperSolidJobs,
+        //   url: SOLID_URL,
+        // },
       ];
 
       for (const { scrapper, url } of scrappers) {
@@ -151,6 +161,16 @@ class ScrapperController implements IScrapperController {
   public scrapeNoFluffJobsData = async () => {
     try {
       await this.scrapeSingleService(ScrapperNofluffjobs, NOFLUFFJOBS_URL);
+    } catch (err) {
+      throw ErrorHandlerController.handleError(err);
+    } finally {
+      await this.browserManager.closeBrowserInstance();
+      await this.updateAllOffersStats();
+    }
+  };
+  public scrapeTheProtocolData = async () => {
+    try {
+      await this.scrapeSingleService(ScrapperTheProtocol, THEPROTOCOL_URL);
     } catch (err) {
       throw ErrorHandlerController.handleError(err);
     } finally {
