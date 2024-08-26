@@ -72,6 +72,7 @@ export class ScrapperNofluffjobs extends ScrapperBase {
           if (!this.keepLoading || this.loadAttempts >= this.maxLoadAttempts) break;
           await this.clickLoadMoreButtonWithRetry();
         }
+
         resolve(data);
       };
 

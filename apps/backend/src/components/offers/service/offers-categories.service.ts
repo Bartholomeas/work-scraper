@@ -66,10 +66,10 @@ class OffersCategoriesService implements IOffersCategoriesService {
             id: "173defa4-4ede-49ef-8f31-f957c6108076",
             value: SOLID_NAME,
           },
-          {
-            id: "08944e5c-320a-4a80-9938-945ee8986b1b",
-            value: THEPROTOCOL_NAME,
-          },
+          // {
+          //   id: "08944e5c-320a-4a80-9938-945ee8986b1b",
+          //   value: THEPROTOCOL_NAME,
+          // },
           {
             id: "6c41e303-746b-4ca9-a3c8-eec5d5ecd702",
             value: NOFLUFF_NAME,
