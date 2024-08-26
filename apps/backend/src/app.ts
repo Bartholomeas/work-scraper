@@ -18,6 +18,7 @@ import { ErrorController } from "@/components/error/error.controller";
 import { offersModule } from "@/components/offers/offers.module";
 import { statisticsModule } from "@/components/statistics/statistics.module";
 import { BackupDbCron } from "./components/cron-jobs/backup-cron";
+import { newsModule } from "./components/news/news.module";
 
 // For some reason imported in tsconfig doesnt work :(
 declare global {
@@ -71,6 +72,7 @@ app.use((req: Request, _res: Response, next: NextFunction) => {
 app.use(BASE_URL + "/auth", authModule.router);
 app.use(BASE_URL + "/offers", offersModule.router);
 app.use(BASE_URL + "/statistics", statisticsModule.router);
+app.use(BASE_URL + "/news", newsModule.router);
 
 app.all("*", (req: Request, _res: Response, next: NextFunction) => {
   next(
