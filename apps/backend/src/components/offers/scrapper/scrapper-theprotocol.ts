@@ -1,12 +1,12 @@
 import { type Browser, type Page } from "puppeteer";
 
-import type { CurrencyCodes, JobOffer, SalaryTypes, ScrappedDataResponse, TimeUnitTypes } from "shared/src/offers/offers.types";
+import type { CurrencyCodes, JobOffer, ScrappedDataResponse } from "shared/src/offers/offers.types";
 
 import { JOB_DATA_SOURCES, THEPROTOCOL_NAME } from "@/misc/constants";
 import { generateId } from "@/utils/generate-id";
 
 import { ErrorHandlerController } from "@/components/error/error-handler.controller";
-import { isContractTypesArr, isWorkModesArr, isWorkPositionLevelsArr, isWorkSchedulesArr } from "@/components/offers/helpers/offers.utils";
+import { isContractTypesArr, isWorkModesArr, isWorkPositionLevelsArr } from "@/components/offers/helpers/offers.utils";
 import { ScrapperBase, type ScrapperBaseProps } from "@/components/offers/scrapper/scrapper-base";
 
 import { JobOfferTheProtocol } from "@/types/offers/theprotocol.types";
@@ -38,6 +38,7 @@ class ScrapperTheProtocol extends ScrapperBase {
     const salaryRange = this.standardizeSalary(offer?.typesOfContracts);
 
     const idHash = `${offer?.title}-${offer?.employer}-theprotocol`;
+
     return {
       id: generateId(idHash),
       dataSourceCode: THEPROTOCOL_NAME,
@@ -86,7 +87,7 @@ class ScrapperTheProtocol extends ScrapperBase {
     try {
       await this.listenAndRestrictRequests(page);
       console.log(`Scrapping TheProtocol page: ${pageNumber}`);
-      await page.goto(`${this.url}?pn=${pageNumber}`, { waitUntil: "networkidle2" });
+      await page.goto(`${this.url}?pageNumber=${pageNumber}`, { waitUntil: "networkidle2" });
       await this.acceptCookieConsent(page).catch(err => {
         console.log("Cannot accept cookie consent: ", err);
         return undefined;
@@ -101,7 +102,7 @@ class ScrapperTheProtocol extends ScrapperBase {
         const scriptTag = document.querySelector('script[id="__NEXT_DATA__"]');
         return scriptTag ? JSON.parse(scriptTag.innerHTML) : undefined;
       });
-      return (content?.props.pageProps.data.jobOffers.groupedOffers as T[]) || [];
+      return (content?.props.pageProps.offersResponse.offers as T[]) || [];
     } catch (err) {
       if (retries > 0) return this.scrapePage<T>(pageNumber, retries - 1);
       throw ErrorHandlerController.handleError(err);
@@ -112,15 +113,15 @@ class ScrapperTheProtocol extends ScrapperBase {
 
   protected async getMaxPages(): Promise<number> {
     try {
-      return 1;
+      const page = await this.browser?.newPage();
+      if (!page) return 1;
+      await page?.goto(this.url);
+      const paginationElements = await page.$$('a[data-test="anchor-pageNumber"]');
+      const lastPaginationElement = paginationElements[paginationElements.length - 1];
+      const maxPagesValue = await page.evaluate(el => el.textContent, lastPaginationElement);
+      const maxPages = parseInt(maxPagesValue ?? "1", 10);
 
-      // const page = await this.browser?.newPage();
-      // if (!page) return 1;
-      // await page.goto(this.url);
-      // const maxPagesElement = await page.$('span[data-test="top-pagination-max-page-number"]');
-      // const maxPagesValue = (await page.evaluate(el => el?.textContent, maxPagesElement)) || "1";
-      // await page.close();
-      // return parseInt(maxPagesValue);
+      return maxPages;
     } catch (err) {
       console.log("Error while getting max pages");
       return 1;
@@ -204,9 +205,15 @@ class ScrapperTheProtocol extends ScrapperBase {
       switch (mode) {
         case "full office":
           return "stationary";
+        case "stacjonarna":
+          return "stationary";
         case "hybrid":
           return "hybrid";
+        case "hybrydowa":
+          return "hybrid";
         case "remote":
+          return "remote";
+        case "zdalna":
           return "remote";
         default:
           return "hybrid";

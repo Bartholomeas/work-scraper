@@ -1,4 +1,4 @@
-type WorkModes = "remote" | "hybrid" | "full office";
+type WorkModes = "remote" | "hybrid" | "full office" | 'hybrydowa' | 'zdalna' | 'stacjonarna';
 interface Workplace {
   location: string;
   city: string;
