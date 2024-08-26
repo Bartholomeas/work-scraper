@@ -33,14 +33,9 @@ const { name, label, description, items } = defineProps<CheckboxControlledProps>
         >
           <FormItem class="flex items-center gap-2">
             <FormControl>
-              <Checkbox
-                :id="`${name}-${item.id}`"
-                :checked="value?.includes(item.value)"
-                :aria-label="item.label"
-                @update:checked="handleChange"
-              />
+              <Checkbox :checked="value?.includes(item.value)" :aria-label="item.label" @update:checked="handleChange" />
             </FormControl>
-            <FormLabel class="!mt-0">
+            <FormLabel class="!mt-0 cursor-pointer">
               {{ item.label }}
             </FormLabel>
           </FormItem>

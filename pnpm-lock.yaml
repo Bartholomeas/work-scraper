@@ -117,6 +117,9 @@ importers:
       prisma:
         specifier: ^5.17.0
         version: 5.18.0
+      puppeteer-extra-plugin-user-data-dir:
+        specifier: ^2.4.1
+        version: 2.4.1(puppeteer-extra@3.3.6(puppeteer-core@22.15.0)(puppeteer@22.15.0(typescript@5.5.4)))
       shared:
         specifier: workspace:*
         version: link:../../packages/shared
