@@ -1,11 +1,22 @@
-import { fetcher } from "@/utils/fetcher";
-import { NEWS_URL } from "@/constants";
+import { useQuery } from "vue-query";
+
 import type { NewsResponse } from "shared/src/news/news.types";
 
-export const useGetNews = async (): Promise<NewsResponse | undefined> => {
+import { fetcher } from "@/utils/fetcher";
+import { NEWS_URL } from "@/constants";
+
+import { newsQueryKeys } from "@/api/news/newsQueryKeys";
+
+const getNews = async (): Promise<NewsResponse | undefined> => {
   try {
-    return await fetcher.get<NewsResponse>(`${NEWS_URL}`);
+    return await fetcher.get<NewsResponse>(NEWS_URL);
   } catch (err) {
     throw err;
   }
 };
+
+export const useGetNews = () =>
+  useQuery<NewsResponse | undefined>({
+    queryKey: newsQueryKeys.getNews(),
+    queryFn: getNews,
+  });
