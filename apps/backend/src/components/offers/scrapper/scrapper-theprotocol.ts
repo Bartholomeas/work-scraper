@@ -98,6 +98,8 @@ class ScrapperTheProtocol extends ScrapperBase {
         console.log("Pagination elements err: ", err);
         return [];
       });
+
+      console.log("What..?", this.url, paginationElements);
       const lastPaginationElement = paginationElements[paginationElements.length - 1];
       console.log("Error lastPaginationElement: ", lastPaginationElement);
       const maxPagesValue = await page
