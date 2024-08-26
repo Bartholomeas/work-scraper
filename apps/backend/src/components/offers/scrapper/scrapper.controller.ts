@@ -175,7 +175,7 @@ class ScrapperController implements IScrapperController {
     } catch (err) {
       throw ErrorHandlerController.handleError(err);
     } finally {
-      await this.browserManager.closeBrowserInstance();
+      // await this.browserManager.closeBrowserInstance();
       await this.updateAllOffersStats();
     }
   };

@@ -11,7 +11,8 @@ import { isContractTypesArr, isWorkModesArr, isWorkPositionLevelsArr } from "@/c
 import { ScrapperBase, type ScrapperBaseProps } from "@/components/offers/scrapper/scrapper-base";
 
 import { JobOfferTheProtocol } from "@/types/offers/theprotocol.types";
-import path from "path";
+import path from "node:path";
+import fs from "node:fs";
 
 class ScrapperTheProtocol extends ScrapperBase {
   protected maxPages: number;
@@ -94,26 +95,41 @@ class ScrapperTheProtocol extends ScrapperBase {
     try {
       const page = await this.browser?.newPage();
       if (!page) return 1;
-      await page?.goto(this.url);
-      const paginationElements = await page.$$('a[data-test="anchor-pageNumber"]').catch(err => {
-        console.log("Pagination elements err: ", err);
-        return [];
+      await page?.goto(this.url, { waitUntil: "networkidle2" });
+
+      const pageContent = await page.content();
+      const htmlFilePath = path.join(__dirname, "theprotocol_page_content.html");
+      fs.writeFile(htmlFilePath, pageContent, err => {
+        if (err) {
+          console.error(`Error saving page content: ${err}`);
+        } else {
+          console.log(`Page content saved to: ${htmlFilePath}`);
+        }
       });
 
-      console.log("What..?", this.url, paginationElements);
+      await page.waitForSelector('nav[aria-label="Paginacja"]').catch(err => {
+        console.log("Error while waiting for pagination nav", err);
+      });
+      const paginationNav = await page.$('nav[aria-label="Paginacja"]');
+
+      if (!paginationNav) {
+        console.log("Pagination nav not found");
+        return 1;
+      }
+
+      const lastPageNumber = await paginationNav.evaluate(nav => {
+        const anchors = nav.querySelectorAll('a[data-test="anchor-pageNumber"]');
+        const lastAnchor = anchors[anchors.length - 1];
+        return lastAnchor ? parseInt(lastAnchor.textContent || "1", 10) : 1;
+      });
+
+      console.log("Max pages:", lastPageNumber);
+
       const currentDir = __dirname;
       const screenshotPath = path.join(currentDir, "..", "..", "screenshot.png");
-      await page.screenshot({ path: screenshotPath, fullPage: true });
+      await page.screenshot({ path: screenshotPath, fullPage: true, captureBeyondViewport: true });
 
-      const lastPaginationElement = paginationElements[paginationElements.length - 1];
-      console.log("Error lastPaginationElement: ", lastPaginationElement);
-      const maxPagesValue = await page
-        .evaluate(el => el.textContent, lastPaginationElement)
-        .catch(err => {
-          console.log("Error evaluating page textContent", err);
-          return "5";
-        });
-      return parseInt(maxPagesValue ?? "1", 10);
+      return lastPageNumber;
     } catch (err) {
       console.log("Error while getting max pages", err);
       return 1;
