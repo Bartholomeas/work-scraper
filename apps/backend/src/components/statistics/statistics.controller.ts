@@ -5,26 +5,19 @@ import { ErrorHandlerController } from "@/components/error/error-handler.control
 import { StatisticsCron } from "@/components/statistics/statistics-cron";
 
 export interface IStatisticsController {
+  generateGeneralStatisticsCommand(): Promise<unknown>;
   generateAllOffersCountStatistics(): Promise<unknown>;
-
   generateDailyPositionsStatistics(): Promise<unknown>;
-
   generateDailyCategoriesStatistics(): Promise<unknown>;
-
   generateDailyWorkplacesStatistics(): Promise<unknown>;
+  generateDailyDataSourcesStatistics(): Promise<unknown>;
 
   generateAllStatistics(req: Request, res: Response, next: NextFunction): Promise<unknown>;
-
   generateGeneralStatistics(req: Request, res: Response, next: NextFunction): Promise<void>;
-
   getAllDailyOffersCountStatistics(req: Request, res: Response, next: NextFunction): Promise<void>;
-
   getDailyCategoryStatistics(req: Request, res: Response, next: NextFunction): Promise<void>;
-
   getDailyPositionsStatistics(req: Request, res: Response, next: NextFunction): Promise<void>;
-
   getDailyWorkplacesStatistics(req: Request, res: Response, next: NextFunction): Promise<void>;
-
   getGeneralStatistics(req: Request, res: Response, next: NextFunction): Promise<void>;
 }
 
@@ -35,6 +28,14 @@ class StatisticsController implements IStatisticsController {
     this.statisticsService = statisticsService;
     new StatisticsCron(this);
   }
+
+  public generateGeneralStatisticsCommand = async () => {
+    try {
+      return await this.statisticsService.generateGeneralStatistics();
+    } catch (err) {
+      throw ErrorHandlerController.handleError(err);
+    }
+  };
 
   public generateAllOffersCountStatistics = async () => {
     try {
@@ -67,6 +68,13 @@ class StatisticsController implements IStatisticsController {
       throw ErrorHandlerController.handleError(err);
     }
   };
+  public generateDailyDataSourcesStatistics = async () => {
+    try {
+      return await this.statisticsService.addDailyDataSourcesStatistics();
+    } catch (err) {
+      throw ErrorHandlerController.handleError(err);
+    }
+  };
 
   public generateAllStatistics = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -76,9 +84,19 @@ class StatisticsController implements IStatisticsController {
         this.generateDailyPositionsStatistics(),
         this.generateDailyCategoriesStatistics(),
         this.generateDailyWorkplacesStatistics(),
+        this.generateDailyDataSourcesStatistics(),
       ]);
 
       res.status(201).json(stats);
+    } catch (err) {
+      next(ErrorHandlerController.handleError(err));
+    }
+  };
+
+  public getDailyDataSourcesStatistics = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const data = await this.statisticsService.retrieveDailyDataSourcesStatistics();
+      res.status(200).json(data);
     } catch (err) {
       next(ErrorHandlerController.handleError(err));
     }

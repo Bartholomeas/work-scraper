@@ -3,24 +3,19 @@ import dayjs from "dayjs";
 import { Prisma } from "@prisma/client/extension";
 import { PrismaClient } from "@prisma/client";
 
-import type {
-  DailyAllOffersCountPayload,
-  DailyCategoriesCountPayload,
-  DailyPositionsCountPayload,
-  DailyWorkplacesCountPayload,
-} from "shared/src/statistics/statistics.types";
-
 import { PrismaInstance } from "@/components/libs/prisma.instance";
 import PrismaPromise = Prisma.PrismaPromise;
 
 interface IStatisticsService {
-  addAllOffersCountStatistics(payload: DailyAllOffersCountPayload): Promise<unknown>;
+  addDailyDataSourcesStatistics(): Promise<void>;
 
-  addDailyPositionsStatistics(payload: DailyPositionsCountPayload): Promise<unknown>;
+  addAllOffersCountStatistics(): Promise<unknown>;
 
-  addDailyCategoriesStatistics(payload: DailyCategoriesCountPayload): Promise<unknown>;
+  addDailyPositionsStatistics(): Promise<unknown>;
 
-  addDailyWorkplacesStatistics(payload: DailyWorkplacesCountPayload): Promise<unknown>;
+  addDailyCategoriesStatistics(): Promise<unknown>;
+
+  addDailyWorkplacesStatistics(): Promise<unknown>;
 
   retrieveAllDailyOffersStatistics(): Promise<unknown>;
 
@@ -50,6 +45,83 @@ class StatisticsService implements IStatisticsService {
     } catch (err) {
       return true;
     }
+  }
+
+  public async addDailyDataSourcesStatistics(): Promise<void> {
+    const todayStats = await this.prisma?.dataSourcesStatistics?.findFirst({
+      where: {
+        createdAt: {
+          gte: dayjs(Date.now()).startOf("day").toISOString(),
+          lt: dayjs(Date.now()).endOf("day").toISOString(),
+        },
+      },
+      include: {
+        dataSources: true,
+      },
+    });
+
+    // Check current DataSources
+    const dataSourcesCounts = await this.prisma?.dataSource?.findMany({
+      select: {
+        id: true,
+        name: true,
+        value: true,
+        _count: true,
+      },
+    });
+
+    // If today stats are already in DB then update records by Average of it. Otherwise create new records
+    if (todayStats) {
+      const dataSourcesUpdates = dataSourcesCounts?.map(dataSrc => {
+        const existingData = todayStats?.dataSources?.find(ds => ds.name === dataSrc.name);
+
+        if (existingData) {
+          const avgCount = dataSrc?._count?.jobOffers
+            ? Math.round(((dataSrc?._count?.jobOffers ?? 0) + existingData?.count) / 2)
+            : (existingData?.count ?? 0);
+
+          return this.prisma.dataSourceSingleStatistic.update({
+            where: {
+              id: existingData.id,
+            },
+            data: {
+              count: avgCount,
+            },
+          });
+        } else {
+          return this.prisma.dataSourcesStatistics.update({
+            where: {
+              id: todayStats.id,
+            },
+            data: {
+              dataSources: {
+                create: {
+                  name: dataSrc?.name,
+                  count: dataSrc?._count?.jobOffers ?? 0,
+                },
+              },
+            },
+          });
+        }
+      });
+
+      await this.prisma.$transaction(dataSourcesUpdates);
+    } else {
+      await this.prisma?.dataSourcesStatistics?.create({
+        data: {
+          dataSources: {
+            create: dataSourcesCounts?.map(el => {
+              return {
+                name: el?.name,
+                count: el?._count?.jobOffers ?? 0,
+              };
+            }),
+          },
+        },
+      });
+    }
+
+    return;
   }
 
   public async addAllOffersCountStatistics() {
@@ -225,6 +297,25 @@ class StatisticsService implements IStatisticsService {
     });
   }
 
+  public async retrieveDailyDataSourcesStatistics() {
+    return this.prisma.dataSourcesStatistics.findMany({
+      orderBy: {
+        createdAt: "asc",
+      },
+      select: {
+        id: true,
+        createdAt: true,
+        dataSources: {
+          select: {
+            id: true,
+            name: true,
+            count: true,
+          },
+        },
+      },
+    });
+  }
+
   public async retrieveAllDailyOffersStatistics() {
     return this.prisma.allOffersCountStatistics.findMany({
       orderBy: {
@@ -329,13 +420,10 @@ class StatisticsService implements IStatisticsService {
     const topCategories = await this.getTopCategories();
     const totalOffers = await this.prisma.jobOffer.count();
 
-    console.time("Delete workplaces");
+    console.time("Delete top workplaces and categories");
     await this.prisma.topWorkplace.deleteMany({});
-    console.timeEnd("Delete workplaces");
-
-    console.time("Delete categories");
     await this.prisma.topCategory.deleteMany({});
-    console.timeEnd("Delete categories");
+    console.timeEnd("Delete top workplaces and categories");
 
     const topWorkplacesData = {
       connectOrCreate: topWorkplaces.map(place => ({

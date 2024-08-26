@@ -8,6 +8,7 @@ import { debounce } from "@/utils/debounce";
 
 import InputControlled from "@/components/common/form/inputs-controlled/InputControlled.vue";
 import SelectControlled, { type SelectControlledItem } from "@/components/common/form/inputs-controlled/SelectControlled.vue";
+import OffersFiltersTopBarInfoPopover from "./OffersFiltersTopBarInfoPopover.vue";
 
 const sortItems: SelectControlledItem[] = [
   {
@@ -34,7 +35,10 @@ watch(
 </script>
 <template>
   <div class="bg-card flex w-full flex-row gap-2 max-lg:pt-2">
-    <InputControlled :name="inputNames.search" label="Szukaj" placeholder="Szukaj.." type="search" label-sr-only full-width />
+    <div class="relative flex w-full flex-row items-center gap-2">
+      <InputControlled :name="inputNames.search" label="Szukaj" placeholder="Szukaj.." type="search" label-sr-only full-width />
+      <OffersFiltersTopBarInfoPopover />
+    </div>
     <SelectControlled name="orderBy" label="Sortuj" label-sr-only :items="sortItems" class-name="w-min sm:w-[200px]" />
   </div>
 </template>

@@ -23,6 +23,7 @@ class OffersRouter {
     router.post("/scrape/pracuj", guardSecret(SECRET_PHRASE), this.offersController.scrapePracujData);
     router.post("/scrape/solidjobs", guardSecret(SECRET_PHRASE), this.offersController.scrapeSolidJobsData);
     router.post("/scrape/justjoin", guardSecret(SECRET_PHRASE), this.offersController.scrapeJustJoinData);
+    router.post("/scrape/nofluffjobs", guardSecret(SECRET_PHRASE), this.offersController.scrapperNoFluffJobsData);
     // ----
     router.delete("/delete-outdated", guardSecret(SECRET_PHRASE), this.offersController.deleteOutdatedOffers);
     router.post("/update-workplaces-count", guardSecret(SECRET_PHRASE), this.offersController.updateWorkplacesCounts);

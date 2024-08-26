@@ -1,17 +1,16 @@
 import dayjs from "dayjs";
-import type { Browser, Page } from "puppeteer";
+import { type Browser, type Page } from "puppeteer";
 
 import type { JobOffer, ScrappedDataResponse } from "shared/src/offers/offers.types";
 
 import { generateId } from "@/utils/generate-id";
-
-import { JUSTJOIN_DATA_FILENAME } from "@/components/offers/helpers/offers.constants";
 import { isContractTypesArr } from "@/components/offers/helpers/offers.utils";
 
 import { ErrorHandlerController } from "@/components/error/error-handler.controller";
 import { ScrapperBase, type ScrapperBaseProps } from "@/components/offers/scrapper/scrapper-base";
 
 import type { JobOfferJustjoin } from "@/types/offers/justjoin.types";
+import { JOB_DATA_SOURCES } from "@/misc/constants";
 
 const VIEWPORT_WIDTH = 800;
 const VIEWPORT_HEIGHT = 980;
@@ -25,9 +24,7 @@ class ScrapperJustjoin extends ScrapperBase {
   }
 
   public getScrappedData = async (): Promise<ScrappedDataResponse> => {
-    const data = await this.saveScrappedData<JobOffer>({
-      fileName: JUSTJOIN_DATA_FILENAME,
-    });
+    const data = await this.saveScrappedData<JobOffer>();
 
     return { createdAt: new Date(Date.now()).toISOString(), data: data || [] };
   };
@@ -56,7 +53,7 @@ class ScrapperJustjoin extends ScrapperBase {
             const contentType = response.headers()["content-type"];
             if (contentType && contentType.includes("application/json")) {
               const res = await response.json();
-              console.log("Response ok", url);
+              console.log("Justjoin url: ", url);
 
               offers.push(...res.data);
             }
@@ -68,17 +65,17 @@ class ScrapperJustjoin extends ScrapperBase {
 
       await page?.goto(this.url, { waitUntil: "networkidle2" });
 
-      await page
+      const cookieBtn = await page
         ?.waitForSelector("#cookiescript_accept", {
           timeout: 5000,
         })
-        .then(async () => {
-          await page?.click("#cookiescript_accept");
-          console.log("Clicked cookie consent");
-        })
-        .catch(err => {
-          console.log("Cookie consent cannot be clicked", err);
+        .catch(() => {
+          console.log("Cookie consent not found");
+          return;
         });
+
+      await cookieBtn?.click();
+      await cookieBtn?.dispose();
 
       const content = await page?.evaluate(() => {
         const scriptTag = document.querySelector('script[id="__NEXT_DATA__"]');
@@ -155,7 +152,8 @@ class ScrapperJustjoin extends ScrapperBase {
       return {
         id: generateId(idHash),
         dataSourceCode: "justjoin",
-        slug: offer?.slug,
+        dataSource: JOB_DATA_SOURCES.justjoin,
+        slug: "",
         createdAt: offer?.publishedAt,
         expirationDate,
         positionName: offer?.title,

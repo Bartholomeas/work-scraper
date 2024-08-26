@@ -7,7 +7,7 @@ class BrowserManager {
   private browser: Browser | undefined;
   private static instance: BrowserManager;
 
-  constructor() {}
+  private constructor() {}
 
   public static getInstance(): BrowserManager {
     if (!BrowserManager.instance) BrowserManager.instance = new BrowserManager();
@@ -53,13 +53,11 @@ class BrowserManager {
 
   public closeBrowserInstance = async (): Promise<void> => {
     try {
-      if (this.browser) {
-        // await Promise.all((await this.browser.pages()).map(page => page.close()));
-        await this.browser.close();
-        console.log("Closed browser instance.");
-        this.browser = undefined;
-      }
-      return;
+      if (!this.browser) return;
+      // await Promise.all((await this.browser.pages()).map(page => page.close()));
+      await this.browser.close();
+      console.log("Closed browser instance.");
+      this.browser = undefined;
     } catch (err) {
       throw ErrorHandlerController.handleError(err);
     }

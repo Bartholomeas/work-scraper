@@ -7,10 +7,10 @@ import { offersQueryParamsSchema } from "shared/src/offers/offers.schemas";
 import { ErrorHandlerController } from "@/components/error/error-handler.controller";
 import { ScrapperController } from "@/components/offers/scrapper/scrapper.controller";
 import { OffersCategoriesService } from "@/components/offers/service/offers-categories.service";
-import { StatisticsService } from "@/components/statistics/statistics.service";
+
+import { statisticsModule } from "@/components/statistics/statistics.module";
 
 import type { OffersService } from "@/components/offers/service/offers.service";
-import { StatisticsController } from "@/components/statistics/statistics.controller";
 
 puppeteer.use(StealthPlugin());
 
@@ -23,6 +23,7 @@ class OffersController {
     this.offersService = offersService;
     this.offersCategoriesService = new OffersCategoriesService();
     this.scrapperController = _scrapperController || new ScrapperController(offersService);
+    statisticsModule.controller;
   }
 
   public updateCategoriesCounts = async (req: Request, res: Response, next: NextFunction) => {
@@ -112,9 +113,7 @@ class OffersController {
   };
 
   private generateScrappedStatistics = async (): Promise<void> => {
-    // Generate general stats from stats controller // Not 100% sure its best way to invoke another controller here because of SOLID principles
-    const statsService = new StatisticsService();
-    const statsController = new StatisticsController(statsService);
+    const statsController = statisticsModule.controller;
 
     // Without Promise.all as it needs to be called in this order
     await this.offersService.updateWorkplacesCounts();
@@ -124,7 +123,7 @@ class OffersController {
     await statsController.generateDailyPositionsStatistics();
     await statsController.generateDailyCategoriesStatistics();
     await statsController.generateDailyWorkplacesStatistics();
-    await statsService.generateGeneralStatistics();
+    await statsController.generateGeneralStatisticsCommand();
   };
 
   //  Scrappers
@@ -147,6 +146,14 @@ class OffersController {
   public scrapeJustJoinData = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       this.scrapperController?.scrapeJustJoinData();
+      res.status(204).json({});
+    } catch (err) {
+      next(ErrorHandlerController.handleError(err));
+    }
+  };
+  public scrapperNoFluffJobsData = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      this.scrapperController?.scrapeNoFluffJobsData();
       res.status(204).json({});
     } catch (err) {
       next(ErrorHandlerController.handleError(err));

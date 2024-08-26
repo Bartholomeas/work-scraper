@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 
-import { JUSTJOIN_NAME, PRACUJ_NAME, SOLID_NAME } from "@/misc/constants";
+import { JUSTJOIN_NAME, NOFLUFF_NAME, PRACUJ_NAME, SOLID_NAME } from "@/misc/constants";
 import { ERROR_CODES } from "@/misc/error.constants";
 
 import { AppErrorController } from "@/components/error/app-error.controller";
@@ -65,6 +65,10 @@ class OffersCategoriesService implements IOffersCategoriesService {
           {
             id: "173defa4-4ede-49ef-8f31-f957c6108076",
             value: SOLID_NAME,
+          },
+          {
+            id: "6c41e303-746b-4ca9-a3c8-eec5d5ecd702",
+            value: NOFLUFF_NAME,
           },
         ],
       } as OffersBaseCategories["dataSources"];

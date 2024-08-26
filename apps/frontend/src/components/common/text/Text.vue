@@ -3,7 +3,7 @@ import { computed, type HTMLAttributes } from "vue";
 import { textVariants, type TextVariants } from "@/components/common/text/Text.variants";
 import { cn } from "@/utils/utils";
 
-interface TextProps {
+export interface TextProps {
   size?: TextVariants["size"];
   align?: TextVariants["align"];
   weight?: TextVariants["weight"];

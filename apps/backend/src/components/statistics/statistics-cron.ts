@@ -5,7 +5,7 @@ class StatisticsCron extends BaseCron {
   private statsController: IStatisticsController;
 
   constructor(statsController: IStatisticsController) {
-    super("0 19 * * *");
+    super("1 19 * * *");
     this.statsController = statsController;
   }
 
@@ -21,6 +21,9 @@ class StatisticsCron extends BaseCron {
 
     this.logTimestampWithMessage("Generate workplaces stats");
     await this.statsController.generateDailyWorkplacesStatistics();
+
+    this.logTimestampWithMessage("Generate datasources stats");
+    await this.statsController.generateDailyDataSourcesStatistics();
   }
 }
 

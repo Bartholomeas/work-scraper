@@ -84,10 +84,19 @@ model SalaryRange {
   @@index([jobOfferId])
 }
 
+model DataSource {
+  id        String     @id @default(uuid())
+  name      String     @unique
+  value     String
+  jobOffers JobOffer[]
+}
+
 model JobOffer {
   id             String          @id @default(uuid())
   slug           String
   positionName   String
+  dataSourceId   String?
+  dataSource     DataSource?     @relation(fields: [dataSourceId], references: [id])
   dataSourceCode String?
   description    String?
   createdAt      DateTime?       @default(now())
@@ -105,6 +114,7 @@ model JobOffer {
   offerUrls      OfferUrl[]      @relation("OfferUrls")
 
   @@index([companyName])
+  @@index([dataSourceId])
 }
 
 // Probably to delete as I fetch these general stats with GeneralStatistics
@@ -172,8 +182,8 @@ model CategorySingleStatistic {
 }
 
 model CategoriesStatistics {
-  id          String                    @id @default(uuid())
-  createdAt   DateTime?                 @default(now())
+  id         String                    @id @default(uuid())
+  createdAt  DateTime?                 @default(now())
   categories CategorySingleStatistic[]
 }
 
@@ -191,4 +201,21 @@ model WorkplacesStatistics {
   id         String                     @id @default(uuid())
   createdAt  DateTime?                  @default(now())
   workplaces WorkplaceSingleStatistic[]
+}
+
+model DataSourceSingleStatistic {
+  id                      String                 @id @default(uuid())
+  createdAt               DateTime?              @default(now())
+  name                    String
+  count                   Int                    @default(0)
+  dataSourcesStatisticsId String?
+  dataSourcesStatistics   DataSourcesStatistics? @relation(fields: [dataSourcesStatisticsId], references: [id], onDelete: Cascade)
+
+  @@index([dataSourcesStatisticsId])
+}
+
+model DataSourcesStatistics {
+  id          String                      @id @default(uuid())
+  createdAt   DateTime?                   @default(now())
+  dataSources DataSourceSingleStatistic[]
 }

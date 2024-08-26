@@ -140,15 +140,7 @@ class OffersService implements IOffersService {
       const data = await this.prisma.jobOffer.findMany({
         ...OfferHelper.getDefaultParams({ ...params, ...defaultParams } as OffersQueryParams),
         where: OfferHelper.getJobOffersConditions({ ...params, ...defaultParams } as OffersQueryParams),
-        // where: {
-        //   positionLevels: {
-        //     some: {
-        //       value: {
-        //         in: ["junior", "senior"],
-        //       },
-        //     },
-        //   },
-        // },
+
         select: {
           id: true,
           createdAt: true,
@@ -156,6 +148,12 @@ class OffersService implements IOffersService {
           positionName: true,
           companyName: true,
           dataSourceCode: true,
+          dataSource: {
+            select: {
+              name: true,
+              value: true,
+            },
+          },
           company: {
             select: {
               name: true,
@@ -243,7 +241,6 @@ class OffersService implements IOffersService {
       throw ErrorHandlerController.handleError(err);
     }
   }
-
   /**
    * @description - Saves passed JobOffer array to database
    * @param {JobOffer[]} offers
@@ -253,19 +250,30 @@ class OffersService implements IOffersService {
       if (!offers.length) return;
       console.log("Saving scrapped data..");
 
-      const upsertOfferPromises = offers
-        ?.filter(offer => offer?.positionName)
-        ?.map(offer => {
-          const parsedOffer = OfferHelper.parseJobOfferToPrismaModel(offer);
-          return this.prisma.jobOffer.upsert({
-            where: { id: offer?.id },
-            create: parsedOffer as never,
-            update: { ...parsedOffer, updatedAt: new Date() } as never,
-          });
+      const batchSize = 50;
+      const parsedOffers = offers.filter(offer => offer?.positionName).map(offer => OfferHelper.parseJobOfferToPrismaModel(offer));
+
+      for (let i = 0; i < parsedOffers.length; i += batchSize) {
+        const batch = parsedOffers.slice(i, i + batchSize);
+
+        await this.prisma.$transaction(async prisma => {
+          for (const offer of batch) {
+            await prisma.jobOffer.upsert({
+              where: { id: offer.id },
+              create: offer,
+              update: {
+                ...offer,
+                updatedAt: new Date(),
+              },
+            });
+          }
         });
-      await this.prisma.$transaction(upsertOfferPromises);
-      return;
+        console.log(`Processed ${i + batch.length} out of ${parsedOffers.length} offers`);
+      }
+
+      console.log("All offers saved successfully");
     } catch (err) {
+      console.error("Error saving job offers:", err);
       throw ErrorHandlerController.handleError(err);
     }
   }

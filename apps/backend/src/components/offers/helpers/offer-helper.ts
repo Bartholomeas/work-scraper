@@ -1,4 +1,6 @@
+import { JOB_DATA_SOURCES } from "@/misc/constants";
 import { connectOrCreateArray } from "@/utils/prisma";
+import { Prisma } from "@prisma/client";
 import type { JobOffer, OffersQueryParams } from "shared/src/offers/offers.types";
 
 type PrismaJobOffer = JobOffer & {
@@ -13,14 +15,16 @@ type PrismaJobOffer = JobOffer & {
 };
 
 class OfferHelper {
-  // private static keysToMap = ["workplaces", "workModes", "contractTypes", "technologies", "workSchedules", "positionLevels"] as const;
-
   public static getJobOffersConditions(params: OffersQueryParams | undefined) {
+    const [mainSearch, categoriesString] = params?.search?.split(";") ?? [params?.search, undefined];
+    const categories = categoriesString?.split(",").filter(Boolean) ?? [];
+    const allCategories = [...new Set([...categories, ...(params?.categories ?? [])])];
+
     try {
       return {
-        ...this.getSearchConditions(params?.search),
+        ...this.getSearchConditions(mainSearch),
         AND: [
-          ...this.getCategoriesConditions(params?.categories),
+          ...this.getCategoriesConditions(allCategories),
           ...this.getDataSourcesConditions(params?.dataSources),
           ...this.getPositionLevelsConditions(params?.positionLevels),
           ...this.getContractTypesConditions(params?.contractTypes),
@@ -51,60 +55,21 @@ class OfferHelper {
   }
 
   public static getSearchConditions(search?: OffersQueryParams["search"]) {
-    return search?.trim()
+    const searchValue = search?.trim();
+
+    return searchValue
       ? {
           OR: [
             {
               positionName: {
-                contains: search,
-              },
-            },
-            {
-              description: {
-                contains: search,
+                contains: searchValue,
               },
             },
             {
               companyName: {
-                contains: search,
+                contains: searchValue,
               },
             },
-            // {
-            //   workplaces: {
-            //     some: {
-            //       value: {
-            //         contains: search,
-            //       },
-            //     },
-            //   },
-            // },
-            // {
-            //   technologies: {
-            //     some: {
-            //       value: {
-            //         contains: search,
-            //       },
-            //     },
-            //   },
-            // },
-            // {
-            //   workModes: {
-            //     some: {
-            //       value: {
-            //         contains: search,
-            //       },
-            //     },
-            //   },
-            // },
-            // {
-            //   contractTypes: {
-            //     some: {
-            //       value: {
-            //         contains: search,
-            //       },
-            //     },
-            //   },
-            // },
           ],
         }
       : {};
@@ -134,16 +99,6 @@ class OfferHelper {
         },
       },
     ];
-    // All positionLevels must match (idk which approach is better)
-    // return Array.isArray(positionLevels) && positionLevels.length > 0
-    //   ? positionLevels.map(value => ({
-    //       positionLevels: {
-    //         some: {
-    //           value,
-    //         },
-    //       },
-    //     }))
-    //   : [];
   }
 
   public static getContractTypesConditions(contractTypes?: OffersQueryParams["contractTypes"]) {
@@ -224,15 +179,23 @@ class OfferHelper {
     });
   }
 
-  public static parseJobOfferToPrismaModel(offer: JobOffer) {
-    const offerUrls = offer?.offerUrls?.map(el => ({
+  public static parseJobOfferToPrismaModel(offer: JobOffer): Prisma.JobOfferCreateInput {
+    const uniqueOfferUrls = [...new Set(offer?.offerUrls)]?.map(el => ({
       value: el,
     }));
 
+    const dataSource = Object.values(JOB_DATA_SOURCES)?.find(el => el.value === offer?.dataSourceCode);
     const salaryRange =
       offer?.salaryRange && offer?.salaryRange?.length > 0
         ? {
-            create: offer?.salaryRange?.map(salary => ({
+            create: Array.from(
+              new Map(
+                offer.salaryRange.map(salary => [
+                  `${salary?.min}-${salary?.max}-${salary?.currency}-${salary?.type}-${salary?.timeUnit}`,
+                  salary,
+                ]),
+              ).values(),
+            ).map(salary => ({
               min: salary?.min,
               max: salary?.max,
               currency: salary?.currency,
@@ -246,6 +209,15 @@ class OfferHelper {
       positionName: offer?.positionName,
       slug: offer?.slug ?? offer?.id,
       dataSourceCode: offer?.dataSourceCode,
+      dataSource: {
+        connectOrCreate: {
+          where: { name: dataSource?.name },
+          create: {
+            name: dataSource?.name ?? "Brak kategorii",
+            value: dataSource?.value ?? "uncategorized",
+          },
+        },
+      },
       description: offer?.description,
       expirationDate: offer?.expirationDate,
       positionLevels: connectOrCreateArray(offer.positionLevels),
@@ -265,13 +237,13 @@ class OfferHelper {
       workModes: connectOrCreateArray(offer?.workModes),
       workSchedules: connectOrCreateArray(offer?.workSchedules),
       technologies: connectOrCreateArray(offer?.technologies),
-      offerUrls: offerUrls ? { create: offerUrls } : undefined,
+      offerUrls: uniqueOfferUrls ? { create: uniqueOfferUrls } : undefined,
       salaryRange,
       company: {
         connectOrCreate: {
-          where: { name: offer?.company?.name },
+          where: { name: offer?.company?.name ?? "Nieznana" },
           create: {
-            name: offer?.company?.name ?? "Nieznana firma",
+            name: offer?.company?.name ?? "Nieznana",
             logoUrl: offer?.company?.logoUrl,
           },
         },
