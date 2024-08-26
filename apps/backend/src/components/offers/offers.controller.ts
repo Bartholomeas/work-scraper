@@ -159,6 +159,15 @@ class OffersController {
       next(ErrorHandlerController.handleError(err));
     }
   };
+
+  public scrapeTheProtocolData = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      this.scrapperController?.scrapeTheProtocolData();
+      res.status(204).json({});
+    } catch (err) {
+      next(ErrorHandlerController.handleError(err));
+    }
+  };
 }
 
 export { OffersController };

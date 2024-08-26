@@ -119,7 +119,6 @@ class ScrapperPracuj extends ScrapperBase {
       const page = await this.browser?.newPage();
       if (!page) return 1;
       if (page) await page.goto(this.url);
-      // // TODO: Uncomment that, added low pages to prevent overload
       const maxPagesElement = await page.$('span[data-test="top-pagination-max-page-number"]');
       let maxPagesValue = "1";
       if (maxPagesElement) {

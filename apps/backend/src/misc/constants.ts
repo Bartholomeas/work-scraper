@@ -17,6 +17,7 @@ export const JUSTJOIN_NAME = "justjoin";
 export const PRACUJ_NAME = "pracuj";
 export const SOLID_NAME = "solid.jobs";
 export const NOFLUFF_NAME = "nofluffjobs";
+export const THEPROTOCOL_NAME = "theprotocol";
 
 export const JOB_DATA_SOURCES = {
   justjoin: {
@@ -34,5 +35,9 @@ export const JOB_DATA_SOURCES = {
   nofluff: {
     name: "NoFluffJobs",
     value: NOFLUFF_NAME,
+  },
+  theprotocol: {
+    name: "TheProtocol",
+    value: THEPROTOCOL_NAME,
   },
 };

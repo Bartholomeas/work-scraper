@@ -11,7 +11,7 @@ export const dataSourceSchema = z.object({
   value: z.string(),
 });
 
-export const dataSourceCodesSchema = z.enum(["pracuj", "justjoin", "solid.jobs", "nofluffjobs"]);
+export const dataSourceCodesSchema = z.enum(["pracuj", "justjoin", "solid.jobs", "nofluffjobs", "theprotocol"]);
 
 export const currenciesSchema = z.enum(["pln", "usd"]);
 export const salaryTypeSchema = z.enum(["brutto", "netto"]);
@@ -39,12 +39,9 @@ export const jobOfferSchema = z.object({
   }),
   salaryRange: z.array(salaryRangeSchema),
   positionLevels: z.array(positionLevelsSchema),
-  // contractTypes: z.array(contractTypeCodesSchema),
   contractTypes: z.array(contractTypeCodesSchema),
   workModes: z.array(workModesSchema),
-  // workModes: z.array(z.string()),
   workSchedules: z.array(workSchedulesSchema),
-  // workSchedules: z.array(z.string()),
   technologies: z.array(z.string()),
   description: z.string().optional(),
   createdAt: z.string(),

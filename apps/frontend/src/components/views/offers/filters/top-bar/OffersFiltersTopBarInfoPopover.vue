@@ -18,7 +18,7 @@ import { Info } from "lucide-vue-next";
       <Text weight="bold">Jak korzystać z filtrów? </Text>
       <Separator class="my-2" />
       <Text class="whitespace-pre-wrap">
-        Domyślnie wyszukiwarka szuka na podstawie wpisanej frazy. Możesz jednak również wypisać kategorię, które chcesz, aby oferta
+        Domyślnie wyszukiwarka szuka na podstawie wpisanej frazy. Możesz jednak wypisać kategorie, które chcesz, aby oferta
         zawierała. Aby wyszukać oferty po kategoriach wpisz je po znaku
         <Text weight="bold" as="span" class="bg-background-lighter rounded-md p-1">";"</Text> na przykład:
         <Text weight="bold" as="span" class="bg-background-lighter w-full whitespace-pre-wrap break-all rounded-md p-1"
