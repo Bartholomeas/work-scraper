@@ -11,6 +11,7 @@ import { isContractTypesArr, isWorkModesArr, isWorkPositionLevelsArr } from "@/c
 import { ScrapperBase, type ScrapperBaseProps } from "@/components/offers/scrapper/scrapper-base";
 
 import { JobOfferTheProtocol } from "@/types/offers/theprotocol.types";
+import path from "path";
 
 class ScrapperTheProtocol extends ScrapperBase {
   protected maxPages: number;
@@ -100,12 +101,16 @@ class ScrapperTheProtocol extends ScrapperBase {
       });
 
       console.log("What..?", this.url, paginationElements);
+      const currentDir = __dirname;
+      const screenshotPath = path.join(currentDir, "..", "..", "screenshot.png");
+      await page.screenshot({ path: screenshotPath, fullPage: true });
+
       const lastPaginationElement = paginationElements[paginationElements.length - 1];
       console.log("Error lastPaginationElement: ", lastPaginationElement);
       const maxPagesValue = await page
         .evaluate(el => el.textContent, lastPaginationElement)
         .catch(err => {
-          console.log("Error evaluating page textContent");
+          console.log("Error evaluating page textContent", err);
           return "5";
         });
       return parseInt(maxPagesValue ?? "1", 10);
