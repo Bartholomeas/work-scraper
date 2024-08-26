@@ -9,5 +9,6 @@ const API_URL = import.meta.env.VITE_API_URL;
 export const OFFERS_URL = `${API_URL}/offers`;
 export const STATISTICS_URL = `${API_URL}/statistics`;
 export const STATISTICS_DAILY_URL = `${STATISTICS_URL}/daily`;
+export const NEWS_URL = `${API_URL}/news`;
 
 export const PAGE_NAME = "ITotyle";
