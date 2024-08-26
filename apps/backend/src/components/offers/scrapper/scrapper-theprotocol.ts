@@ -11,8 +11,6 @@ import { isContractTypesArr, isWorkModesArr, isWorkPositionLevelsArr } from "@/c
 import { ScrapperBase, type ScrapperBaseProps } from "@/components/offers/scrapper/scrapper-base";
 
 import { JobOfferTheProtocol } from "@/types/offers/theprotocol.types";
-import path from "node:path";
-import fs from "node:fs";
 
 class ScrapperTheProtocol extends ScrapperBase {
   protected maxPages: number;
@@ -97,16 +95,6 @@ class ScrapperTheProtocol extends ScrapperBase {
       if (!page) return 1;
       await page?.goto(this.url, { waitUntil: "networkidle2" });
 
-      const pageContent = await page.content();
-      const htmlFilePath = path.join(__dirname, "theprotocol_page_content.html");
-      fs.writeFile(htmlFilePath, pageContent, err => {
-        if (err) {
-          console.error(`Error saving page content: ${err}`);
-        } else {
-          console.log(`Page content saved to: ${htmlFilePath}`);
-        }
-      });
-
       await page.waitForSelector('nav[aria-label="Paginacja"]').catch(err => {
         console.log("Error while waiting for pagination nav", err);
       });
@@ -124,10 +112,6 @@ class ScrapperTheProtocol extends ScrapperBase {
       });
 
       console.log("Max pages:", lastPageNumber);
-
-      const currentDir = __dirname;
-      const screenshotPath = path.join(currentDir, "..", "..", "screenshot.png");
-      await page.screenshot({ path: screenshotPath, fullPage: true, captureBeyondViewport: true });
 
       return lastPageNumber;
     } catch (err) {

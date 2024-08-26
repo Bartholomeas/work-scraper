@@ -1,3 +1,5 @@
+import fs from "node:fs";
+import path from "node:path";
 import dayjs from "dayjs";
 import { type Browser, ElementHandle, type Page } from "puppeteer";
 
@@ -42,7 +44,6 @@ export class ScrapperNofluffjobs extends ScrapperBase {
       this.page?.on("response", response => {
         const url = response.url();
 
-        // if (url.includes("https://nofluffjobs.com/api/joboffers/main") || url.includes("https://nofluffjobs.com/api/search/posting")) {
         if (url.includes("https://nofluffjobs.com/api/search/posting")) {
           console.log("Nofluffjobs url: ", url);
 
@@ -89,7 +90,17 @@ export class ScrapperNofluffjobs extends ScrapperBase {
         ?.goto(this.url, { waitUntil: "networkidle2" })
         .then(() => this.pressCookieConsent(this.page))
         .then(async () => {
-          await this.setITCategory();
+          // await this.setITCategory();
+          await this.page?.screenshot({ path: path.join(__dirname, "nofluffjobs_page_content.html") });
+
+          // Save HTML page content
+          const pageContent = await this.page?.content();
+          if (pageContent) {
+            const htmlFilePath = path.join(__dirname, "nofluffjobs_page_content.html");
+            fs.writeFileSync(htmlFilePath, pageContent);
+            console.log(`Page content saved to: ${htmlFilePath}`);
+          }
+
           return this.page?.evaluateHandle(this.getLoadMoreButton);
         })
         .then(loadMoreBtn => {
@@ -102,6 +113,15 @@ export class ScrapperNofluffjobs extends ScrapperBase {
         })
         .catch(reject);
 
+      // const pageContent = this.page?.content().then(res => res);
+      // const htmlFilePath = path.join(__dirname, "theprotocol_page_content.html");
+      // fs.writeFile(htmlFilePath, pageContent, err => {
+      //   if (err) {
+      //     console.error(`Error saving page content: ${err}`);
+      //   } else {
+      //     console.log(`Page content saved to: ${htmlFilePath}`);
+      //   }
+      // });
       const waitUntilFinished = () =>
         new Promise<void>(resolveWait => {
           const interval = setInterval(() => {
@@ -201,9 +221,6 @@ export class ScrapperNofluffjobs extends ScrapperBase {
       const workplaces = this.standardizeWorkplaces(offer?.location?.places);
 
       const todayDate = dayjs(new Date());
-
-      // Currently doesnt adding all offerurls as it takes a lot of place in DB relations; to rethink
-      // const offerUrls = [`https://nofluffjobs.com/pl/job/${offer?.url}`].concat(offer?.location?.places?.map(place => `https://nofluffjobs.com/pl/job/${place?.url}`));
 
       const expirationDate = offer?.renewed
         ? dayjs(new Date(offer?.renewed)).add(1, "month").toISOString()
