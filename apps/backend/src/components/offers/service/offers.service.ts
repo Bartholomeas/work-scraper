@@ -252,17 +252,18 @@ class OffersService implements IOffersService {
 
       const batchSize = 50;
       const parsedOffers = offers.filter(offer => offer?.positionName).map(offer => OfferHelper.parseJobOfferToPrismaModel(offer));
-
       for (let i = 0; i < parsedOffers.length; i += batchSize) {
         const batch = parsedOffers.slice(i, i + batchSize);
 
         await this.prisma.$transaction(async prisma => {
           for (const offer of batch) {
+            const { offerUrls, salaryRange, ...restOffer } = offer;
+
             await prisma.jobOffer.upsert({
               where: { id: offer.id },
               create: offer,
               update: {
-                ...offer,
+                ...restOffer,
                 updatedAt: new Date(),
               },
             });

@@ -1,4 +1,5 @@
-import { type Browser, type Page } from "puppeteer";
+import { type Browser } from "puppeteer";
+import dayjs from "dayjs";
 
 import type { CurrencyCodes, JobOffer, ScrappedDataResponse } from "shared/src/offers/offers.types";
 
@@ -10,7 +11,6 @@ import { isContractTypesArr, isWorkModesArr, isWorkPositionLevelsArr } from "@/c
 import { ScrapperBase, type ScrapperBaseProps } from "@/components/offers/scrapper/scrapper-base";
 
 import { JobOfferTheProtocol } from "@/types/offers/theprotocol.types";
-import dayjs from "dayjs";
 
 class ScrapperTheProtocol extends ScrapperBase {
   protected maxPages: number;
@@ -27,41 +27,33 @@ class ScrapperTheProtocol extends ScrapperBase {
 
   protected standardizeData(offers: JobOfferTheProtocol[]): JobOffer[] {
     if (!offers?.length) return [];
-    return offers.map(this.mapOfferToJobOffer);
+    return offers.map(offer => {
+      const idHash = `${offer?.title}-${offer?.employer}-theprotocol`;
+
+      return {
+        id: generateId(idHash),
+        dataSourceCode: THEPROTOCOL_NAME,
+        dataSource: JOB_DATA_SOURCES.theprotocol,
+        slug: "",
+        positionName: offer?.title,
+        company: {
+          logoUrl: null,
+          name: offer?.employer,
+        },
+        positionLevels: this.standardizePositionLevels(offer?.positionLevels),
+        contractTypes: this.standardizeContractTypes(offer?.typesOfContracts),
+        workModes: this.standardizeWorkModes(offer?.workModes),
+        workSchedules: ["full-time"] as JobOffer["workSchedules"],
+        salaryRange: this.standardizeSalary(offer?.typesOfContracts),
+        technologies: offer?.technologies,
+        description: undefined,
+        createdAt: dayjs(new Date(offer?.publicationDateUtc)).toISOString(),
+        expirationDate: dayjs(new Date(offer?.publicationDateUtc)).add(1, "month").toISOString(),
+        offerUrls: [`https://theprotocol.it/praca/${offer?.offerUrlName}`],
+        workplaces: offer?.workplace?.map(this.mapWorkplace),
+      } satisfies JobOffer;
+    });
   }
-
-  private mapOfferToJobOffer = (offer: JobOfferTheProtocol): JobOffer => {
-    const positionLevels = this.standardizePositionLevels(offer?.positionLevels);
-    const contractTypes = this.standardizeContractTypes(offer?.typesOfContracts);
-    const workSchedules = ["full-time"] as JobOffer["workSchedules"];
-    const workModes = this.standardizeWorkModes(offer?.workModes);
-    const salaryRange = this.standardizeSalary(offer?.typesOfContracts);
-
-    const idHash = `${offer?.title}-${offer?.employer}-theprotocol`;
-
-    return {
-      id: generateId(idHash),
-      dataSourceCode: THEPROTOCOL_NAME,
-      dataSource: JOB_DATA_SOURCES.theprotocol,
-      slug: "",
-      positionName: offer?.title,
-      company: {
-        logoUrl: null,
-        name: offer?.employer,
-      },
-      positionLevels,
-      contractTypes,
-      workModes,
-      workSchedules,
-      salaryRange,
-      technologies: offer?.technologies,
-      description: undefined,
-      createdAt: dayjs(new Date(offer?.publicationDateUtc)).toISOString(),
-      expirationDate: dayjs(new Date(offer?.publicationDateUtc)).add(1, "month").toISOString(),
-      offerUrls: [`https://theprotocol.it/praca/${offer?.offerUrlName}`],
-      workplaces: offer?.workplace?.map(this.mapWorkplace),
-    } satisfies JobOffer;
-  };
 
   private mapWorkplace = (place: JobOfferTheProtocol["workplace"][0]): { city: string; address: string | null } => {
     const [placeCity, placeAddress] = place?.location.split(",") ?? ["", null];
@@ -71,16 +63,6 @@ class ScrapperTheProtocol extends ScrapperBase {
     };
   };
 
-  private async acceptCookieConsent(page: Page | undefined): Promise<void> {
-    if (!page) return;
-    try {
-      await page.waitForSelector('[data-test="button-submitCookie"]', { timeout: 500 });
-      await page.click('[data-test="button-submitCookie"]');
-    } catch (err) {
-      console.log("Cannot press cookie consent.");
-    }
-  }
-
   protected scrapePage = async <T>(pageNumber: number, retries = 3): Promise<T[] | undefined> => {
     const page = await this.browser?.newPage();
     if (!page) return [];
@@ -88,13 +70,9 @@ class ScrapperTheProtocol extends ScrapperBase {
       await this.listenAndRestrictRequests(page);
       console.log(`Scrapping TheProtocol page: ${pageNumber}`);
       await page.goto(`${this.url}?pageNumber=${pageNumber}`, { waitUntil: "networkidle2" });
-      await this.acceptCookieConsent(page).catch(err => {
-        console.log("Cannot accept cookie consent: ", err);
-        return undefined;
-      });
 
       await page.waitForSelector('script[id="__NEXT_DATA__"]').catch(err => {
-        console.log("Pracuj nextdata wait error: ", err);
+        console.log("TheProtocol nextdata wait error: ", err);
         return undefined;
       });
 
@@ -119,9 +97,7 @@ class ScrapperTheProtocol extends ScrapperBase {
       const paginationElements = await page.$$('a[data-test="anchor-pageNumber"]');
       const lastPaginationElement = paginationElements[paginationElements.length - 1];
       const maxPagesValue = await page.evaluate(el => el.textContent, lastPaginationElement);
-      const maxPages = parseInt(maxPagesValue ?? "1", 10);
-
-      return maxPages;
+      return parseInt(maxPagesValue ?? "1", 10);
     } catch (err) {
       console.log("Error while getting max pages");
       return 1;

@@ -204,6 +204,7 @@ class OfferHelper {
             })),
           }
         : undefined;
+
     return {
       id: offer.id,
       positionName: offer?.positionName,
