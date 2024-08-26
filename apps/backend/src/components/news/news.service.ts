@@ -1,4 +1,6 @@
-const mockNews = [
+import { type NewsResponse } from "shared/src/news/news.types";
+
+const mockNews: NewsResponse = [
   {
     id: "08944e5c-320a-4a80-9938-945ee8986b1b",
     title: "New Feature: Dark Mode",
@@ -40,8 +42,7 @@ const mockNews = [
 class NewsService {
   constructor() {}
 
-  public async getAll(): Promise<unknown> {
-    console.log("COJES", mockNews);
+  public async getAll(): Promise<NewsResponse> {
     return new Promise(resolve => {
       setTimeout(() => {
         resolve(mockNews);
