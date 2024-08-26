@@ -1,5 +1,3 @@
-import fs from "node:fs";
-import path from "node:path";
 import dayjs from "dayjs";
 import { type Browser, ElementHandle, type Page } from "puppeteer";
 
@@ -11,11 +9,16 @@ import { JOB_DATA_SOURCES, NOFLUFF_NAME } from "@/misc/constants";
 
 import { isWorkPositionLevelsArr } from "@/components/offers/helpers/offers.utils";
 import { ScrapperBase, type ScrapperBaseProps } from "@/components/offers/scrapper/scrapper-base";
-import { ErrorHandlerController } from "@/components/error/error-handler.controller";
 
 import type { JobOfferNofluffJobs } from "@/types/offers/nofluffjobs.types";
 
 export class ScrapperNofluffjobs extends ScrapperBase {
+  private keepLoading: boolean = true;
+  private loadAttempts: number = 0;
+  private readonly maxLoadAttempts: number = 5;
+  private readonly maxRetries: number = 4;
+  private readonly retryDelay: number = 3000;
+
   constructor(browser: Browser | undefined, props: ScrapperBaseProps) {
     super(browser, props);
     this.maxPages = 1;
@@ -28,7 +31,6 @@ export class ScrapperNofluffjobs extends ScrapperBase {
 
   protected async scrapePage<T>(pageNumber: number): Promise<T[] | undefined> {
     await this.initializePage();
-    const wait = (duration = 100) => new Promise(resolve => setTimeout(resolve, duration));
 
     await this.page?.setViewport({
       width: 1200,
@@ -39,102 +41,74 @@ export class ScrapperNofluffjobs extends ScrapperBase {
     const data: T[] = [];
 
     return new Promise<T[] | undefined>((resolve, reject) => {
-      let keepLoading = true;
-
-      this.page?.on("response", response => {
+      this.page?.on("response", async response => {
         const url = response.url();
-
         if (url.includes("https://nofluffjobs.com/api/search/posting")) {
           console.log("Nofluffjobs url: ", url);
-
-          response
-            .json()
-            .then(res => {
-              const contentType = response.headers()["content-type"];
-              if (contentType && contentType.includes("application/json")) {
-                if (res?.postings) data.push(...res.postings);
-              }
-
-              this.page
-                ?.evaluateHandle(this.getLoadMoreButton)
-                .then(loadMoreBtn => {
-                  const element = loadMoreBtn?.asElement() as ElementHandle<Element>;
-                  if (element) {
-                    wait(50).then(() => {
-                      element?.click();
-                      element?.dispose();
-                    });
-
-                    this.page
-                      ?.waitForFunction(el => el.textContent?.includes("Pokaż kolejne"), {}, element)
-                      .catch(() => {
-                        keepLoading = false;
-                      });
-                  } else {
-                    keepLoading = false;
-                  }
-                })
-                .catch(err => {
-                  keepLoading = false;
-                  reject(ErrorHandlerController.handleError(err));
-                });
-            })
-            .catch(err => {
-              keepLoading = false;
-              reject(ErrorHandlerController.handleError(err));
-            });
+          try {
+            const res = await response.json();
+            const contentType = response.headers()["content-type"];
+            if (contentType && contentType.includes("application/json")) {
+              if (res?.postings) data.push(...res.postings);
+            }
+            await this.clickLoadMoreButtonWithRetry();
+          } catch (err) {
+            console.error("Error processing response:", err);
+            this.keepLoading = false;
+          }
         }
       });
 
       this.page
-        ?.goto(this.url, { waitUntil: "networkidle2" })
+        ?.goto(this.url, { waitUntil: "networkidle2", timeout: 60000 })
         .then(() => this.pressCookieConsent(this.page))
-        .then(async () => {
-          // await this.setITCategory();
-          await this.page?.screenshot({ path: path.join(__dirname, "nofluffjobs_page_content.html") });
-
-          // Save HTML page content
-          const pageContent = await this.page?.content();
-          if (pageContent) {
-            const htmlFilePath = path.join(__dirname, "nofluffjobs_page_content.html");
-            fs.writeFileSync(htmlFilePath, pageContent);
-            console.log(`Page content saved to: ${htmlFilePath}`);
-          }
-
-          return this.page?.evaluateHandle(this.getLoadMoreButton);
-        })
-        .then(loadMoreBtn => {
-          if (loadMoreBtn && loadMoreBtn.asElement()) {
-            const element = loadMoreBtn.asElement() as ElementHandle<Element>;
-            element?.click();
-          } else {
-            keepLoading = false;
-          }
-        })
+        .then(() => this.clickLoadMoreButtonWithRetry())
         .catch(reject);
 
-      // const pageContent = this.page?.content().then(res => res);
-      // const htmlFilePath = path.join(__dirname, "theprotocol_page_content.html");
-      // fs.writeFile(htmlFilePath, pageContent, err => {
-      //   if (err) {
-      //     console.error(`Error saving page content: ${err}`);
-      //   } else {
-      //     console.log(`Page content saved to: ${htmlFilePath}`);
-      //   }
-      // });
-      const waitUntilFinished = () =>
-        new Promise<void>(resolveWait => {
-          const interval = setInterval(() => {
-            if (!keepLoading) {
-              clearInterval(interval);
-              resolveWait();
-            }
-          }, 500);
-        });
+      const waitUntilFinished = async () => {
+        while (this.keepLoading && this.loadAttempts < this.maxLoadAttempts) {
+          await this.wait(10000);
+          this.loadAttempts++;
+          if (!this.keepLoading || this.loadAttempts >= this.maxLoadAttempts) break;
+          await this.clickLoadMoreButtonWithRetry();
+        }
+        resolve(data);
+      };
 
-      waitUntilFinished().then(() => resolve(data));
+      waitUntilFinished();
     });
   }
+
+  private async clickLoadMoreButtonWithRetry(): Promise<void> {
+    for (let i = 0; i < this.maxRetries; i++) {
+      try {
+        const loadMoreBtn = await this.page?.evaluateHandle(this.getLoadMoreButton);
+        const element = loadMoreBtn?.asElement() as ElementHandle<Element>;
+        if (element) {
+          await element.click();
+          await this.wait(1000);
+          await element.dispose();
+          return;
+        } else {
+          console.log(`No 'Load More' button found (attempt ${i + 1}/${this.maxRetries})`);
+        }
+      } catch (err) {
+        console.error(`Error clicking 'Load More' button (attempt ${i + 1}/${this.maxRetries}):`, err);
+      }
+
+      if (i < this.maxRetries - 1) {
+        await this.wait(this.retryDelay);
+      }
+    }
+
+    console.log("Max retries reached. No more 'Load More' button found.");
+    this.keepLoading = false;
+  }
+
+  private wait(duration: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, duration));
+  }
+
   private async setITCategory() {
     try {
       const wait = (duration = 100) => new Promise(resolve => setTimeout(resolve, duration));
