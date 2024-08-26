@@ -67,7 +67,7 @@ export class ScrapperNofluffjobs extends ScrapperBase {
 
       const waitUntilFinished = async () => {
         while (this.keepLoading && this.loadAttempts < this.maxLoadAttempts) {
-          await this.wait(10000);
+          await this.wait(1000);
           this.loadAttempts++;
           if (!this.keepLoading || this.loadAttempts >= this.maxLoadAttempts) break;
           await this.clickLoadMoreButtonWithRetry();
