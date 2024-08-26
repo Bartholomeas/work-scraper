@@ -8,12 +8,12 @@
   },
   "scripts": {
     "build": "NODE_ENV=production && tsup --tsconfig tsconfig.json --format cjs,esm --dts",
-    "dev": "NODE_ENV=development && tsx watch src/server.ts",
+    "dev": "tsx watch --inspect src/server.ts",
     "start": "NODE_ENV=production && node dist/server.js",
     "lint": "eslint --fix --cache 'src/**/*.{ts,tsx}'",
     "type-check": "tsc --noEmit",
     "format": "eslint src/**/*.ts --fix",
-    "db:push": "NODE_ENV=development && dotenv -e .env -- pnpx prisma db push",
+    "db:push": "dotenv -e .env -- pnpx prisma db push",
     "db:push:test": "NODE_ENV=test && dotenv -e .env.test -- pnpx prisma db push",
     "db:studio": "NODE_ENV=development && dotenv -e .env -- pnpx prisma studio",
     "db:studio:test": "NODE_ENV=test && dotenv -e .env.test -- pnpx prisma studio",
@@ -63,11 +63,13 @@
     "@types/node": "^20.14.2",
     "@types/node-cron": "^3.0.11",
     "@types/supertest": "^6.0.2",
+    "config": "workspace:*",
     "dotenv-cli": "^7.4.2",
     "jest": "^29.7.0",
     "morgan": "^1.10.0",
     "prettier": "^3.2.5",
     "prisma": "^5.17.0",
+    "puppeteer-extra-plugin-user-data-dir": "^2.4.1",
     "shared": "workspace:*",
     "supertest": "^7.0.0",
     "ts-jest": "^29.1.5",
@@ -77,7 +79,6 @@
     "tsconfig-paths": "^4.2.0",
     "tsup": "^8.1.0",
     "tsx": "^4.15.7",
-    "typescript": "^5.5.4",
-    "config": "workspace:*"
+    "typescript": "^5.5.4"
   }
 }
