@@ -10,11 +10,12 @@ import { ScrapperCron } from "@/components/offers/scrapper/scrapper-cron";
 import { ScrapperJustjoin } from "@/components/offers/scrapper/scrapper-justjoin";
 import { ScrapperPracuj } from "@/components/offers/scrapper/scrapper-pracuj";
 import { ScrapperSolidJobs } from "@/components/offers/scrapper/scrapper-solidjobs";
+import { ScrapperTheProtocol } from "@/components/offers/scrapper/scrapper-theprotocol";
 import { ScrapperNofluffjobs } from "@/components/offers/scrapper/scrapper-nofluffjobs";
 
-import type { OffersService } from "@/components/offers/service/offers.service";
 import { StatisticsService } from "@/components/statistics/statistics.service";
-import { ScrapperTheProtocol } from "./scrapper-theprotocol";
+
+import type { OffersService } from "@/components/offers/service/offers.service";
 
 type ScrapperInstances =
   | typeof ScrapperPracuj
@@ -77,18 +78,18 @@ class ScrapperController implements IScrapperController {
           scrapper: ScrapperTheProtocol,
           url: THEPROTOCOL_URL,
         },
-        // {
-        //   scrapper: ScrapperPracuj,
-        //   url: PRACUJ_URL,
-        // },
-        // {
-        //   scrapper: ScrapperJustjoin,
-        //   url: JUSTJOIN_URL,
-        // },
-        // {
-        //   scrapper: ScrapperSolidJobs,
-        //   url: SOLID_URL,
-        // },
+        {
+          scrapper: ScrapperPracuj,
+          url: PRACUJ_URL,
+        },
+        {
+          scrapper: ScrapperJustjoin,
+          url: JUSTJOIN_URL,
+        },
+        {
+          scrapper: ScrapperSolidJobs,
+          url: SOLID_URL,
+        },
       ];
 
       for (const { scrapper, url } of scrappers) {
