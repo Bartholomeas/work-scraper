@@ -7,7 +7,7 @@ import { useGetNews } from "@/api/news/getNews";
 import Title from "@/components/common/title/Title.vue";
 
 import NewsCard from "@/components/views/news/single/NewsCard.vue";
-import NewsCardsSkeleton from "@/components/views/news/single/NewsCardSkeleton.vue";
+import NewsCardsSkeleton from "@/components/views/news/single/NewsCardsSkeleton.vue";
 
 const title = useTitle();
 title.value = `Aktualności | ${PAGE_NAME}`;
