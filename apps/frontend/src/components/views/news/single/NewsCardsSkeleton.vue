@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import NewsCardSkeleton from "./NewsCardSkeleton.vue";
+import NewsCardSkeleton from "./single/NewsCardSkeleton.vue";
 </script>
 
 <template>
