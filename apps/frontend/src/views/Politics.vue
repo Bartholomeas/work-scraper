@@ -17,11 +17,23 @@ const baseTextSize = "xl";
     <Title order="h1">Polityka strony</Title>
     <Separator />
     <PoliticsContentWrapper title="Nasze Cele 🎯">
-      <Text :size="baseTextSize"> Udostępniamy narzędzie do monitorowania ofert pracy w sektorze IT i technologii. </Text>
+      <Text :size="baseTextSize">
+        Udostępniamy narzędzie do monitorowania ofert pracy w sektorze IT i technologii, które ma charakter edukacyjny i niekomercyjny. Nasz
+        projekt jest dedykowany wyłącznie do celów naukowych, nie generuje korzyści majątkowych, i nie służy do celów komercyjnych.
+      </Text>
       <Text :size="baseTextSize">
         Naszym priorytetem jest upraszczanie procesu poszukiwania pracy, zbierając wszystkie dostępne oferty w jednym miejscu. Chcemy, aby
         kandydaci mieli pełny wgląd w rynek pracy. Nasza platforma jest zaprojektowana z myślą o użytkownikach, dostosowując się do ich
         dynamicznych potrzeb.
+      </Text>
+    </PoliticsContentWrapper>
+
+    <PoliticsContentWrapper title="Zgodność z Prawem 📜">
+      <Text :size="baseTextSize">
+        Wszystkie dane zbierane w ramach naszej platformy są uzyskiwane w sposób legalny, zgodnie z obowiązującymi przepisami prawa, w tym
+        Ustawą o ochronie baz danych z dnia 27 lipca 2001 r. (Dz. U. 2001 Nr 128 poz. 1402 z późn. zm.). Nasza działalność nie narusza praw
+        autorskich ani praw do baz danych. Projekt ma na celu wyłącznie cele naukowe i badawcze, a wszystkie zebrane informacje są
+        wykorzystywane zgodnie z ich przeznaczeniem edukacyjnym.
       </Text>
     </PoliticsContentWrapper>
 
