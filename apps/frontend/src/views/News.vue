@@ -8,6 +8,7 @@ import Title from "@/components/common/title/Title.vue";
 
 import NewsCard from "@/components/views/news/single/NewsCard.vue";
 import NewsCardsSkeleton from "@/components/views/news/single/NewsCardsSkeleton.vue";
+import NoResultsCard from "@/components/common/NoResultsCard.vue";
 
 const title = useTitle();
 title.value = `Aktualności | ${PAGE_NAME}`;
@@ -21,10 +22,13 @@ const { data: newsItems, isLoading } = useGetNews();
     <div v-if="isLoading">
       <NewsCardsSkeleton />
     </div>
-    <div class="grid gap-6 md:grid-cols-2" v-else>
+    <div class="grid gap-6 md:grid-cols-2" v-else-if="!isLoading && newsItems">
       <TransitionGroup name="card">
         <NewsCard v-for="newsItem in newsItems" :key="newsItem.id" :newsItem="newsItem" />
       </TransitionGroup>
+    </div>
+    <div v-else class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+      <NoResultsCard text="Brak aktualności..." />
     </div>
   </div>
 </template>
