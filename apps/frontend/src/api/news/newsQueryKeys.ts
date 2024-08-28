@@ -2,7 +2,7 @@ import { createQueryKeyFactory, type QueryFunctionContextCreator } from "@/lib/t
 
 const keyFactory = createQueryKeyFactory("news");
 export const newsQueryKeys = {
-  getNews: () => keyFactory.list("getOffers"),
+  getNews: () => keyFactory.list("getNews"),
 };
 
 export type NewsQueryFunctionContext = QueryFunctionContextCreator<typeof newsQueryKeys>;
