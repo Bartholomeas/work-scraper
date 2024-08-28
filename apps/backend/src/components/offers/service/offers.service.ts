@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 
 import type { JobOffer, JobOffersResponse, OffersQueryParams, OffersWorkplaceListItem } from "shared/src/offers/offers.types";
 
-import { OFFERS_METADATA_ID } from "@/misc/constants";
+import { OFFERS_METADATA_ID, PRACUJ_NAME } from "@/misc/constants";
 
 import { PrismaInstance } from "@/components/libs/prisma.instance";
 import { OfferHelper } from "@/components/offers/helpers/offer-helper";
@@ -139,7 +139,12 @@ class OffersService implements IOffersService {
     try {
       const data = await this.prisma.jobOffer.findMany({
         ...OfferHelper.getDefaultParams({ ...params, ...defaultParams } as OffersQueryParams),
-        where: OfferHelper.getJobOffersConditions({ ...params, ...defaultParams } as OffersQueryParams),
+        where: {
+          ...OfferHelper.getJobOffersConditions({ ...params, ...defaultParams } as OffersQueryParams),
+          dataSourceCode: {
+            not: PRACUJ_NAME,
+          },
+        },
 
         select: {
           id: true,
@@ -218,7 +223,12 @@ class OffersService implements IOffersService {
 
       const totalOffers = await this.prisma.jobOffer
         .count({
-          where: OfferHelper.getJobOffersConditions({ ...params, ...defaultParams } as OffersQueryParams),
+          where: {
+            dataSourceCode: {
+              not: PRACUJ_NAME,
+            },
+            ...OfferHelper.getJobOffersConditions({ ...params, ...defaultParams } as OffersQueryParams),
+          },
         })
         .catch(() => 0);
 

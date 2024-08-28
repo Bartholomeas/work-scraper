@@ -58,10 +58,10 @@ class OffersCategoriesService implements IOffersCategoriesService {
             id: "2db909e1-ec5f-4ad1-a6ef-7736ce1e1c5f",
             value: JUSTJOIN_NAME,
           },
-          {
-            id: "6a7a44cc-08d4-47e9-acb1-f2bb397d48b2",
-            value: PRACUJ_NAME,
-          },
+          // {
+          //   id: "6a7a44cc-08d4-47e9-acb1-f2bb397d48b2",
+          //   value: PRACUJ_NAME,
+          // },
           {
             id: "173defa4-4ede-49ef-8f31-f957c6108076",
             value: SOLID_NAME,
