@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const dbPath = path.join(__dirname, "..", "dev.db");
+const dbPath = path.join(__dirname, "..", "dev_INNY_BACKUP.db");
 const backupDir = path.join(__dirname, "..", "backups");
 const backupFile = path.join(backupDir, `dev-${new Date().toISOString().replace(/:/g, "-")}.db`);
 

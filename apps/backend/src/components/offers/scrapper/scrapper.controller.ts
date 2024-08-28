@@ -70,18 +70,18 @@ class ScrapperController implements IScrapperController {
   public scrapeOffersData = async () => {
     try {
       const scrappers = [
-        // {
-        //   scrapper: ScrapperNofluffjobs,
-        //   url: NOFLUFFJOBS_URL,
-        // },
-        // {
-        //   scrapper: ScrapperTheProtocol,
-        //   url: THEPROTOCOL_URL,
-        // },
-        // {
-        //   scrapper: ScrapperPracuj,
-        //   url: PRACUJ_URL,
-        // },
+        {
+          scrapper: ScrapperNofluffjobs,
+          url: NOFLUFFJOBS_URL,
+        },
+        {
+          scrapper: ScrapperTheProtocol,
+          url: THEPROTOCOL_URL,
+        },
+        {
+          scrapper: ScrapperPracuj,
+          url: PRACUJ_URL,
+        },
         {
           scrapper: ScrapperJustjoin,
           url: JUSTJOIN_URL,
