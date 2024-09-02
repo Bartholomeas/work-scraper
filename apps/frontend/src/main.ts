@@ -1,6 +1,7 @@
 import { createApp } from "vue";
 import { VueQueryPlugin } from "vue-query";
 import { router } from "@/router";
+import VueGtag from "vue-gtag-next";
 
 import "./assets/index.css";
 import App from "./App.vue";
@@ -17,4 +18,10 @@ app.use(VueQueryPlugin, {
     },
   },
 });
+app.use(VueGtag, {
+  property: {
+    id: `${import.meta.env.VITE_GOOGLE_ANALYTICS_ID}`,
+  },
+});
+
 app.mount("#app");

@@ -32,6 +32,7 @@
     "tailwindcss-animate": "^1.0.7",
     "vee-validate": "^4.13.0",
     "vue": "^3.4.21",
+    "vue-gtag-next": "^1.14.0",
     "vue-query": "^1.26.0",
     "vue-router": "^4.3.2",
     "zod": "^3.23.8"
