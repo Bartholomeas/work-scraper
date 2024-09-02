@@ -17,6 +17,7 @@ import OfferBadges from "@/components/views/offers/single/OfferBadges.vue";
 
 import { ArrowRight, Building2, Calendar, HardDrive, Info, MapPin } from "lucide-vue-next";
 import Title from "@/components/common/title/Title.vue";
+import { hoverCardClasses } from "@/styles/hover-styles";
 
 const OffersDetailsDialog = defineAsyncComponent(() => import("@/components/views/offers/single/OffersDetailsDialog.vue"));
 
@@ -44,7 +45,7 @@ const formattedCreationDate = computed(() => formatDate(offer?.createdAt));
 
 <template>
   <Card
-    class="flex flex-col gap-2 p-3 transition-shadow transition-transform hover:z-30 hover:translate-y-[-2px] hover:shadow-xl"
+    :class="['relative flex flex-col gap-2 p-3 hover:z-30', hoverCardClasses]"
     :aria-label="`Otwórz szczegóły ogłoszenia: ${offer?.positionName ?? ''}`"
   >
     <div class="flex flex-col justify-between self-stretch md:flex-row">

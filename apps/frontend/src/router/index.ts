@@ -17,6 +17,16 @@ const routes = [
     name: "Policy",
     component: () => import("@/views/Politics.vue"),
   },
+  {
+    path: "/:pathMatch(.*)*",
+    name: "NotFound",
+    component: () => import("@/views/NotFound.vue"),
+  },
+  {
+    path: routeUrls.news,
+    name: "News",
+    component: () => import("@/views/News.vue"),
+  },
 ];
 
 export const router = createRouter({
