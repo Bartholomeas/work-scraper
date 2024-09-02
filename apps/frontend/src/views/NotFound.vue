@@ -11,7 +11,7 @@ title.value = `Nie znaleziono strony | ${PAGE_NAME}`;
 
 <template>
   <div class="flex h-full w-full flex-col items-center">
-    <img src="../assets/404.webp" alt="" />
+    <img src="../assets/404.webp" alt="Robot z kodem błędu 404 - nie znaleziono strony" />
     <Text as="p" size="xl" color="primary" weight="bold" class="pb-6">Wygląda na to, że zabłądziłeś!</Text>
     <RouterLink to="/">
       <Button variant="default" class="h-12 w-full font-bold uppercase"> Wróć do strony głównej </Button>
