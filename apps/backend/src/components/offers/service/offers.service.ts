@@ -141,9 +141,9 @@ class OffersService implements IOffersService {
         ...OfferHelper.getDefaultParams({ ...params, ...defaultParams } as OffersQueryParams),
         where: {
           ...OfferHelper.getJobOffersConditions({ ...params, ...defaultParams } as OffersQueryParams),
-          dataSourceCode: {
-            not: PRACUJ_NAME,
-          },
+          // dataSourceCode: {
+          //   not: PRACUJ_NAME,
+          // },
         },
 
         select: {
@@ -224,9 +224,9 @@ class OffersService implements IOffersService {
       const totalOffers = await this.prisma.jobOffer
         .count({
           where: {
-            dataSourceCode: {
-              not: PRACUJ_NAME,
-            },
+            // dataSourceCode: {
+            //   not: PRACUJ_NAME,
+            // },
             ...OfferHelper.getJobOffersConditions({ ...params, ...defaultParams } as OffersQueryParams),
           },
         })
