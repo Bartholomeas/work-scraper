@@ -30,7 +30,7 @@ const skeletonArray = computed(() => Array.from({ length: 48 }));
       :data-index="index"
       :style="{ '--index': index }"
     />
-    <NoResultsCard v-else key="offerSingleItem-empty" />
+    <NoResultsCard v-else key="offerSingleItem-empty" text="Brak wyników..." />
   </TransitionGroup>
 </template>
 
