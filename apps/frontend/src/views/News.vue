@@ -22,7 +22,7 @@ const { data: newsItems, isLoading } = useGetNews();
     <div v-if="isLoading">
       <NewsCardsSkeleton />
     </div>
-    <div class="grid gap-6 md:grid-cols-2" v-else-if="!isLoading && newsItems">
+    <div class="grid gap-6 md:grid-cols-2" v-else-if="!isLoading && Array.isArray(newsItems) && newsItems?.length > 0">
       <TransitionGroup name="card">
         <NewsCard v-for="newsItem in newsItems" :key="newsItem.id" :newsItem="newsItem" />
       </TransitionGroup>
