@@ -10,11 +10,11 @@ title.value = `Nie znaleziono strony | ${PAGE_NAME}`;
 </script>
 
 <template>
-  <div class="flex h-full w-full flex-col items-center">
-    <img src="../assets/404.webp" alt="Robot z kodem błędu 404 - nie znaleziono strony" />
-    <Text as="p" size="xl" color="primary" weight="bold" class="pb-6">Wygląda na to, że zabłądziłeś!</Text>
+  <div class="mt-10 flex flex-col items-center">
+    <img src="../assets/404.webp" alt="Robot z kodem błędu 404 - nie znaleziono strony" class="max-w-[350px]" />
+    <Text as="p" size="h1" color="default" weight="bold" class="pb-6 text-center">Wygląda na to, że zabłądziłeś!</Text>
     <RouterLink to="/">
-      <Button variant="default" class="h-12 w-full font-bold uppercase"> Wróć do strony głównej </Button>
+      <Button variant="default" class="h-12 font-bold"> Wróć do strony głównej </Button>
     </RouterLink>
   </div>
 </template>
