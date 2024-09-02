@@ -18,6 +18,7 @@ export class ScrapperNofluffjobs extends ScrapperBase {
   private readonly maxLoadAttempts: number = 5;
   private readonly maxRetries: number = 4;
   private readonly retryDelay: number = 3000;
+  private screenshotCounter: number = 0;
 
   constructor(browser: Browser | undefined, props: ScrapperBaseProps) {
     super(browser, props);
@@ -52,6 +53,16 @@ export class ScrapperNofluffjobs extends ScrapperBase {
               if (res?.postings) data.push(...res.postings);
             }
             await this.clickLoadMoreButtonWithRetry();
+
+            if (this.page) {
+              this.screenshotCounter++;
+              const screenshotPath = `./nofluffjobs_page_${this.screenshotCounter}.png`;
+              await this.page.screenshot({
+                path: screenshotPath,
+                fullPage: true,
+              });
+              console.log(`Screenshot saved as ${screenshotPath}`);
+            }
           } catch (err) {
             console.error("Error processing response:", err);
             this.keepLoading = false;
