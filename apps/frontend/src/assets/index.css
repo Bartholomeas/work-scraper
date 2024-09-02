@@ -66,6 +66,7 @@
     --error: #f32;
 
     --ring: 212.7 26.8% 83.9%;
+    --radius: 0.5rem;
 
     /*Charts variables*/
     --vis-tooltip-background-color: none !important;
@@ -117,8 +118,6 @@
   --error: #f32;
 
   --ring: 222.2 84% 4.9%;
-
-  --radius: 0.5rem;
 
   /*Charts variables*/
   --vis-tooltip-background-color: none !important;
