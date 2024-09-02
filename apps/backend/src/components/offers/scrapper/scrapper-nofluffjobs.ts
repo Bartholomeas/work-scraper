@@ -18,7 +18,6 @@ export class ScrapperNofluffjobs extends ScrapperBase {
   private readonly maxLoadAttempts: number = 5;
   private readonly maxRetries: number = 4;
   private readonly retryDelay: number = 3000;
-  private screenshotCounter: number = 0;
 
   constructor(browser: Browser | undefined, props: ScrapperBaseProps) {
     super(browser, props);
@@ -40,6 +39,7 @@ export class ScrapperNofluffjobs extends ScrapperBase {
     await this.listenAndRestrictRequests(this.page);
 
     const data: T[] = [];
+    let screenshotCounter: number = 0;
 
     return new Promise<T[] | undefined>((resolve, reject) => {
       this.page?.on("response", async response => {
@@ -52,11 +52,12 @@ export class ScrapperNofluffjobs extends ScrapperBase {
             if (contentType && contentType.includes("application/json")) {
               if (res?.postings) data.push(...res.postings);
             }
+            await this.scrollToBottom();
             await this.clickLoadMoreButtonWithRetry();
 
             if (this.page) {
-              this.screenshotCounter++;
-              const screenshotPath = `./nofluffjobs_page_${this.screenshotCounter}.png`;
+              screenshotCounter++;
+              const screenshotPath = `./nofluffjobs_page_${screenshotCounter}.png`;
               await this.page.screenshot({
                 path: screenshotPath,
                 fullPage: true,
@@ -72,13 +73,15 @@ export class ScrapperNofluffjobs extends ScrapperBase {
 
       this.page
         ?.goto(this.url, { waitUntil: "networkidle2", timeout: 60000 })
-        .then(() => this.pressCookieConsent(this.page))
+        .then(() => this.handleCookieConsent())
+        .then(() => this.scrollToBottom())
         .then(() => this.clickLoadMoreButtonWithRetry())
         .catch(reject);
 
       const waitUntilFinished = async () => {
         while (this.keepLoading && this.loadAttempts < this.maxLoadAttempts) {
-          await this.wait(1000);
+          await this.wait(5000);
+          await this.scrollToBottom();
           this.loadAttempts++;
           if (!this.keepLoading || this.loadAttempts >= this.maxLoadAttempts) break;
           await this.clickLoadMoreButtonWithRetry();
@@ -89,6 +92,26 @@ export class ScrapperNofluffjobs extends ScrapperBase {
 
       waitUntilFinished();
     });
+  }
+
+  private async scrollToBottom(): Promise<void> {
+    await this.page?.evaluate(async () => {
+      await new Promise<void>(resolve => {
+        let totalHeight = 0;
+        const distance = 500;
+        const timer = setInterval(() => {
+          const { scrollHeight } = document.body;
+          window.scrollBy(0, distance);
+          totalHeight += distance;
+
+          if (totalHeight >= scrollHeight) {
+            clearInterval(timer);
+            resolve();
+          }
+        }, 100);
+      });
+    });
+    console.log("Scrolled to bottom of the page");
   }
 
   private async clickLoadMoreButtonWithRetry(): Promise<void> {
@@ -116,7 +139,6 @@ export class ScrapperNofluffjobs extends ScrapperBase {
     console.log("Max retries reached. No more 'Load More' button found.");
     this.keepLoading = false;
   }
-
   private wait(duration: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, duration));
   }
@@ -137,7 +159,7 @@ export class ScrapperNofluffjobs extends ScrapperBase {
       await filtersBtn?.dispose();
 
       //TODO: To improve if its because of timeout
-      await wait(500);
+      await wait(1000);
 
       const categoriesSection = await this.page?.waitForSelector('div[data-cy-section="btnFilters-category"]');
 
@@ -175,7 +197,7 @@ export class ScrapperNofluffjobs extends ScrapperBase {
 
   private getLoadMoreButton() {
     const buttons = Array.from(document.querySelectorAll("button"));
-    const targetBtn = buttons.find(btn => btn.textContent?.includes("Pokaż kolejne"));
+    const targetBtn = buttons.find(btn => btn.textContent?.includes("Pokaż kolejne oferty"));
     return targetBtn || null;
   }
 
@@ -192,6 +214,19 @@ export class ScrapperNofluffjobs extends ScrapperBase {
     if (cookieBtn) {
       await cookieBtn?.click();
       await cookieBtn?.dispose();
+    }
+  }
+
+  private async handleCookieConsent(): Promise<void> {
+    try {
+      await this.page?.waitForSelector("#onetrust-accept-btn-handler", { timeout: 5000 });
+
+      await this.page?.click("#onetrust-accept-btn-handler");
+      await this.page?.waitForNetworkIdle({ timeout: 5000 });
+
+      console.log("Cookie consent accepted successfully");
+    } catch (error) {
+      console.log("Cookie consent dialog not found or already accepted", error);
     }
   }
 
