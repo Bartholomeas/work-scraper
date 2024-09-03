@@ -62,11 +62,12 @@ const formattedCreationDate = computed(() => formatDate(offer?.createdAt));
       <Separator />
       <div class="flex flex-col gap-2">
         <Title order="h4">Technologie</Title>
-        <div class="flex w-full flex-wrap gap-2">
+        <div v-if="offer?.technologies" class="flex w-full flex-wrap gap-2">
           <Badge v-for="category in offer?.technologies" :key="`${offer?.id}-${category}`" variant="secondary" class="uppercase"
             >{{ category }}
           </Badge>
         </div>
+        <Badge v-else variant="secondary" class="max-w-max uppercase"> Brak informacji </Badge>
       </div>
 
       <Separator />
