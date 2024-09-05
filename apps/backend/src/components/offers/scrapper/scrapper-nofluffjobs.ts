@@ -15,9 +15,12 @@ import type { JobOfferNofluffJobs } from "@/types/offers/nofluffjobs.types";
 export class ScrapperNofluffjobs extends ScrapperBase {
   private keepLoading: boolean = true;
   private loadAttempts: number = 0;
-  private readonly maxLoadAttempts: number = 50; // Increased to allow for more pages
-  private readonly maxRetries: number = 4;
-  private readonly retryDelay: number = 5000; // Increased to 5 seconds
+  private readonly maxLoadAttempts: number = 10;
+  private readonly maxRetries: number = 6;
+  private readonly retryDelay: number = 5000;
+  private interceptedRequestsCount: number = 0;
+  private processedRequestsCount: number = 0;
+  private readonly pageTimeout: number = 60000; // 60 seconds timeout
 
   constructor(browser: Browser | undefined, props: ScrapperBaseProps) {
     super(browser, props);
@@ -26,72 +29,62 @@ export class ScrapperNofluffjobs extends ScrapperBase {
 
   public async getScrappedData(): Promise<ScrappedDataResponse> {
     const data = await this.saveScrappedData<JobOffer>();
-    console.log("Total scraped offers:", data?.length || 0);
     return { createdAt: new Date(Date.now()).toISOString(), data: data || [] };
   }
 
   protected async scrapePage<T>(pageNumber: number): Promise<T[] | undefined> {
     await this.initializePage();
-    await this.page?.setViewport({ width: 1200, height: 1080 });
+
+    await this.page?.setViewport({
+      width: 1200,
+      height: 1080,
+    });
     await this.listenAndRestrictRequests(this.page);
 
     const data: T[] = [];
 
     return new Promise<T[] | undefined>((resolve, reject) => {
-      let isFinished = false;
-
       this.page?.on("response", async response => {
         const url = response.url();
         if (url.includes("https://nofluffjobs.com/api/search/posting")) {
           console.log("Nofluffjobs url: ", url);
+          this.interceptedRequestsCount++;
           try {
             const res = await response.json();
-            if (res?.postings) data.push(...res.postings);
-            await this.scrollToBottom();
+            const contentType = response.headers()["content-type"];
+            if (contentType && contentType.includes("application/json")) {
+              if (res?.postings) data.push(...res.postings);
+            }
+            await this.clickLoadMoreButtonWithRetry();
           } catch (err) {
             console.error("Error processing response:", err);
+          } finally {
+            this.processedRequestsCount++;
+            if (this.processedRequestsCount === this.interceptedRequestsCount && !this.keepLoading) {
+              resolve(data);
+            }
           }
         }
       });
 
-      const navigateAndInitialize = async () => {
-        try {
-          await this.page?.goto(this.url, { waitUntil: "networkidle2", timeout: 60000 });
-          await this.handleCookieConsent();
-          await this.scrollToBottom();
-          await this.clickLoadMoreButtonWithRetry();
-        } catch (error) {
-          console.error("Error during navigation and initialization:", error);
-          // Optionally, you can add a retry mechanism here
-          // await this.wait(5000);
-          // await navigateAndInitialize();
-        }
-      };
-
-      navigateAndInitialize().catch(reject);
+      this.page
+        ?.goto(this.url, { waitUntil: "networkidle2", timeout: 60000 })
+        .then(() => this.pressCookieConsent(this.page))
+        .then(() => this.scrollToBottom())
+        .then(() => this.clickLoadMoreButtonWithRetry())
+        .catch(reject);
 
       const waitUntilFinished = async () => {
         while (this.keepLoading && this.loadAttempts < this.maxLoadAttempts) {
-          try {
-            await this.wait(10000);
-            await this.scrollToBottom();
-            this.loadAttempts++;
-            if (!this.keepLoading || this.loadAttempts >= this.maxLoadAttempts) {
-              isFinished = true;
-              break;
-            }
-            await this.clickLoadMoreButtonWithRetry();
-          } catch (error) {
-            console.error("Error during scraping loop:", error);
-            // Optionally, you can break the loop or continue based on the error
-            // break;
-          }
+          await this.wait(2000);
+          this.loadAttempts++;
+          if (!this.keepLoading || this.loadAttempts >= this.maxLoadAttempts) break;
+          await this.scrollToBottom();
+          await this.clickLoadMoreButtonWithRetry();
         }
 
-        await this.wait(15000);
-
-        if (isFinished) {
-          console.log("Finished scraping, total offers:", data.length);
+        this.keepLoading = false;
+        if (this.processedRequestsCount === this.interceptedRequestsCount) {
           resolve(data);
         }
       };
@@ -101,57 +94,54 @@ export class ScrapperNofluffjobs extends ScrapperBase {
   }
 
   private async scrollToBottom(): Promise<void> {
-    try {
-      await this.page?.evaluate(async () => {
-        await new Promise<void>((resolve) => {
-          let totalHeight = 0;
-          const distance = 500;
-          const timer = setInterval(() => {
-            const {scrollHeight} = document.body;
-            window.scrollBy(0, distance);
-            totalHeight += distance;
+    await this.page?.evaluate(async () => {
+      await new Promise<void>(resolve => {
+        let totalHeight = 0;
+        const distance = 100;
+        const timer = setInterval(() => {
+          const {scrollHeight} = document.body;
+          window.scrollBy(0, distance);
+          totalHeight += distance;
 
-            if (totalHeight >= scrollHeight) {
-              clearInterval(timer);
-              resolve();
-            }
-          }, 100);
-        });
+          if (totalHeight >= scrollHeight) {
+            clearInterval(timer);
+            resolve();
+          }
+        }, 100);
       });
-      console.log("Scrolled to bottom of the page");
-    } catch (error) {
-      console.error("Error while scrolling to bottom:", error);
-      // Optionally, you can add a retry mechanism here
-      // await this.wait(2000);
-      // await this.scrollToBottom();
-    }
+    });
+    await this.wait(1000); // Wait for any dynamic content to load after scrolling
   }
 
   private async clickLoadMoreButtonWithRetry(): Promise<void> {
-    for (let i = 0; i < this.maxRetries; i++) {
+    const startTime = Date.now();
+
+    while (Date.now() - startTime < this.pageTimeout) {
       try {
-        const loadMoreBtn = await this.page?.evaluateHandle(this.getLoadMoreButton);
-        const element = loadMoreBtn?.asElement() as ElementHandle<Element>;
-        if (element) {
-          await element.click();
-          await this.wait(2000); // Increased wait time after clicking
-          await element.dispose();
-          return;
-        } else {
-          console.log(`No 'Load More' button found (attempt ${i + 1}/${this.maxRetries})`);
-          this.keepLoading = false; // Stop loading if button is not found
+        await this.scrollToBottom();
+
+        const loadMoreBtn = await this.page?.waitForFunction(
+          () => {
+            const buttons = Array.from(document.querySelectorAll("button"));
+            return buttons.find(btn => btn.textContent?.includes("Pokaż kolejne"));
+          },
+          { timeout: 5000 },
+        );
+
+        if (loadMoreBtn) {
+          await (loadMoreBtn as ElementHandle<Element>).click();
+          await this.wait(2000);
           return;
         }
       } catch (err) {
-        console.error(`Error clicking 'Load More' button (attempt ${i + 1}/${this.maxRetries}):`, err);
+        console.error(`Error finding or clicking 'Load More' button:`, err);
       }
 
-      if (i < this.maxRetries - 1) {
-        await this.wait(this.retryDelay);
-      }
+      console.log("Button not found or not clickable, retrying...");
+      await this.wait(this.retryDelay);
     }
 
-    console.log("Max retries reached. No more 'Load More' button found.");
+    console.log("Timeout reached. No more 'Load More' button found or page fully loaded.");
     this.keepLoading = false;
   }
 
@@ -175,7 +165,7 @@ export class ScrapperNofluffjobs extends ScrapperBase {
       await filtersBtn?.dispose();
 
       //TODO: To improve if its because of timeout
-      await wait(1000);
+      await wait(500);
 
       const categoriesSection = await this.page?.waitForSelector('div[data-cy-section="btnFilters-category"]');
 
@@ -213,7 +203,7 @@ export class ScrapperNofluffjobs extends ScrapperBase {
 
   private getLoadMoreButton() {
     const buttons = Array.from(document.querySelectorAll("button"));
-    const targetBtn = buttons.find(btn => btn.textContent?.includes("Pokaż kolejne oferty"));
+    const targetBtn = buttons.find(btn => btn.textContent?.includes("Pokaż kolejne"));
     return targetBtn || null;
   }
 
@@ -230,19 +220,6 @@ export class ScrapperNofluffjobs extends ScrapperBase {
     if (cookieBtn) {
       await cookieBtn?.click();
       await cookieBtn?.dispose();
-    }
-  }
-
-  private async handleCookieConsent(): Promise<void> {
-    try {
-      await this.page?.waitForSelector("#onetrust-accept-btn-handler", { timeout: 5000 });
-
-      await this.page?.click("#onetrust-accept-btn-handler");
-      await this.page?.waitForNetworkIdle({ timeout: 5000 });
-
-      console.log("Cookie consent accepted successfully");
-    } catch (error) {
-      console.log("Cookie consent dialog not found or already accepted", error);
     }
   }
 
