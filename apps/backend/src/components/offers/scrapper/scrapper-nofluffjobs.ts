@@ -15,9 +15,9 @@ import type { JobOfferNofluffJobs } from "@/types/offers/nofluffjobs.types";
 export class ScrapperNofluffjobs extends ScrapperBase {
   private keepLoading: boolean = true;
   private loadAttempts: number = 0;
-  private readonly maxLoadAttempts: number = 5;
-  private readonly maxRetries: number = 4;
-  private readonly retryDelay: number = 3000;
+  private readonly maxLoadAttempts: number = 6;
+  private readonly maxRetries: number = 5;
+  private readonly retryDelay: number = 6000;
 
   constructor(browser: Browser | undefined, props: ScrapperBaseProps) {
     super(browser, props);
@@ -65,20 +65,29 @@ export class ScrapperNofluffjobs extends ScrapperBase {
         .then(() => this.clickLoadMoreButtonWithRetry())
         .catch(reject);
 
-      const waitUntilFinished = async () => {
-        while (this.keepLoading && this.loadAttempts < this.maxLoadAttempts) {
-          await this.wait(1000);
-          this.loadAttempts++;
-          if (!this.keepLoading || this.loadAttempts >= this.maxLoadAttempts) break;
-          await this.clickLoadMoreButtonWithRetry();
-        }
-
-        resolve(data);
-      };
-
-      waitUntilFinished();
+      this.waitUntilFinished(() => resolve(data));
     });
   }
+
+  private async waitUntilFinished(resolveFn: () => void) {
+    while (this.keepLoading && this.loadAttempts < this.maxLoadAttempts) {
+      await this.wait(3000 + Math.random() * 1000);
+      this.loadAttempts++;
+      if (!this.keepLoading || this.loadAttempts >= this.maxLoadAttempts) break;
+      await this.clickLoadMoreButtonWithRetry();
+    }
+
+    resolveFn();
+  }
+
+  // private async waitUntilFinished() {
+  //   while (this.keepLoading && this.loadAttempts < this.maxLoadAttempts) {
+  //     await this.wait(2000 + Math.random() * 1000); // Dodano większe losowe opóźnienia w głównej pętli
+  //     this.loadAttempts++;
+  //     if (!this.keepLoading || this.loadAttempts >= this.maxLoadAttempts) break;
+  //     await this.clickLoadMoreButtonWithRetry();
+  //   }
+  // }
 
   private async clickLoadMoreButtonWithRetry(): Promise<void> {
     for (let i = 0; i < this.maxRetries; i++) {
@@ -87,7 +96,7 @@ export class ScrapperNofluffjobs extends ScrapperBase {
         const element = loadMoreBtn?.asElement() as ElementHandle<Element>;
         if (element) {
           await element.click();
-          await this.wait(1000);
+          await this.wait(1500 + Math.random() * 500); // Dodano większe i losowe opóźnienie
           await element.dispose();
           return;
         } else {
@@ -98,7 +107,7 @@ export class ScrapperNofluffjobs extends ScrapperBase {
       }
 
       if (i < this.maxRetries - 1) {
-        await this.wait(this.retryDelay);
+        await this.wait(this.retryDelay + i * 1000); // Każda próba ma progresywnie większe opóźnienie
       }
     }
 
